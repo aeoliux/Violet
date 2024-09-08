@@ -15,27 +15,27 @@ suspend fun logIn(keychain: Keychain, login: String?, password: String?) {
         password = usernameAndPass.slice(indexOfSpace + 1..<usernameAndPass.length)
     }
 
-    Context.client.value.proceedLogin(login, password)
+    AppContext.client.value.proceedLogin(login, password)
 }
 
 suspend fun fetchData(keychain: Keychain, login: String? = null, password: String? = null): Boolean {
     try {
         logIn(keychain, login, password)
 
-        val me = Context.client.value.me()
+        val me = AppContext.client.value.me()
         Database.setAboutMe(me)
 
-        val grades = Context.client.value.grades()
+        val grades = AppContext.client.value.grades()
         Database.insertGrades(grades)
 
-        val classInfo = Context.client.value.classInfo()
+        val classInfo = AppContext.client.value.classInfo()
         Database.setClassInfo(classInfo)
 
-        val luckyNumber = Context.client.value.luckyNumber()
+        val luckyNumber = AppContext.client.value.luckyNumber()
         Database.setLuckyNumber(luckyNumber)
 
-        Context.semester.value = classInfo.semester
-        Context.databaseUpdated.value = !Context.databaseUpdated.value
+        AppContext.semester.value = classInfo.semester
+        AppContext.databaseUpdated.value = !AppContext.databaseUpdated.value
 
         return true
     } catch (e: Exception) {

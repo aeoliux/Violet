@@ -7,7 +7,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,11 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.github.aeoliux.violet.Context
+import com.github.aeoliux.violet.AppContext
 import com.github.aeoliux.violet.Keychain
 import com.github.aeoliux.violet.app.components.LoadingIndicator
 import com.github.aeoliux.violet.app.fetchData
-import com.github.aeoliux.violet.showAlert
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,8 +37,8 @@ fun LoginView(keychain: Keychain) {
             Button({ coroutineScope.launch {
                 showLoadingIndicator = true
 
-                Context.isLoggedIn.value = fetchData(keychain, login, password)
-                if (Context.isLoggedIn.value)
+                AppContext.isLoggedIn.value = fetchData(keychain, login, password)
+                if (AppContext.isLoggedIn.value)
                     keychain.savePass("$login $password")
 
                 showLoadingIndicator = false

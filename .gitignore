@@ -4,5 +4,6 @@
 /.idea
 /.kotlin
 /.gradle
-.DS_Store
+/**/.DS_Store
 /gradle/wrapper/*
+/**/xcuserdata

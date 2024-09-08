@@ -14,7 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.aeoliux.violet.Context
+import com.github.aeoliux.violet.AppContext
 import com.github.aeoliux.violet.api.Grade
 import com.github.aeoliux.violet.app.components.ExpandableList
 import com.github.aeoliux.violet.app.components.LoadingIndicator
@@ -26,7 +26,7 @@ fun GradesView() {
     var isLoaded by remember { mutableStateOf(false) }
     var grades by remember { mutableStateOf(LinkedHashMap<String, List<Grade>>()) }
 
-    LaunchedEffect(Context.databaseUpdated.value) {
+    LaunchedEffect(AppContext.databaseUpdated.value) {
         grades = Database.selectGrades()?: LinkedHashMap()
 
         isLoaded = true
@@ -54,7 +54,7 @@ fun GradesView() {
 
 @Composable
 internal fun GradeSemesterView(semester: UInt, grades: List<Grade>) {
-    ExpandableList({ Text("Semester $semester") }, expanded = Context.semester.value == semester) {
+    ExpandableList({ Text("Semester $semester") }, expanded = AppContext.semester.value == semester) {
         grades.forEach { grade ->
             if (grade.semester == semester) {
                 GradeComponent(grade)

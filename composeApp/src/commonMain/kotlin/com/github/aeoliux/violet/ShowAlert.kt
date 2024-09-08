@@ -1,7 +1,7 @@
 package com.github.aeoliux.violet
 
 fun showAlert(title: String, e: Exception) {
-    Context.alertTitle.value = title
-    Context.alertMessage.value = e.message?: e.toString()
-    Context.showAlert.value = true
+    AppContext.alertTitle.value = title
+    AppContext.alertMessage.value = e.message?: e.toString()
+    AppContext.showAlert.value = true
 }

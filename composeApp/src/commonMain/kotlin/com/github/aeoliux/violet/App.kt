@@ -6,7 +6,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import app.cash.sqldelight.db.SqlDriver
 import com.github.aeoliux.violet.app.login.LoginView
 import com.github.aeoliux.violet.app.MainView
 import com.github.aeoliux.violet.storage.Database
@@ -18,23 +17,23 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun App(keychain: Keychain) {
     MaterialTheme {
         LaunchedEffect(Unit) {
-            Context.isLoggedIn.value = Database.selectAboutMe() != null
+            AppContext.isLoggedIn.value = Database.selectAboutMe() != null
         }
 
-        if (Context.isLoggedIn.value) {
+        if (AppContext.isLoggedIn.value) {
             MainView(keychain)
         } else {
             LoginView(keychain)
         }
 
-        if (Context.showAlert.value) {
+        if (AppContext.showAlert.value) {
             AlertDialog(
-                onDismissRequest = { Context.showAlert.value = false },
+                onDismissRequest = { AppContext.showAlert.value = false },
                 confirmButton = { TextButton(onClick = {
-                    Context.showAlert.value = false
+                    AppContext.showAlert.value = false
                 }) { Text("Ok") } },
-                title = { Text(Context.alertTitle.value) },
-                text = { Text(Context.alertMessage.value) }
+                title = { Text(AppContext.alertTitle.value) },
+                text = { Text(AppContext.alertMessage.value) }
             )
         }
     }

@@ -2,7 +2,6 @@ package com.github.aeoliux.violet.app.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -18,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.aeoliux.violet.Context
+import com.github.aeoliux.violet.AppContext
 import com.github.aeoliux.violet.api.ClassInfo
 import com.github.aeoliux.violet.api.Me
 import com.github.aeoliux.violet.app.components.LoadingIndicator
@@ -35,11 +34,11 @@ fun HomeView() {
     var isLoaded by remember { mutableStateOf(false) }
     var luckyNumber by remember { mutableStateOf<Pair<UInt, LocalDate>?>(null) }
 
-    LaunchedEffect(Context.databaseUpdated.value) {
+    LaunchedEffect(AppContext.databaseUpdated.value) {
         me = Database.selectAboutMe()
         classInfo = Database.selectClassInfo()
         luckyNumber = Database.selectLuckyNumber()
-        Context.semester.value = classInfo?.semester ?: 1u
+        AppContext.semester.value = classInfo?.semester ?: 1u
 
         isLoaded = true
     }

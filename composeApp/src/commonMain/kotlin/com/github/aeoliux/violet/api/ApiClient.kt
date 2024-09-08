@@ -1,11 +1,16 @@
 package com.github.aeoliux.violet.api
 
-import com.github.aeoliux.violet.api.bodys.*
+import com.github.aeoliux.violet.api.bodys.Class
+import com.github.aeoliux.violet.api.bodys.Colors
+import com.github.aeoliux.violet.api.bodys.LuckyNumbers
 import com.github.aeoliux.violet.api.bodys.Me
-import com.github.aeoliux.violet.api.bodys.grades.*
+import com.github.aeoliux.violet.api.bodys.Subjects
+import com.github.aeoliux.violet.api.bodys.Users
+import com.github.aeoliux.violet.api.bodys.grades.Grades
+import com.github.aeoliux.violet.api.bodys.grades.GradesCategories
+import com.github.aeoliux.violet.api.bodys.grades.GradesComments
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.request.forms.submitForm
@@ -20,7 +25,7 @@ class ApiClient {
     var subjects = LinkedHashMap<UInt, String>()
     var colors = LinkedHashMap<UInt, String>()
 
-    private val client = HttpClient(CIO) {
+    private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
