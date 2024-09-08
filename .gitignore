@@ -1,0 +1,8 @@
+/build
+/composeApp/build
+/local.properties
+/.idea
+/.kotlin
+/.gradle
+.DS_Store
+/gradle/wrapper/*

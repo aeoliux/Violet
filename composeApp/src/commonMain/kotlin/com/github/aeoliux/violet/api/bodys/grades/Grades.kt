@@ -1,0 +1,81 @@
+package com.github.aeoliux.violet.api.bodys.grades
+
+import com.github.aeoliux.violet.api.Grade
+import com.github.aeoliux.violet.api.GradeType
+import com.github.aeoliux.violet.api.bodys.IdAndUrl
+import com.github.aeoliux.violet.api.User
+import com.github.aeoliux.violet.api.localDateTimeFormat
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class GradeData(
+    val Id: UInt,
+    val Lesson: IdAndUrl,
+    val Subject: IdAndUrl,
+    val Student: IdAndUrl,
+    val Category: IdAndUrl,
+    val AddedBy: IdAndUrl,
+    val Grade: String,
+    val AddDate: String,
+    val Semester: UInt,
+    val IsConstituent: Boolean,
+    val IsSemester: Boolean,
+    val IsSemesterProposition: Boolean,
+    val IsFinal: Boolean,
+    val IsFinalProposition: Boolean,
+)
+
+@Serializable
+data class Grades(val Grades: List<GradeData>) {
+    fun toGrades(
+        categories: GradesCategories,
+        comments: GradesComments,
+        users: LinkedHashMap<UInt, User>,
+        subjects: LinkedHashMap<UInt, String>,
+        colors: LinkedHashMap<UInt, String>
+    ): LinkedHashMap<String, List<Grade>> {
+        return this.Grades.fold(LinkedHashMap()) { acc, gradeData ->
+            val category = categories.getCategoryById(gradeData.Category.Id)
+            if (category == null)
+                acc
+
+            val comment = comments.getCommentByGradeId(gradeData.Id)
+            val gradeType = {
+                if (gradeData.IsConstituent)
+                    GradeType.Constituent
+                else if (gradeData.IsSemester)
+                    GradeType.Semester
+                else if (gradeData.IsSemesterProposition)
+                    GradeType.SemesterProposition
+                else if (gradeData.IsFinal)
+                    GradeType.Final
+                else if (gradeData.IsFinalProposition)
+                    GradeType.FinalProposition
+
+                GradeType.Constituent
+            }()
+
+            val teacher = users[gradeData.AddedBy.Id]?.firstName + " " + users[gradeData.AddedBy.Id]?.lastName
+
+            val grade = Grade(
+                gradeData.Grade,
+                LocalDateTime.parse(gradeData.AddDate, localDateTimeFormat),
+                colors[category!!.Color.Id]?: "000000",
+                gradeType,
+                category.Name,
+                teacher,
+                if (category.CountToTheAverage) category.Weight else 0u,
+                gradeData.Semester,
+                comment
+            )
+
+            val subject = subjects[gradeData.Subject.Id]
+            if (subject != null)
+                acc[subject] = acc[subject]?.plus(grade)?: listOf(grade)
+
+            acc
+        }
+    }
+}

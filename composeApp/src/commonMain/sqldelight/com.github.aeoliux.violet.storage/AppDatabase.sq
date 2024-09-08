@@ -1,0 +1,92 @@
+import kotlin.Boolean;
+import kotlin.String;
+import kotlin.collections.List;
+import com.github.aeoliux.violet.api.GradeType;
+
+/**
+CREATE TABLE Users (
+    id INTEGER NOT NULL,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL,
+    isSchoolAdministrator INTEGER AS Boolean NOT NULL,
+    isEmployee INTEGER AS Boolean NOT NULL
+);
+
+insertUser:
+INSERT INTO Users VALUES (?, ?, ?, ?, ?);
+
+selectUserById:
+SELECT * FROM Users WHERE id = ? LIMIT 1;
+
+clearUsers:
+DELETE FROM Users;
+*/
+
+CREATE TABLE ClassInfo (
+    number INTEGER NOT NULL,
+    symbol TEXT NOT NULL,
+    classTutors TEXT AS List<String> NOT NULL,
+    semester INTEGER NOT NULL
+);
+
+insertClassInfo:
+INSERT INTO ClassInfo VALUES (?, ?, ?, ?);
+
+selectClassInfo:
+SELECT * FROM ClassInfo LIMIT 1;
+
+clearClassInfo:
+DELETE FROM ClassInfo;
+
+CREATE TABLE Grades (
+    subject TEXT NOT NULL,
+    grade TEXT NOT NULL,
+    addDate TEXT NOT NULL,
+    color TEXT NOT NULL,
+    gradeType INTEGER AS GradeType NOT NULL,
+    category TEXT NOT NULL,
+    addedBy TEXT NOT NULL,
+    weight INTEGER NOT NULL,
+    semester INTEGER NOT NULL,
+    comment TEXT
+);
+
+insertGrade:
+INSERT INTO Grades VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectAllGrades:
+SELECT * FROM Grades;
+
+clearGrades:
+DELETE FROM Grades;
+
+CREATE TABLE Me (
+    id INTEGER NOT NULL,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL,
+    email TEXT NOT NULL,
+    login TEXT NOT NULL
+);
+
+insertAboutMe:
+INSERT INTO Me VALUES (?, ?, ?, ?, ?);
+
+selectAboutMe:
+SELECT * FROM Me LIMIT 1;
+
+clearAboutMe:
+DELETE FROM Me;
+
+CREATE TABLE LuckyNumber (
+    number INTEGER NOT NULL,
+    date TEXT NOT NULL
+);
+
+insertLuckyNumber:
+INSERT INTO LuckyNumber VALUES (?, ?);
+
+selectLuckyNumber:
+SELECT * FROM LuckyNumber LIMIT 1;
+
+clearLuckyNumber:
+DELETE FROM LuckyNumber;
