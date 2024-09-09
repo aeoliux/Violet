@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Get dependencies
+        shell: bash
+        run: brew install openjdk@17
+
+      - name: Build Violet.ipa
+        shell: bash
+        run: ./build_ios.sh
+
+      - name: Upload Violet.ipa
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-iphoneos
+          path: ./Violet.ipa
+
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get dependencies
+        shell: bash
+        run: apt install openjdk-17-jdk
+
+      - name: Build .apk
+        shell: bash
+        run: ./gradlew assembleDebug
+
+      - name: Upload .apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-iphoneos
+          path: ./composeApp/build/outputs/apk/debug/composeApp-debug.apk
+          
