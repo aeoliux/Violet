@@ -5,8 +5,15 @@ import com.github.aeoliux.violet.storage.Database
 import com.github.aeoliux.violet.storage.DatabaseDriverFactory
 import platform.UIKit.UIViewController
 
-fun MainViewController(): UIViewController {
+fun MainViewController(
+    savePassFunc: (password: String) -> Unit,
+    getPassFunc: () -> String?
+): UIViewController {
     Database.open(DatabaseDriverFactory().createDriver())
 
-    return ComposeUIViewController { App(Keychain()) }
+    return ComposeUIViewController {
+        App(
+            Keychain(savePassFunc, getPassFunc)
+        )
+    }
 }

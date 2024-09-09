@@ -40,7 +40,7 @@ actual class Keychain(private val context: Context) {
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    actual suspend fun savePass(password: String) {
+    actual fun savePass(password: String) {
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val iv = cipher.iv
@@ -56,7 +56,7 @@ actual class Keychain(private val context: Context) {
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    actual suspend fun getPass(): String? {
+    actual fun getPass(): String? {
         val encryptedPassword = sharedPreferences.getString("synergiaCredentials", null)?: return null
         val encryptedPasswordBuffer = ByteBuffer.wrap(
             Base64.decode(encryptedPassword)

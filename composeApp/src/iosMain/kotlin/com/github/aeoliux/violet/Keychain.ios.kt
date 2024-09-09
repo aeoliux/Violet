@@ -1,11 +1,14 @@
 package com.github.aeoliux.violet
 
-actual class Keychain {
-    actual suspend fun savePass(password: String) {
-
+actual class Keychain(
+    val savePassFunc: (password: String) -> Unit,
+    val getPassFunc: () -> String?
+) {
+    actual fun savePass(password: String) {
+        savePassFunc(password)
     }
 
-    actual suspend fun getPass(): String? {
-        return null
+    actual fun getPass(): String? {
+        return getPassFunc()
     }
 }
