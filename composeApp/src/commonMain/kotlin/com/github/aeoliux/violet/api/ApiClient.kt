@@ -1,10 +1,12 @@
 package com.github.aeoliux.violet.api
 
 import com.github.aeoliux.violet.api.bodys.Class
+import com.github.aeoliux.violet.api.bodys.Classrooms
 import com.github.aeoliux.violet.api.bodys.Colors
 import com.github.aeoliux.violet.api.bodys.LuckyNumbers
 import com.github.aeoliux.violet.api.bodys.Me
 import com.github.aeoliux.violet.api.bodys.Subjects
+import com.github.aeoliux.violet.api.bodys.Timetables
 import com.github.aeoliux.violet.api.bodys.Users
 import com.github.aeoliux.violet.api.bodys.grades.Grades
 import com.github.aeoliux.violet.api.bodys.grades.GradesCategories
@@ -18,12 +20,14 @@ import io.ktor.client.request.get
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.serialization.json.Json
 
 class ApiClient {
     var users = LinkedHashMap<UInt, User>()
     var subjects = LinkedHashMap<UInt, String>()
     var colors = LinkedHashMap<UInt, String>()
+    var classrooms = LinkedHashMap<UInt, String>()
 
     private val client = HttpClient {
         install(ContentNegotiation) {
@@ -51,6 +55,7 @@ class ApiClient {
         users = data<Users>("Users").toUserMap()
         subjects = data<Subjects>("Subjects").toMap()
         colors = data<Colors>("Colors").toMap()
+        classrooms = data<Classrooms>("Classrooms").toMap()
     }
 
     private suspend inline fun <reified T> data(location: String): T {
@@ -76,4 +81,10 @@ class ApiClient {
     suspend fun luckyNumber(): Pair<UInt, LocalDate> {
         return data<LuckyNumbers>("LuckyNumbers").parse()
     }
+
+    suspend fun timetable(): Timetable {
+        return data<Timetables>("Timetables").toTimetableMap(classrooms)
+    }
 }
+
+typealias Timetable = LinkedHashMap<LocalDate, LinkedHashMap<LocalTime, List<Lesson>>>

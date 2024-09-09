@@ -3,7 +3,7 @@ package com.github.aeoliux.violet.app
 import com.github.aeoliux.violet.*
 import com.github.aeoliux.violet.storage.*
 
-suspend fun logIn(keychain: Keychain, login: String?, password: String?) {
+suspend fun logIn(keychain: Keychain, login: String? = null, password: String? = null) {
     var login = login
     var password = password
 
@@ -33,6 +33,9 @@ suspend fun fetchData(keychain: Keychain, login: String? = null, password: Strin
 
         val luckyNumber = AppContext.client.value.luckyNumber()
         Database.setLuckyNumber(luckyNumber)
+
+        val timetable = AppContext.client.value.timetable()
+        Database.insertLessons(timetable)
 
         AppContext.semester.value = classInfo.semester
         AppContext.databaseUpdated.value = !AppContext.databaseUpdated.value

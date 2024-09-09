@@ -46,8 +46,7 @@ fun GradeComponent(grade: Grade) {
     ) {
         Column(
             Modifier
-                .fillMaxHeight()
-                .wrapContentWidth(),
+                .wrapContentHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

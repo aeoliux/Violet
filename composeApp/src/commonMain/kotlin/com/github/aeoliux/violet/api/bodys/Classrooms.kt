@@ -11,4 +11,11 @@ data class Classroom(
 )
 
 @Serializable
-data class Classrooms(val Classrooms: List<Classroom>)
+data class Classrooms(val Classrooms: List<Classroom>) {
+    fun toMap(): LinkedHashMap<UInt, String> {
+        return Classrooms.fold(LinkedHashMap()) { acc, classroom ->
+            acc[classroom.Id] = classroom.Name
+            acc
+        }
+    }
+}

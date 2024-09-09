@@ -1,6 +1,7 @@
 package com.github.aeoliux.violet.api
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 data class Me(
     val id: UInt,
@@ -42,4 +43,13 @@ data class ClassInfo(
     val symbol: String,
     val classTutors: List<String>,
     val semester: UInt
+)
+
+data class Lesson(
+    val lessonNo: UInt,
+    val subject: String,
+    val teacher: String,
+    val classroom: String,
+    val isCanceled: Boolean,
+    val subclassName: String?
 )

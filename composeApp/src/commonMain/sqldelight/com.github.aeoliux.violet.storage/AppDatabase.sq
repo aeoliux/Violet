@@ -90,3 +90,24 @@ SELECT * FROM LuckyNumber LIMIT 1;
 
 clearLuckyNumber:
 DELETE FROM LuckyNumber;
+
+CREATE TABLE Lessons (
+    date TEXT NOT NULL,
+    time TEXT NOT NULL,
+    lessonNo INTEGER NOT NULL,
+
+    subject TEXT NOT NULL,
+    teacher TEXT NOT NULL,
+    classroom TEXT NOT NULL,
+    isCanceled INTEGER AS Boolean NOT NULL,
+    subclassName TEXT
+);
+
+insertLesson:
+INSERT INTO Lessons VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+selectLessons:
+SELECT * FROM Lessons;
+
+clearLessons:
+DELETE FROM Lessons;
