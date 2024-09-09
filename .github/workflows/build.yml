@@ -38,7 +38,7 @@ jobs:
 
       - name: Get dependencies
         shell: bash
-        run: apt install openjdk-17-jdk
+        run: sudo apt install -y openjdk-17-jdk
 
       - name: Build .apk
         shell: bash
