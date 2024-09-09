@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -25,7 +25,7 @@ jobs:
         run: ./build_ios.sh
 
       - name: Upload Violet.ipa
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-iphoneos
           path: ./Violet.ipa
@@ -34,18 +34,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Get dependencies
-        shell: bash
-        run: sudo apt install -y openjdk-17-jdk
+      - name: Acquire java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
       - name: Build .apk
         shell: bash
         run: ./gradlew assembleDebug
 
       - name: Upload .apk
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-iphoneos
           path: ./composeApp/build/outputs/apk/debug/composeApp-debug.apk
