@@ -1,7 +1,7 @@
 package com.github.aeoliux.violet.api.bodys
 
-import com.github.aeoliux.violet.api.ClassInfo
-import com.github.aeoliux.violet.api.User
+import com.github.aeoliux.violet.api.types.ClassInfo
+import com.github.aeoliux.violet.api.types.User
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable

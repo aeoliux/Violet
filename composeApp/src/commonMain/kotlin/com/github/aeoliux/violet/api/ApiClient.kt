@@ -8,9 +8,16 @@ import com.github.aeoliux.violet.api.bodys.Me
 import com.github.aeoliux.violet.api.bodys.Subjects
 import com.github.aeoliux.violet.api.bodys.Timetables
 import com.github.aeoliux.violet.api.bodys.Users
+import com.github.aeoliux.violet.api.bodys.attendance.Attendances
+import com.github.aeoliux.violet.api.bodys.attendance.AttendancesTypes
 import com.github.aeoliux.violet.api.bodys.grades.Grades
 import com.github.aeoliux.violet.api.bodys.grades.GradesCategories
 import com.github.aeoliux.violet.api.bodys.grades.GradesComments
+import com.github.aeoliux.violet.api.types.Attendance
+import com.github.aeoliux.violet.api.types.ClassInfo
+import com.github.aeoliux.violet.api.types.Grade
+import com.github.aeoliux.violet.api.types.Lesson
+import com.github.aeoliux.violet.api.types.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -62,7 +69,7 @@ class ApiClient {
         return client.get(Endpoints.url(location)).body()
     }
 
-    suspend fun me(): com.github.aeoliux.violet.api.Me {
+    suspend fun me(): com.github.aeoliux.violet.api.types.Me {
         return data<Me>("Me").toMeData()
     }
 
@@ -84,6 +91,14 @@ class ApiClient {
 
     suspend fun timetable(): Timetable {
         return data<Timetables>("Timetables").toTimetableMap(classrooms)
+    }
+
+    suspend fun attendance(): LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>> {
+        return data<Attendances>("Attendances").toAttendanceMap(
+            colors,
+            data<AttendancesTypes>("Attendances/Types").Types,
+            users
+        )
     }
 }
 

@@ -1,8 +1,7 @@
 package com.github.aeoliux.violet.storage
 
-import com.github.aeoliux.violet.api.Grade
+import com.github.aeoliux.violet.api.types.Grade
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format
 
 fun Database.selectGrades(): LinkedHashMap<String, List<Grade>>? {
     try {

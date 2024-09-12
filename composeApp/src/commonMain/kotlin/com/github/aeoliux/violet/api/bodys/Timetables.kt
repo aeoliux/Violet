@@ -1,6 +1,6 @@
 package com.github.aeoliux.violet.api.bodys
 
-import com.github.aeoliux.violet.api.Lesson
+import com.github.aeoliux.violet.api.types.Lesson
 import com.github.aeoliux.violet.api.Timetable
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

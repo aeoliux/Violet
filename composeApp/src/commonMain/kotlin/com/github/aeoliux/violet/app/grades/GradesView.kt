@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.aeoliux.violet.AppContext
-import com.github.aeoliux.violet.api.Grade
+import com.github.aeoliux.violet.api.types.Grade
 import com.github.aeoliux.violet.app.components.ExpandableList
 import com.github.aeoliux.violet.app.components.LoadingIndicator
 import com.github.aeoliux.violet.storage.Database

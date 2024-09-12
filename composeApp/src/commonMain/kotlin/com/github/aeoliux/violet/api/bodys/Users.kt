@@ -15,9 +15,9 @@ data class User(
 
 @Serializable
 data class Users(val Users: List<User>) {
-    fun toUserMap(): LinkedHashMap<UInt, com.github.aeoliux.violet.api.User> {
+    fun toUserMap(): LinkedHashMap<UInt, com.github.aeoliux.violet.api.types.User> {
         return this.Users.fold(LinkedHashMap()) { acc, user ->
-            acc[user.Id] = com.github.aeoliux.violet.api.User(
+            acc[user.Id] = com.github.aeoliux.violet.api.types.User(
                 firstName = user.FirstName,
                 lastName = user.LastName,
                 isSchoolAdministrator = user.IsSchoolAdministrator,

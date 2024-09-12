@@ -1,6 +1,6 @@
 package com.github.aeoliux.violet.storage
 
-import com.github.aeoliux.violet.api.Me
+import com.github.aeoliux.violet.api.types.Me
 
 fun Database.selectAboutMe(): Me? {
     try {

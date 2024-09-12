@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.aeoliux.violet.Keychain
+import com.github.aeoliux.violet.app.attendance.AttendanceView
 import com.github.aeoliux.violet.app.grades.GradesView
 import com.github.aeoliux.violet.app.home.HomeView
 import com.github.aeoliux.violet.app.timetable.TimetableView
@@ -45,7 +46,8 @@ fun MainView(keychain: Keychain) {
     val tabs = listOf(
         TabItem("Home") { HomeView() },
         TabItem("Grades") { GradesView() },
-        TabItem("Timetable") { TimetableView() }
+        TabItem("Timetable") { TimetableView() },
+        TabItem("Attendance") { AttendanceView() }
     )
 
     val coroutineScope = rememberCoroutineScope()
@@ -58,7 +60,7 @@ fun MainView(keychain: Keychain) {
             isRefreshing = false
         }
     })
-    var scrollState = rememberScrollState()
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = { TopAppBar({
@@ -109,7 +111,7 @@ fun MainView(keychain: Keychain) {
                     .verticalScroll(scrollState),
 
             ) {
-                Column(Modifier.padding(2.dp),
+                Column(Modifier.padding(2.dp).fillMaxSize(),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     tabs[selectedTabItem].destination()

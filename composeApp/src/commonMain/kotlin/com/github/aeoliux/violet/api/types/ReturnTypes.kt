@@ -1,7 +1,6 @@
-package com.github.aeoliux.violet.api
+package com.github.aeoliux.violet.api.types
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 
 data class Me(
     val id: UInt,
@@ -16,7 +15,11 @@ data class User(
     val lastName: String,
     val isSchoolAdministrator: Boolean,
     val isEmployee: Boolean
-)
+) {
+    fun teacher(): String {
+        return "$firstName $lastName"
+    }
+}
 
 enum class GradeType {
     Constituent,
@@ -52,4 +55,13 @@ data class Lesson(
     val classroom: String,
     val isCanceled: Boolean,
     val subclassName: String?
+)
+
+data class Attendance(
+    val addedBy: String,
+    val addDate: LocalDateTime,
+    val semester: UInt,
+    val typeShort: String,
+    val type: String,
+    val color: String,
 )

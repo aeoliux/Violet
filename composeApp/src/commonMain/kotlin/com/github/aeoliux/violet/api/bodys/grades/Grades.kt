@@ -1,12 +1,11 @@
 package com.github.aeoliux.violet.api.bodys.grades
 
-import com.github.aeoliux.violet.api.Grade
-import com.github.aeoliux.violet.api.GradeType
+import com.github.aeoliux.violet.api.types.Grade
+import com.github.aeoliux.violet.api.types.GradeType
 import com.github.aeoliux.violet.api.bodys.IdAndUrl
-import com.github.aeoliux.violet.api.User
+import com.github.aeoliux.violet.api.types.User
 import com.github.aeoliux.violet.api.localDateTimeFormat
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,6 +1,6 @@
 package com.github.aeoliux.violet.storage
 
-import com.github.aeoliux.violet.api.ClassInfo
+import com.github.aeoliux.violet.api.types.ClassInfo
 
 fun Database.selectClassInfo(): ClassInfo? {
     try {

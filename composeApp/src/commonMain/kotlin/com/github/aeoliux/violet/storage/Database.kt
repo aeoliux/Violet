@@ -2,7 +2,7 @@ package com.github.aeoliux.violet.storage
 
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.db.SqlDriver
-import com.github.aeoliux.violet.api.GradeType
+import com.github.aeoliux.violet.api.types.GradeType
 import comgithubaeoliuxvioletstorage.AppDatabaseQueries
 import comgithubaeoliuxvioletstorage.ClassInfo
 import comgithubaeoliuxvioletstorage.Grades

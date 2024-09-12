@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aeoliux.violet.AppContext
-import com.github.aeoliux.violet.api.ClassInfo
-import com.github.aeoliux.violet.api.Me
+import com.github.aeoliux.violet.api.types.ClassInfo
+import com.github.aeoliux.violet.api.types.Me
 import com.github.aeoliux.violet.app.components.LoadingIndicator
 import com.github.aeoliux.violet.storage.Database
 import com.github.aeoliux.violet.storage.selectAboutMe

@@ -1,7 +1,6 @@
 package com.github.aeoliux.violet.api.bodys
 
-import com.github.aeoliux.violet.api.Me
-import io.ktor.http.renderSetCookieHeader
+import com.github.aeoliux.violet.api.types.Me
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,7 +17,7 @@ data class SubMe(val Account: Account)
 @Serializable
 data class Me(val Me: SubMe) {
     fun toMeData(): Me {
-        return com.github.aeoliux.violet.api.Me(
+        return Me(
             id = Me.Account.Id,
             firstName = Me.Account.FirstName,
             lastName = Me.Account.LastName,

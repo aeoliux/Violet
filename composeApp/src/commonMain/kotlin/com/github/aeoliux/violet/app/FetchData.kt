@@ -37,6 +37,9 @@ suspend fun fetchData(keychain: Keychain, login: String? = null, password: Strin
         val timetable = AppContext.client.value.timetable()
         Database.insertLessons(timetable)
 
+        val attendances = AppContext.client.value.attendance()
+        Database.insertAttendances(attendances)
+
         AppContext.semester.value = classInfo.semester
         AppContext.databaseUpdated.value = !AppContext.databaseUpdated.value
 

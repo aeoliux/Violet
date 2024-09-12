@@ -1,7 +1,7 @@
 import kotlin.Boolean;
 import kotlin.String;
 import kotlin.collections.List;
-import com.github.aeoliux.violet.api.GradeType;
+import com.github.aeoliux.violet.api.types.GradeType;
 
 /**
 CREATE TABLE Users (
@@ -111,3 +111,24 @@ SELECT * FROM Lessons;
 
 clearLessons:
 DELETE FROM Lessons;
+
+CREATE TABLE Attendances(
+    date TEXT NOT NULL,
+    lessonNo INTEGER NOT NULL,
+
+    addedBy TEXT NOT NULL,
+    addDate TEXT NOT NULL,
+    semester INTEGER NOT NULL,
+    typeShort TEXT NOT NULL,
+    type TEXT NOT NULL,
+    color TEXT NOT NULL
+);
+
+insertAttendance:
+INSERT INTO Attendances VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+selectAttendances:
+SELECT * FROM Attendances;
+
+clearAttendances:
+DELETE FROM Attendances;
