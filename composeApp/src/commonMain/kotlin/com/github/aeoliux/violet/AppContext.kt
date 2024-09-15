@@ -14,4 +14,5 @@ object AppContext {
     var alertMessage: MutableState<String> = mutableStateOf("")
 
     var databaseUpdated = mutableStateOf(false)
+    var statusMessage = mutableStateOf<String?>(null)
 }

@@ -20,11 +20,7 @@ fun App(keychain: Keychain) {
             AppContext.isLoggedIn.value = Database.selectAboutMe() != null
         }
 
-        if (AppContext.isLoggedIn.value) {
-            MainView(keychain)
-        } else {
-            LoginView(keychain)
-        }
+        MainView(keychain)
 
         if (AppContext.showAlert.value) {
             AlertDialog(

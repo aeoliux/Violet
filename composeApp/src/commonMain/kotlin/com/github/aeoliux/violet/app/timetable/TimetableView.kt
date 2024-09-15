@@ -36,16 +36,16 @@ import kotlinx.datetime.toLocalDateTime
 fun TimetableView() {
     var timetable by remember { mutableStateOf(Timetable()) }
     var isLoaded by remember { mutableStateOf(false) }
-    var selectedTabIndex by remember { mutableStateOf(
-        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.dayOfWeek.isoDayNumber - 1
-    )}
+    var selectedTabIndex by remember { mutableStateOf(weekDay() - 1)}
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
     LaunchedEffect(AppContext.databaseUpdated.value) {
-        timetable = Database.selectLessons()?: Timetable()
-        selectedDate = timetable.keys.elementAt(selectedTabIndex)
-
-        isLoaded = true
+        val timetableTemp = Database.selectLessons()
+        if (timetableTemp != null) {
+            timetable = timetableTemp
+            selectedDate = timetable.keys.elementAt(selectedTabIndex)
+            isLoaded = true
+        }
     }
 
     if (isLoaded) {
@@ -115,4 +115,15 @@ fun TimetableView() {
             }
 //        }
     }
+}
+
+fun weekDay(): Int {
+    var date = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .date
+
+    if (date.dayOfWeek.isoDayNumber > 5)
+        date = LocalDate.fromEpochDays(date.toEpochDays() + (date.dayOfWeek.isoDayNumber - 6))
+
+    return date.dayOfWeek.isoDayNumber
 }

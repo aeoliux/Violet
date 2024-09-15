@@ -1,5 +1,9 @@
 package com.github.aeoliux.violet.app
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,10 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.github.aeoliux.violet.AppContext
 import com.github.aeoliux.violet.Keychain
 import com.github.aeoliux.violet.app.attendance.AttendanceView
 import com.github.aeoliux.violet.app.grades.GradesView
 import com.github.aeoliux.violet.app.home.HomeView
+import com.github.aeoliux.violet.app.login.LoginView
 import com.github.aeoliux.violet.app.timetable.TimetableView
 import kotlinx.coroutines.launch
 
@@ -64,7 +71,25 @@ fun MainView(keychain: Keychain) {
 
     Scaffold(
         topBar = { TopAppBar({
-            Text(text = tabs[selectedTabItem].text, fontWeight = FontWeight.Bold)
+            Column {
+                Text(
+                    text = if (AppContext.isLoggedIn.value)
+                        tabs[selectedTabItem].text
+                    else
+                        "Log in to S***rgia",
+                    fontWeight = FontWeight.Bold
+                )
+
+                AnimatedVisibility(
+                    AppContext.statusMessage.value != null
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 2.dp),
+                        text = AppContext.statusMessage.value?: "",
+                        fontSize = 13.sp
+                    )
+                }
+            }
         }) },
         bottomBar = {
             BottomNavigation(
@@ -72,25 +97,28 @@ fun MainView(keychain: Keychain) {
                     .fillMaxWidth()
                     .wrapContentHeight()
             ) {
-                tabs.forEachIndexed { i, it ->
-                    BottomNavigationItem(
-                        modifier = Modifier
-                            .height(50.dp)
-                            .fillMaxWidth(),
-                        selected = selectedTabItem == i,
-                        onClick = { selectedTabItem = i },
-                        icon = {
-                            Text(
-                                text = it.text,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    )
+                if (AppContext.isLoggedIn.value) {
+                    tabs.forEachIndexed { i, it ->
+                        BottomNavigationItem(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .fillMaxWidth(),
+                            selected = selectedTabItem == i,
+                            onClick = { selectedTabItem = i },
+                            icon = {
+                                Text(
+                                    text = it.text,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
     ) {
-        Box(Modifier.fillMaxSize().pullRefresh(refreshState)) {
+        if (AppContext.isLoggedIn.value) {
+            Box(Modifier.fillMaxSize().pullRefresh(refreshState)) {
 //            LazyColumn(
 //                modifier = Modifier
 //                    .fillMaxWidth()
@@ -103,22 +131,31 @@ fun MainView(keychain: Keychain) {
 //                }
 //            }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-                    .padding(bottom = 55.dp)
-                    .verticalScroll(scrollState),
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp)
+                        .padding(bottom = 55.dp)
+                        .verticalScroll(scrollState),
 
-            ) {
-                Column(Modifier.padding(2.dp).fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    tabs[selectedTabItem].destination()
+                    ) {
+                    Column(
+                        Modifier.padding(2.dp).fillMaxSize(),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        tabs[selectedTabItem].destination()
+                    }
                 }
-            }
 
-            PullRefreshIndicator(isRefreshing, refreshState, Modifier.align(Alignment.TopCenter))
+                PullRefreshIndicator(
+                    isRefreshing,
+                    refreshState,
+                    Modifier.align(Alignment.TopCenter)
+                )
+            }
+        } else {
+            LoginView(keychain)
         }
     }
 }

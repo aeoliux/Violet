@@ -26,8 +26,12 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 
 class ApiClient {
@@ -90,7 +94,15 @@ class ApiClient {
     }
 
     suspend fun timetable(): Timetable {
-        return data<Timetables>("Timetables").toTimetableMap(classrooms)
+        val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+        val weekDay = today.dayOfWeek.isoDayNumber
+        val weekStarts = if (weekDay > 5) {
+            LocalDate.fromEpochDays(today.toEpochDays() + (weekDay - 6))
+        } else {
+            LocalDate.fromEpochDays(today.toEpochDays() - weekDay + 1)
+        }
+
+        return data<Timetables>("Timetables?weekStart=${weekStarts}").toTimetableMap(classrooms)
     }
 
     suspend fun attendance(): LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>> {
