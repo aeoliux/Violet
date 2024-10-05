@@ -1,9 +1,10 @@
 package com.github.aeoliux.violet.api.bodys.attendance
 
-import com.github.aeoliux.violet.api.types.Attendance
-import com.github.aeoliux.violet.api.types.User
+import com.github.aeoliux.violet.api.Attendance
 import com.github.aeoliux.violet.api.bodys.IdAndUrl
 import com.github.aeoliux.violet.api.localDateTimeFormat
+import com.github.aeoliux.violet.api.types.AttendanceItem
+import com.github.aeoliux.violet.api.types.User
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
@@ -25,7 +26,7 @@ data class Attendances(val Attendances: List<AttendanceEntry>) {
         colors: LinkedHashMap<UInt, String>,
         types: List<AttendanceType>,
         users: LinkedHashMap<UInt, User>
-    ): LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>{
+    ): Attendance {
         return Attendances.fold(LinkedHashMap()) { acc, att ->
             val date = LocalDate.parse(att.Date)
             val type = types.firstOrNull { it.Id == att.Type.Id }?: return@fold acc
@@ -35,7 +36,7 @@ data class Attendances(val Attendances: List<AttendanceEntry>) {
             val color = type.ColorRGB?: colors[type.Color?.Id]?: return@fold acc
             val teacher = users[att.AddedBy.Id]?: return@fold acc
 
-            val attendance = Attendance(
+            val attendance = AttendanceItem(
                 addedBy = teacher.teacher(),
                 addDate = LocalDateTime.parse(att.AddDate, format = localDateTimeFormat),
                 semester = att.Semester,

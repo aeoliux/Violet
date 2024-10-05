@@ -1,50 +1,45 @@
 package com.github.aeoliux.violet.app.attendance
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.github.aeoliux.violet.AppContext
-import com.github.aeoliux.violet.api.types.Attendance
-import com.github.aeoliux.violet.app.TabItem
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectAttendances
-import kotlinx.datetime.LocalDate
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.main.TabItem
 
 @Composable
-fun AttendanceView() {
-    var attendance by remember {
-        mutableStateOf<LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>>(
-            LinkedHashMap()
-        )
-    }
-    var selectedView by remember { mutableStateOf(-1) }
+fun AttendanceView(vm: AttendanceViewModel = viewModel { AttendanceViewModel() }) {
+    val appState = LocalAppState.current
+
+    val attendance by vm.attendance.collectAsState()
+    val isLoaded by vm.isLoaded.collectAsState()
+    val selectedView by vm.selectedView.collectAsState()
+
     val views = listOf(
         TabItem("List") { AttendanceListView(attendance) },
         TabItem("Table") { AttendanceTableView(attendance) }
     )
 
-    LaunchedEffect(AppContext.databaseUpdated.value) {
-        attendance = Database.selectAttendances()?: LinkedHashMap()
-        selectedView = 0
+    LaunchedEffect(appState.databaseUpdated.value) {
+        vm.launchedEffect()
     }
 
-    if (selectedView != -1) {
+    if (isLoaded) {
         TabRow(
             selectedTabIndex = selectedView,
             backgroundColor = Color.White,
@@ -61,7 +56,7 @@ fun AttendanceView() {
                 Tab(
                     modifier = Modifier.fillMaxWidth(),
                     selected = selectedView == index,
-                    onClick = { selectedView = index }
+                    onClick = { vm.selectView(index) }
                 ) {
                     Row(
                         Modifier.fillMaxWidth(),
@@ -75,5 +70,16 @@ fun AttendanceView() {
         }
 
         views[selectedView].destination()
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "You've always been at school!",
+                fontSize = 20.sp
+            )
+        }
     }
 }

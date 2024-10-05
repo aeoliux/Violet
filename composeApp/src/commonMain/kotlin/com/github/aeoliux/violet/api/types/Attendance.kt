@@ -1,8 +1,9 @@
 package com.github.aeoliux.violet.api.types
 
+import com.github.aeoliux.violet.api.Attendance
 import kotlinx.datetime.LocalDate
 
-fun LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>.minOrMax(accStartsWith: UInt, comparator: (acc: UInt, new: UInt) -> Boolean): UInt {
+fun Attendance.minOrMax(accStartsWith: UInt, comparator: (acc: UInt, new: UInt) -> Boolean): UInt {
     return this.keys.fold(accStartsWith) { acc, key ->
         val attendances = this[key]!!
 
@@ -20,10 +21,10 @@ fun LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>.minOrMax(accStarts
     }
 }
 
-fun LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>.min(): UInt {
+fun Attendance.min(): UInt {
     return this.minOrMax(UInt.MAX_VALUE) { acc, new -> acc > new }
 }
 
-fun LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>.max(): UInt {
+fun Attendance.max(): UInt {
     return this.minOrMax(UInt.MIN_VALUE) { acc, new -> new > acc }
 }

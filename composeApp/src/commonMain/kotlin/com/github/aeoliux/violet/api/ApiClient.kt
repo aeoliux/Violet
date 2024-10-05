@@ -13,7 +13,7 @@ import com.github.aeoliux.violet.api.bodys.attendance.AttendancesTypes
 import com.github.aeoliux.violet.api.bodys.grades.Grades
 import com.github.aeoliux.violet.api.bodys.grades.GradesCategories
 import com.github.aeoliux.violet.api.bodys.grades.GradesComments
-import com.github.aeoliux.violet.api.types.Attendance
+import com.github.aeoliux.violet.api.types.AttendanceItem
 import com.github.aeoliux.violet.api.types.ClassInfo
 import com.github.aeoliux.violet.api.types.Grade
 import com.github.aeoliux.violet.api.types.Lesson
@@ -96,8 +96,9 @@ class ApiClient {
     suspend fun timetable(): Timetable {
         val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         val weekDay = today.dayOfWeek.isoDayNumber
+        println(weekDay)
         val weekStarts = if (weekDay > 5) {
-            LocalDate.fromEpochDays(today.toEpochDays() + (weekDay - 6))
+            LocalDate.fromEpochDays(today.toEpochDays() + 8 - weekDay)
         } else {
             LocalDate.fromEpochDays(today.toEpochDays() - weekDay + 1)
         }
@@ -105,7 +106,7 @@ class ApiClient {
         return data<Timetables>("Timetables?weekStart=${weekStarts}").toTimetableMap(classrooms)
     }
 
-    suspend fun attendance(): LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>> {
+    suspend fun attendance(): Attendance {
         return data<Attendances>("Attendances").toAttendanceMap(
             colors,
             data<AttendancesTypes>("Attendances/Types").Types,
@@ -115,3 +116,4 @@ class ApiClient {
 }
 
 typealias Timetable = LinkedHashMap<LocalDate, LinkedHashMap<LocalTime, List<Lesson>>>
+typealias Attendance = LinkedHashMap<LocalDate, LinkedHashMap<UInt, AttendanceItem>>

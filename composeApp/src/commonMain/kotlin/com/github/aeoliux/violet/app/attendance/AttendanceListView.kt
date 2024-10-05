@@ -14,14 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.github.aeoliux.violet.api.Attendance
 import com.github.aeoliux.violet.api.toColorLong
-import com.github.aeoliux.violet.api.types.Attendance
 import com.github.aeoliux.violet.app.components.ExpandableList
-import kotlinx.datetime.LocalDate
 
 @Composable
 fun AttendanceListView(
-    attendance: LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>
+    attendance: Attendance
 ) {
     attendance.forEach { (date, attendances) ->
         Card(Modifier.fillMaxWidth().wrapContentHeight().padding(10.dp)) {

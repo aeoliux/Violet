@@ -20,7 +20,7 @@ data class TimetableItemTeacher(
 
 @Serializable
 data class TimetableItem(
-    val Classroom: IdAsStringAndUrl,
+    val Classroom: IdAsStringAndUrl? = null,
     val DateFrom: String,
     val DateTo: String,
     val DayNo: String,
@@ -56,7 +56,7 @@ data class Timetables(
                         lessonNo = index.toUInt(),
                         subject = it.Subject.Name,
                         teacher = "${it.Teacher.FirstName} ${it.Teacher.LastName}",
-                        classroom = classrooms[it.Classroom.Id.toUInt()]?: return@forEach2,
+                        classroom = classrooms[it.Classroom?.Id?.toUInt()]?: "unknown classroom",
                         isCanceled = it.IsCanceled,
                         subclassName = it.VirtualClassName
                     )

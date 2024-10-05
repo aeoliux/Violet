@@ -8,28 +8,25 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.aeoliux.violet.AppContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.api.types.Grade
+import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.ExpandableList
 import com.github.aeoliux.violet.app.components.LoadingIndicator
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectGrades
 
 @Composable
-fun GradesView() {
-    var isLoaded by remember { mutableStateOf(false) }
-    var grades by remember { mutableStateOf(LinkedHashMap<String, List<Grade>>()) }
+fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
+    val appState = LocalAppState.current
 
-    LaunchedEffect(AppContext.databaseUpdated.value) {
-        grades = Database.selectGrades()?: LinkedHashMap()
+    val isLoaded by vm.isLoaded.collectAsState()
+    val grades by vm.grades.collectAsState()
 
-        isLoaded = true
+    LaunchedEffect(appState.databaseUpdated.value) {
+        vm.launchedEffect()
     }
 
     if (isLoaded)
@@ -54,7 +51,9 @@ fun GradesView() {
 
 @Composable
 internal fun GradeSemesterView(semester: UInt, grades: List<Grade>) {
-    ExpandableList({ Text("Semester $semester") }, expanded = AppContext.semester.value == semester) {
+    val appState = LocalAppState.current
+
+    ExpandableList({ Text("Semester $semester") }, expanded = appState.semester.value == semester) {
         grades.forEach { grade ->
             if (grade.semester == semester) {
                 GradeComponent(grade)

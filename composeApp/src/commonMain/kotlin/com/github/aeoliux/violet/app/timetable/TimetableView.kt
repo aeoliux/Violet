@@ -12,55 +12,39 @@ import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.aeoliux.violet.AppContext
-import com.github.aeoliux.violet.api.Timetable
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectLessons
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.isoDayNumber
-import kotlinx.datetime.toLocalDateTime
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.aeoliux.violet.app.appState.LocalAppState
 
 @Composable
-fun TimetableView() {
-    var timetable by remember { mutableStateOf(Timetable()) }
-    var isLoaded by remember { mutableStateOf(false) }
-    var selectedTabIndex by remember { mutableStateOf(weekDay() - 1)}
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
+    val appState = LocalAppState.current
 
-    LaunchedEffect(AppContext.databaseUpdated.value) {
-        val timetableTemp = Database.selectLessons()
-        if (timetableTemp != null) {
-            timetable = timetableTemp
-            selectedDate = timetable.keys.elementAt(selectedTabIndex)
-            isLoaded = true
-        }
-    }
+    val timetable by vm.timetable.collectAsState()
+    val isLoaded by vm.isLoaded.collectAsState()
+
+    val selectedTab by vm.selectedTab.collectAsState()
+    val selectedDate by vm.selectedDate.collectAsState()
+
+    LaunchedEffect(appState.databaseUpdated.value) { vm.launchedEffect() }
 
     if (isLoaded) {
         ScrollableTabRow(
-            selectedTabIndex = selectedTabIndex,
+            selectedTabIndex = selectedTab,
             backgroundColor = Color.White,
             contentColor = Color.Black
         ) {
             timetable.keys.sorted().forEachIndexed { index, date ->
                 Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = {
-                        selectedDate = date
-                        selectedTabIndex = index
-                    }
+                    selected = selectedTab == index,
+                    onClick = { vm.changeTab(index) }
                 ) {
                     Text(modifier = Modifier.padding(16.dp), text = date.toString())
                 }
@@ -115,15 +99,4 @@ fun TimetableView() {
             }
 //        }
     }
-}
-
-fun weekDay(): Int {
-    var date = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-        .date
-
-    if (date.dayOfWeek.isoDayNumber > 5)
-        date = LocalDate.fromEpochDays(date.toEpochDays() + (date.dayOfWeek.isoDayNumber - 6))
-
-    return date.dayOfWeek.isoDayNumber
 }

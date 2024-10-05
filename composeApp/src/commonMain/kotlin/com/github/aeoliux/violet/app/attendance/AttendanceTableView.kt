@@ -20,15 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.github.aeoliux.violet.api.Attendance
 import com.github.aeoliux.violet.api.toColorLong
-import com.github.aeoliux.violet.api.types.Attendance
 import com.github.aeoliux.violet.api.types.max
 import com.github.aeoliux.violet.api.types.min
-import kotlinx.datetime.LocalDate
 
 @Composable
 fun AttendanceTableView(
-    attendance: LinkedHashMap<LocalDate, LinkedHashMap<UInt, Attendance>>,
+    attendance: Attendance,
 ) {
     val minLesson = attendance.min()
     val maxLesson = attendance.max()

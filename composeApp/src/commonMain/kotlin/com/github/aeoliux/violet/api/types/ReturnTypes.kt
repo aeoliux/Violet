@@ -57,7 +57,7 @@ data class Lesson(
     val subclassName: String?
 )
 
-data class Attendance(
+data class AttendanceItem(
     val addedBy: String,
     val addDate: LocalDateTime,
     val semester: UInt,
