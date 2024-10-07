@@ -9,3 +9,5 @@ and from [here](https://nightly.link/aeoliux/Violet/workflows/build/main/release
 - Grades
 - Lucky number
 - Timetable
+- Attendance
+- Agenda

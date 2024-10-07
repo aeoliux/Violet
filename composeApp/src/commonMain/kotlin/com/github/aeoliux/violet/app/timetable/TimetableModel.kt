@@ -1,8 +1,8 @@
 package com.github.aeoliux.violet.app.timetable
 
 import com.github.aeoliux.violet.api.Timetable
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectLessons
+import com.github.aeoliux.violet.app.storage.Database
+import com.github.aeoliux.violet.app.storage.selectLessons
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone

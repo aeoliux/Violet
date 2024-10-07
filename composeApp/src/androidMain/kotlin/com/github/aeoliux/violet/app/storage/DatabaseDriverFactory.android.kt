@@ -1,4 +1,4 @@
-package com.github.aeoliux.violet.storage
+package com.github.aeoliux.violet.app.storage
 
 import android.content.Context
 import app.cash.sqldelight.ColumnAdapter

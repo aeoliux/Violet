@@ -132,3 +132,27 @@ SELECT * FROM Attendances;
 
 clearAttendances:
 DELETE FROM Attendances;
+
+CREATE TABLE Agenda(
+    date TEXT NOT NULL,
+    lessonNo INTEGER NOT NULL,
+
+    content TEXT NOT NULL,
+    category TEXT NOT NULL,
+    createdBy TEXT NOT NULL,
+    addedAt TEXT NOT NULL,
+    color TEXT NOT NULL,
+    timeFrom TEXT NOT NULL,
+    timeTo TEXT NOT NULL,
+    subject TEXT,
+    classroom TEXT
+);
+
+insertAgenda:
+INSERT INTO Agenda VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectAgenda:
+SELECT * FROM Agenda;
+
+clearAgenda:
+DELETE FROM Agenda;

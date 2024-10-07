@@ -1,4 +1,4 @@
-package com.github.aeoliux.violet.storage
+package com.github.aeoliux.violet.app.storage
 
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.db.SqlDriver

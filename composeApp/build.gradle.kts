@@ -110,7 +110,7 @@ android {
 sqldelight {
     databases {
         create("AppDatabase") {
-            packageName.set("com.github.aeoliux.violet.storage")
+            packageName.set("com.github.aeoliux.violet.app.storage")
         }
     }
 }

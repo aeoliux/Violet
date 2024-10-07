@@ -3,6 +3,7 @@ package com.github.aeoliux.violet.app.main
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.aeoliux.violet.app.agenda.AgendaView
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.fetchData
 import com.github.aeoliux.violet.app.attendance.AttendanceView
@@ -23,7 +24,8 @@ class MainViewModel(
         TabItem("Home") { HomeView() },
         TabItem("Grades") { GradesView() },
         TabItem("Timetable") { TimetableView() },
-        TabItem("Attendance") { AttendanceView() }
+        TabItem("Attendance") { AttendanceView() },
+        TabItem("Agenda and homeworks") { AgendaView() }
     )
 
     private var _isRefreshing = MutableStateFlow(false)

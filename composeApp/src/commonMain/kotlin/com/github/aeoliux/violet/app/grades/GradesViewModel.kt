@@ -3,8 +3,8 @@ package com.github.aeoliux.violet.app.grades
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.api.types.Grade
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectGrades
+import com.github.aeoliux.violet.app.storage.Database
+import com.github.aeoliux.violet.app.storage.selectGrades
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

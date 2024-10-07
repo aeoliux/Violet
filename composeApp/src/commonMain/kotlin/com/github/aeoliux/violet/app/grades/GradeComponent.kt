@@ -71,47 +71,6 @@ fun GradeComponent(grade: Grade) {
     }
 
     if (showDescription) {
-        Dialog(
-            onDismissRequest = { showDescription = false }
-        ) {
-            Column(
-                Modifier
-                    .wrapContentSize()
-                    .background(Color.White)
-                    .padding(20.dp)
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    )
-            ) {
-                Row {
-                    Column(Modifier.wrapContentWidth().wrapContentHeight()) {
-                        Text("Grade: ")
-                        Text("Added by: ")
-                        Text("Category: ")
-                        Text("Weight: ")
-                        Text("Date: ")
-                        if (grade.comment != null) Text("Comment: ")
-                    }
-                    Column(Modifier.wrapContentHeight()) {
-                        Text(grade.grade)
-                        Text(grade.addedBy)
-                        Text(grade.category)
-                        Text(grade.weight.toString())
-                        Text(grade.addDate.toString())
-                        if (grade.comment != null) Text(grade.comment)
-                    }
-                }
-
-                Row(
-                    Modifier.padding(10.dp).fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Button(onClick = { showDescription = false }) {
-                        Text("Ok")
-                    }
-                }
-            }
-        }
+        GradeDialog(grade) { showDescription = false }
     }
 }

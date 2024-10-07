@@ -5,8 +5,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import com.github.aeoliux.violet.Keychain
 import com.github.aeoliux.violet.api.ApiClient
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectAboutMe
+import com.github.aeoliux.violet.app.storage.Database
+import com.github.aeoliux.violet.app.storage.selectAboutMe
 
 class AppState(
     var client: MutableState<ApiClient> = mutableStateOf(ApiClient()),

@@ -84,16 +84,17 @@ fun MainView() {
         content = {
             Scaffold(
                 topBar = { TopAppBar(
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            coroutineScope.launch { drawerState.open() }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = ""
-                            )
-                        }
-                    },
+                    navigationIcon =
+                        if (appState.isLoggedIn.value) ({
+                            IconButton(onClick = {
+                                coroutineScope.launch { drawerState.open() }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Menu,
+                                    contentDescription = ""
+                                )
+                            }
+                        }) else null,
                     title = {
                         Column {
                             Text(

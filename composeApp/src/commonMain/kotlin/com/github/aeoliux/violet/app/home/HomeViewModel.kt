@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.api.types.ClassInfo
 import com.github.aeoliux.violet.api.types.Me
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectAboutMe
-import com.github.aeoliux.violet.storage.selectClassInfo
-import com.github.aeoliux.violet.storage.selectLuckyNumber
+import com.github.aeoliux.violet.app.storage.Database
+import com.github.aeoliux.violet.app.storage.selectAboutMe
+import com.github.aeoliux.violet.app.storage.selectClassInfo
+import com.github.aeoliux.violet.app.storage.selectLuckyNumber
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

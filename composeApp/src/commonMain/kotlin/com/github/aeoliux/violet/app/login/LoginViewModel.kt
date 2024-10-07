@@ -27,8 +27,6 @@ class LoginViewModel(
             _showLoadingIndicator.update { true }
 
             appState.fetchData(login.value, password.value)
-            if (appState.isLoggedIn.value)
-                appState.keychain.savePass("$login $password")
 
             _showLoadingIndicator.update { false }
         }

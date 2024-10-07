@@ -28,7 +28,10 @@ fun HomeView(vm: HomeViewModel = viewModel { HomeViewModel() }) {
     val isLoaded by vm.isLoaded.collectAsState()
     val luckyNumber by vm.luckyNumber.collectAsState()
 
-    LaunchedEffect(appState.databaseUpdated.value) { vm.launchedEffect() }
+    LaunchedEffect(appState.databaseUpdated.value) {
+        vm.launchedEffect()
+        appState.semester.value = classInfo?.semester?: 1u
+    }
 
     if (isLoaded) {
         Card(Modifier

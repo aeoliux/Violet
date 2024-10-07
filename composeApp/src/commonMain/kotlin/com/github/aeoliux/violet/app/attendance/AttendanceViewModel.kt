@@ -3,8 +3,8 @@ package com.github.aeoliux.violet.app.attendance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.api.Attendance
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.selectAttendances
+import com.github.aeoliux.violet.app.storage.Database
+import com.github.aeoliux.violet.app.storage.selectAttendances
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

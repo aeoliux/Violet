@@ -8,11 +8,14 @@ import com.github.aeoliux.violet.api.bodys.Me
 import com.github.aeoliux.violet.api.bodys.Subjects
 import com.github.aeoliux.violet.api.bodys.Timetables
 import com.github.aeoliux.violet.api.bodys.Users
+import com.github.aeoliux.violet.api.bodys.agenda.HomeworkCategories
+import com.github.aeoliux.violet.api.bodys.agenda.Homeworks
 import com.github.aeoliux.violet.api.bodys.attendance.Attendances
 import com.github.aeoliux.violet.api.bodys.attendance.AttendancesTypes
 import com.github.aeoliux.violet.api.bodys.grades.Grades
 import com.github.aeoliux.violet.api.bodys.grades.GradesCategories
 import com.github.aeoliux.violet.api.bodys.grades.GradesComments
+import com.github.aeoliux.violet.api.types.AgendaItem
 import com.github.aeoliux.violet.api.types.AttendanceItem
 import com.github.aeoliux.violet.api.types.ClassInfo
 import com.github.aeoliux.violet.api.types.Grade
@@ -113,7 +116,18 @@ class ApiClient {
             users
         )
     }
+
+    suspend fun agenda(): Agenda {
+        return data<Homeworks>("HomeWorks")
+            .toAgenda(
+                data<HomeworkCategories>("HomeWorks/Categories").toMap(colors),
+                users,
+                classrooms,
+                subjects
+            )
+    }
 }
 
 typealias Timetable = LinkedHashMap<LocalDate, LinkedHashMap<LocalTime, List<Lesson>>>
 typealias Attendance = LinkedHashMap<LocalDate, LinkedHashMap<UInt, AttendanceItem>>
+typealias Agenda = LinkedHashMap<LocalDate, LinkedHashMap<UInt, List<AgendaItem>>>

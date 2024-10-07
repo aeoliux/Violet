@@ -1,5 +1,6 @@
 package com.github.aeoliux.violet.api.types
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
 data class Me(
@@ -64,4 +65,16 @@ data class AttendanceItem(
     val typeShort: String,
     val type: String,
     val color: String,
+)
+
+data class AgendaItem(
+    val content: String,
+    val category: String,
+    val createdBy: String,
+    val addedAt: LocalDateTime,
+    val color: String,
+    val subject: String?,
+    val classroom: String?,
+    val timeFrom: String,
+    val timeTo: String,
 )

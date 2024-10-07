@@ -1,45 +1,65 @@
 package com.github.aeoliux.violet.app.appState
 
-import com.github.aeoliux.violet.storage.Database
-import com.github.aeoliux.violet.storage.insertAttendances
-import com.github.aeoliux.violet.storage.insertGrades
-import com.github.aeoliux.violet.storage.insertLessons
-import com.github.aeoliux.violet.storage.setAboutMe
-import com.github.aeoliux.violet.storage.setClassInfo
-import com.github.aeoliux.violet.storage.setLuckyNumber
+import com.github.aeoliux.violet.app.storage.Database
+import com.github.aeoliux.violet.app.storage.insertAgenda
+import com.github.aeoliux.violet.app.storage.insertAttendances
+import com.github.aeoliux.violet.app.storage.insertGrades
+import com.github.aeoliux.violet.app.storage.insertLessons
+import com.github.aeoliux.violet.app.storage.selectClassInfo
+import com.github.aeoliux.violet.app.storage.setAboutMe
+import com.github.aeoliux.violet.app.storage.setClassInfo
+import com.github.aeoliux.violet.app.storage.setLuckyNumber
 
 suspend fun AppState.fetchData(login: String? = null, password: String? = null) {
     try {
-        statusMessage.value = "Logging in to Synergia..."
-        logIn(login, password)
+        setFetchStatus("Logging in to Synergia...") { logIn(login, password) }
         if (!isLoggedIn.value) {
             statusMessage.value = "Invalid credentials"
             return
         }
 
-        statusMessage.value = "Getting your personal data..."
-        val me = client.value.me()
-        Database.setAboutMe(me)
+        setFetchStatus("Getting your personal data...") {
+            Database.setAboutMe(
+                client.value.me()
+            )
+        }
 
-        statusMessage.value = "Checking if you got 1..."
-        val grades = client.value.grades()
-        Database.insertGrades(grades)
+        setFetchStatus("Checking if you got 1...") {
+            Database.insertGrades(
+                client.value.grades()
+            )
+        }
 
-        statusMessage.value = "What class are you in?"
-        val classInfo = client.value.classInfo()
-        Database.setClassInfo(classInfo)
+        val classInfo = setFetchStatus("What class are you in?") {
+            val classInfo = client.value.classInfo()
+            Database.setClassInfo(classInfo)
 
-        statusMessage.value = "What is today's lucky number?"
-        val luckyNumber = client.value.luckyNumber()
-        Database.setLuckyNumber(luckyNumber)
+            classInfo
+        }
 
-        statusMessage.value = "Let's check the timetable!"
-        val timetable = client.value.timetable()
-        Database.insertLessons(timetable)
+        setFetchStatus("What is today's lucky number?") {
+            Database.setLuckyNumber(
+                client.value.luckyNumber()
+            )
+        }
 
-        statusMessage.value = "Have you been at school?"
-        val attendances = client.value.attendance()
-        Database.insertAttendances(attendances)
+        setFetchStatus("Let's check the timetable!") {
+            Database.insertLessons(
+                client.value.timetable()
+            )
+        }
+
+        setFetchStatus("Have you been at school?") {
+            Database.insertAttendances(
+                client.value.attendance()
+            )
+        }
+
+        setFetchStatus("What do you need to do now?") {
+            Database.insertAgenda(
+                client.value.agenda()
+            )
+        }
 
         statusMessage.value = "Saving some data and refreshing the view..."
         semester.value = classInfo.semester
@@ -49,4 +69,12 @@ suspend fun AppState.fetchData(login: String? = null, password: String? = null) 
     } catch (e: Exception) {
         showAlert("Fetching data error", e)
     }
+}
+
+suspend fun <T> AppState.setFetchStatus(status: String, operation: suspend () -> T): T {
+    statusMessage.value = status
+    val ret = operation()
+    statusMessage.value = null
+
+    return ret
 }
