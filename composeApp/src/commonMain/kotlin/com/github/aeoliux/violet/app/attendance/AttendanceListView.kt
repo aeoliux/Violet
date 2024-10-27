@@ -26,7 +26,10 @@ fun AttendanceListView(
         Card(Modifier.fillMaxWidth().wrapContentHeight().padding(10.dp)) {
             ExpandableList(
                 header = {
-                    Text(date.toString())
+                    Text(
+                        modifier = Modifier.padding(15.dp),
+                        text = date.toString()
+                    )
                 }
             ) {
                 attendances.forEach { (lessonNo, attendanceInfo) ->

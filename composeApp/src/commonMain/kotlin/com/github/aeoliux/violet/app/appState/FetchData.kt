@@ -5,6 +5,7 @@ import com.github.aeoliux.violet.app.storage.insertAgenda
 import com.github.aeoliux.violet.app.storage.insertAttendances
 import com.github.aeoliux.violet.app.storage.insertGrades
 import com.github.aeoliux.violet.app.storage.insertLessons
+import com.github.aeoliux.violet.app.storage.insertSchoolNotices
 import com.github.aeoliux.violet.app.storage.selectClassInfo
 import com.github.aeoliux.violet.app.storage.setAboutMe
 import com.github.aeoliux.violet.app.storage.setClassInfo
@@ -58,6 +59,12 @@ suspend fun AppState.fetchData(login: String? = null, password: String? = null) 
         setFetchStatus("What do you need to do now?") {
             Database.insertAgenda(
                 client.value.agenda()
+            )
+        }
+
+        setFetchStatus("Does your school do anything?") {
+            Database.insertSchoolNotices(
+                client.value.schoolNotices()
             )
         }
 

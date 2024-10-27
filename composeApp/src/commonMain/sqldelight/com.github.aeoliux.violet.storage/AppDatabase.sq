@@ -156,3 +156,26 @@ SELECT * FROM Agenda;
 
 clearAgenda:
 DELETE FROM Agenda;
+
+CREATE TABLE SchoolNotices(
+    id INTEGER PRIMARY KEY NOT NULL,
+    startDate TEXT NOT NULL,
+    endDate TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    content TEXT NOT NULL,
+    addedBy TEXT NOT NULL,
+    createdAt TEXT NOT NULL
+);
+
+insertSchoolNotices:
+INSERT INTO SchoolNotices (startDate, endDate, subject, content, addedBy, createdAt)
+    VALUES (?, ?, ?, ?, ?, ?);
+
+selectListOfSchoolNotices:
+SELECT id, addedBy, subject, createdAt FROM SchoolNotices ORDER BY createdAt DESC;
+
+selectSchoolNotice:
+SELECT * FROM SchoolNotices WHERE id = ? LIMIT 1;
+
+clearSchoolNotices:
+DELETE FROM SchoolNotices;

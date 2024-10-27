@@ -35,7 +35,9 @@ fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
                 return@forEach
 
             Card {
-                ExpandableList({ Text(subject) }) {
+                ExpandableList({
+                    Text(modifier = Modifier.padding(15.dp), text = subject)
+                }) {
                     GradeSemesterView(1u, grades)
                     GradeSemesterView(2u, grades)
                 }
@@ -53,7 +55,12 @@ fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
 internal fun GradeSemesterView(semester: UInt, grades: List<Grade>) {
     val appState = LocalAppState.current
 
-    ExpandableList({ Text("Semester $semester") }, expanded = appState.semester.value == semester) {
+    ExpandableList(
+        header = {
+            Text(modifier = Modifier.padding(15.dp), text ="Semester $semester")
+        },
+        expanded = appState.semester.value == semester
+    ) {
         grades.forEach { grade ->
             if (grade.semester == semester) {
                 GradeComponent(grade)

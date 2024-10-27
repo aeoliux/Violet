@@ -78,3 +78,12 @@ data class AgendaItem(
     val timeFrom: String,
     val timeTo: String,
 )
+
+data class SchoolNotice(
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val subject: String,
+    val content: String,
+    val addedBy: String,
+    val createdAt: LocalDateTime
+)

@@ -9,6 +9,7 @@ import com.github.aeoliux.violet.app.appState.fetchData
 import com.github.aeoliux.violet.app.attendance.AttendanceView
 import com.github.aeoliux.violet.app.grades.GradesView
 import com.github.aeoliux.violet.app.home.HomeView
+import com.github.aeoliux.violet.app.schoolNotices.SchoolNoticesView
 import com.github.aeoliux.violet.app.timetable.TimetableView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +26,8 @@ class MainViewModel(
         TabItem("Grades") { GradesView() },
         TabItem("Timetable") { TimetableView() },
         TabItem("Attendance") { AttendanceView() },
-        TabItem("Agenda and homeworks") { AgendaView() }
+        TabItem("Agenda and homeworks") { AgendaView() },
+        TabItem("School notices") { SchoolNoticesView() }
     )
 
     private var _isRefreshing = MutableStateFlow(false)

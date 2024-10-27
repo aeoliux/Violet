@@ -5,6 +5,7 @@ import com.github.aeoliux.violet.api.bodys.Classrooms
 import com.github.aeoliux.violet.api.bodys.Colors
 import com.github.aeoliux.violet.api.bodys.LuckyNumbers
 import com.github.aeoliux.violet.api.bodys.Me
+import com.github.aeoliux.violet.api.bodys.SchoolNotices
 import com.github.aeoliux.violet.api.bodys.Subjects
 import com.github.aeoliux.violet.api.bodys.Timetables
 import com.github.aeoliux.violet.api.bodys.Users
@@ -20,6 +21,7 @@ import com.github.aeoliux.violet.api.types.AttendanceItem
 import com.github.aeoliux.violet.api.types.ClassInfo
 import com.github.aeoliux.violet.api.types.Grade
 import com.github.aeoliux.violet.api.types.Lesson
+import com.github.aeoliux.violet.api.types.SchoolNotice
 import com.github.aeoliux.violet.api.types.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -99,7 +101,6 @@ class ApiClient {
     suspend fun timetable(): Timetable {
         val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         val weekDay = today.dayOfWeek.isoDayNumber
-        println(weekDay)
         val weekStarts = if (weekDay > 5) {
             LocalDate.fromEpochDays(today.toEpochDays() + 8 - weekDay)
         } else {
@@ -125,6 +126,10 @@ class ApiClient {
                 classrooms,
                 subjects
             )
+    }
+
+    suspend fun schoolNotices(): List<SchoolNotice> {
+        return data<SchoolNotices>("SchoolNotices").toSNList(users)
     }
 }
 

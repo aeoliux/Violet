@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -41,9 +42,9 @@ fun ExpandableList(
                     if (onChange != null)
                         onChange()
                 }
-                .height(50.dp)
-                .padding(start = 15.dp),
+                .wrapContentHeight(),
             horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column(Modifier.fillMaxHeight(),
                 verticalArrangement = Arrangement.Center,
