@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,14 +28,16 @@ fun Dialog(onDismiss: () -> Unit, content: @Composable () -> Unit) {
         Column(
             Modifier
                 .wrapContentSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(20.dp)
                 .clip(
                     RoundedCornerShape(10.dp)
                 )
         ) {
-            Row {
-                content()
+            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+                Row {
+                    content()
+                }
             }
 
             Row(

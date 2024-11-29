@@ -3,9 +3,9 @@ package com.github.aeoliux.violet.app.grades
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.api.types.Grade
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.ExpandableList
+import com.github.aeoliux.violet.app.components.Header
 import com.github.aeoliux.violet.app.components.LoadingIndicator
 
 @Composable
@@ -29,12 +30,21 @@ fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
         vm.launchedEffect()
     }
 
-    if (isLoaded)
+    if (isLoaded) {
+        Header("Grades")
+
         grades.forEach { (subject, grades) ->
             if (grades.isEmpty())
                 return@forEach
 
-            Card {
+            Card(
+                modifier = Modifier.padding(
+                    start = 10.dp,
+                    end = 10.dp,
+                    top = 2.dp,
+                    bottom = 2.dp
+                )
+            ) {
                 ExpandableList({
                     Text(modifier = Modifier.padding(15.dp), text = subject)
                 }) {
@@ -42,12 +52,8 @@ fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
                     GradeSemesterView(2u, grades)
                 }
             }
-
-            Spacer(
-                Modifier.height(10.dp)
-            )
         }
-    else
+    } else
         LoadingIndicator()
 }
 

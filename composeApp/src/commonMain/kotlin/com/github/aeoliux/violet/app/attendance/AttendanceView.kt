@@ -6,9 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.components.Header
 import com.github.aeoliux.violet.app.main.TabItem
 
 @Composable
@@ -40,10 +42,12 @@ fun AttendanceView(vm: AttendanceViewModel = viewModel { AttendanceViewModel() }
     }
 
     if (isLoaded) {
+        Header("Attendance")
+
         TabRow(
             selectedTabIndex = selectedView,
-            backgroundColor = Color.White,
             contentColor = Color.Black,
+            modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
 //            indicator = { positions ->
 //                TabRowDefaults.Indicator(
 //                    modifier = Modifier
@@ -63,7 +67,11 @@ fun AttendanceView(vm: AttendanceViewModel = viewModel { AttendanceViewModel() }
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(modifier = Modifier.padding(16.dp), text = it.text)
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = it.text,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }
             }

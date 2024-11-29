@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.ExpandableList
+import com.github.aeoliux.violet.app.components.Header
 import com.github.aeoliux.violet.app.storage.Database
 import com.github.aeoliux.violet.app.storage.selectSchoolNotice
 
@@ -31,12 +32,14 @@ fun SchoolNoticesView(vm: SchoolNoticesViewModel = viewModel { SchoolNoticesView
         vm.launchedEffect()
     }
 
+    Header("School notices")
+
     listOfSchoolNotices.forEach {
         Card(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(2.dp)
+                .padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
         ) {
             ExpandableList(
                 header = {

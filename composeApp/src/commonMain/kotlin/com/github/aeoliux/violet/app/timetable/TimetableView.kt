@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Card
-import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.Tab
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.components.Header
 
 @Composable
 fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
@@ -36,9 +38,11 @@ fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
     LaunchedEffect(appState.databaseUpdated.value) { vm.launchedEffect() }
 
     if (isLoaded) {
+        Header("Timetable")
+
         ScrollableTabRow(
+            modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp),
             selectedTabIndex = selectedTab,
-            backgroundColor = Color.White,
             contentColor = Color.Black
         ) {
             timetable.keys.sorted().forEachIndexed { index, date ->
@@ -46,7 +50,11 @@ fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
                     selected = selectedTab == index,
                     onClick = { vm.changeTab(index) }
                 ) {
-                    Text(modifier = Modifier.padding(16.dp), text = date.toString())
+                    Text(
+                        modifier = Modifier.padding(16.dp),
+                        text = date.toString(),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
         }
@@ -58,7 +66,12 @@ fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
             timetable[selectedDate]?.keys?.sorted()?.forEach { time ->
                 val lessons = timetable[selectedDate]!![time]!!
 
-                Row(Modifier.fillMaxWidth().wrapContentHeight()) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
+                ) {
                     lessons.forEach { lesson ->
                         val decoration = if (lesson.isCanceled) TextDecoration.LineThrough else TextDecoration.None
 

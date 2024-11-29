@@ -13,7 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +39,15 @@ fun AttendanceTableView(
             Spacer(Modifier.height(60.dp))
             attendance.forEach { (date, _) ->
                 Column(
-                    modifier = Modifier.wrapContentSize().padding(5.dp).height(50.dp),
+                    modifier = Modifier.wrapContentSize().padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp).height(50.dp),
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(date.toString(), fontWeight = FontWeight.Bold)
+                    Text(
+                        date.toString(),
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
         }
@@ -55,7 +60,11 @@ fun AttendanceTableView(
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(it.toString(), fontWeight = FontWeight.SemiBold)
+                        Text(
+                            it.toString(),
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }
             }
@@ -69,11 +78,11 @@ fun AttendanceTableView(
                             modifier = Modifier
                                 .size(50.dp)
                                 .padding(5.dp)
-                                .background(it?.color?.toColorLong()?: Color.White),
+                                .background(it?.color?.toColorLong()?: MaterialTheme.colorScheme.background),
                             verticalArrangement = Arrangement.SpaceEvenly,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(it?.typeShort ?: "", fontWeight = FontWeight.SemiBold)
+                            Text(it?.typeShort ?: "", fontWeight = FontWeight.SemiBold, color = Color.Black)
                         }
                     }
                 }

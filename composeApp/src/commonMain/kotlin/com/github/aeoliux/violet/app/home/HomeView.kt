@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,7 +36,8 @@ fun HomeView(vm: HomeViewModel = viewModel { HomeViewModel() }) {
     if (isLoaded) {
         Card(Modifier
             .fillMaxWidth()
-            .wrapContentHeight()) {
+            .wrapContentHeight()
+            .padding(10.dp)) {
             Column(
                 Modifier.fillMaxWidth().wrapContentHeight().padding(10.dp),
                 verticalArrangement = Arrangement.Top

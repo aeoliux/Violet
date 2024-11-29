@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.api.toColorLong
 import com.github.aeoliux.violet.app.appState.LocalAppState
-import com.github.aeoliux.violet.app.components.Dialog
+import com.github.aeoliux.violet.app.components.Header
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -40,6 +40,8 @@ fun AgendaView(vm: AgendaViewModel = viewModel { AgendaViewModel() }) {
     }
 
     if (isLoaded) {
+        Header("Agenda")
+
         var dateIndex = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toEpochDays()
         val startDate = dateIndex
 
@@ -50,7 +52,7 @@ fun AgendaView(vm: AgendaViewModel = viewModel { AgendaViewModel() }) {
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(2.dp)
+                    .padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
             ) {
                 val agenda = agenda[date]
 

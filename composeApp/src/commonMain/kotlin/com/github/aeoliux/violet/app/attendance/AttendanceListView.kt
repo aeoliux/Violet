@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.github.aeoliux.violet.api.Attendance
 import com.github.aeoliux.violet.api.toColorLong
@@ -23,7 +24,12 @@ fun AttendanceListView(
     attendance: Attendance
 ) {
     attendance.forEach { (date, attendances) ->
-        Card(Modifier.fillMaxWidth().wrapContentHeight().padding(10.dp)) {
+        Card(
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
+        ) {
             ExpandableList(
                 header = {
                     Text(
@@ -48,7 +54,7 @@ fun AttendanceListView(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = attendanceInfo.typeShort)
+                            Text(text = attendanceInfo.typeShort, color = Color.Black)
                         }
                         Column(
                             modifier = Modifier
