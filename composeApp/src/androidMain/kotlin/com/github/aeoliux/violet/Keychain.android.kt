@@ -76,4 +76,8 @@ actual class Keychain(private val context: Context) {
         println(final)
         return final
     }
+
+    actual fun deletePass() {
+        sharedPreferences.edit().remove("synergiaCredentials").apply()
+    }
 }

@@ -5,7 +5,7 @@ import ComposeApp
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.MainViewController(
-            savePassFunc: savePassFunc, getPassFunc: getPassFunc
+            savePassFunc: savePassFunc, getPassFunc: getPassFunc, deletePassFunc: deletePassFunc
         )
     }
 

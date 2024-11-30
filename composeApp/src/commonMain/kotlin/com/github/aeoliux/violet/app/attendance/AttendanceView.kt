@@ -42,8 +42,6 @@ fun AttendanceView(vm: AttendanceViewModel = viewModel { AttendanceViewModel() }
     }
 
     if (isLoaded) {
-        Header("Attendance")
-
         TabRow(
             selectedTabIndex = selectedView,
             contentColor = Color.Black,

@@ -7,13 +7,14 @@ import platform.UIKit.UIViewController
 
 fun MainViewController(
     savePassFunc: (password: String) -> Unit,
-    getPassFunc: () -> String?
+    getPassFunc: () -> String?,
+    deletePassFunc: () -> Unit
 ): UIViewController {
     Database.open(DatabaseDriverFactory().createDriver())
 
     return ComposeUIViewController {
         App(
-            Keychain(savePassFunc, getPassFunc)
+            Keychain(savePassFunc, getPassFunc, deletePassFunc)
         )
     }
 }

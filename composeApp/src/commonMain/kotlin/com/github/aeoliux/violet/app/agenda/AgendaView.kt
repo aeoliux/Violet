@@ -40,8 +40,6 @@ fun AgendaView(vm: AgendaViewModel = viewModel { AgendaViewModel() }) {
     }
 
     if (isLoaded) {
-        Header("Agenda")
-
         var dateIndex = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toEpochDays()
         val startDate = dateIndex
 

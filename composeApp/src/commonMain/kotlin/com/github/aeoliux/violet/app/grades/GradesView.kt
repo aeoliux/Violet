@@ -31,8 +31,6 @@ fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
     }
 
     if (isLoaded) {
-        Header("Grades")
-
         grades.forEach { (subject, grades) ->
             if (grades.isEmpty())
                 return@forEach

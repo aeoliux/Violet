@@ -2,7 +2,8 @@ package com.github.aeoliux.violet
 
 actual class Keychain(
     val savePassFunc: (password: String) -> Unit,
-    val getPassFunc: () -> String?
+    val getPassFunc: () -> String?,
+    val deletePassFunc: () -> Unit
 ) {
     actual fun savePass(password: String) {
         savePassFunc(password)
@@ -10,5 +11,9 @@ actual class Keychain(
 
     actual fun getPass(): String? {
         return getPassFunc()
+    }
+
+    actual fun deletePass() {
+        deletePassFunc()
     }
 }

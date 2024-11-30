@@ -6,11 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.app.agenda.AgendaView
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.fetchData
+import com.github.aeoliux.violet.app.appState.runBackgroundTask
 import com.github.aeoliux.violet.app.attendance.AttendanceView
 import com.github.aeoliux.violet.app.grades.GradesView
 import com.github.aeoliux.violet.app.home.HomeView
 import com.github.aeoliux.violet.app.schoolNotices.SchoolNoticesView
 import com.github.aeoliux.violet.app.timetable.TimetableView
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,7 +28,7 @@ class MainViewModel(
         TabItem("Grades") { GradesView() },
         TabItem("Timetable") { TimetableView() },
         TabItem("Attendance") { AttendanceView() },
-        TabItem("Agenda and homeworks") { AgendaView() },
+        TabItem("Agenda") { AgendaView() },
         TabItem("School notices") { SchoolNoticesView() }
     )
 
@@ -36,10 +38,13 @@ class MainViewModel(
     private var _selectedView = MutableStateFlow(0)
     val selectedView get() = _selectedView.asStateFlow()
 
+    private var _settings = MutableStateFlow(false)
+    val settings get() = _settings.asStateFlow()
+
     fun refresh() {
         viewModelScope.launch {
             _isRefreshing.update { true }
-            appState.fetchData()
+            runBackgroundTask({ appState.fetchData() })
             _isRefreshing.update { false }
         }
     }
@@ -47,6 +52,12 @@ class MainViewModel(
     fun selectView(view: Int) {
         viewModelScope.launch {
             _selectedView.update { view }
+        }
+    }
+
+    fun showOrHideSettings() {
+        viewModelScope.launch {
+            _settings.update { !it }
         }
     }
 }

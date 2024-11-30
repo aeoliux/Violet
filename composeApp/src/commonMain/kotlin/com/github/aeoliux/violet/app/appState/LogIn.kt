@@ -17,7 +17,6 @@ suspend fun AppState.logIn(login: String? = null, password: String? = null) {
 
         client.value.proceedLogin(login, password)
         val data = "$login $password"
-        println(data)
         keychain.savePass(data)
         isLoggedIn.value = true
     } catch (e: Exception) {

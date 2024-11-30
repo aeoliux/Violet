@@ -29,6 +29,9 @@ class LoginViewModel(
             appState.fetchData(login.value, password.value)
 
             _showLoadingIndicator.update { false }
+
+            _login.update { "" }
+            _password.update { "" }
         }
     }
 

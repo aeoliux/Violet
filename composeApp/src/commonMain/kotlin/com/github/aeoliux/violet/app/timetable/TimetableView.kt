@@ -38,8 +38,6 @@ fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
     LaunchedEffect(appState.databaseUpdated.value) { vm.launchedEffect() }
 
     if (isLoaded) {
-        Header("Timetable")
-
         ScrollableTabRow(
             modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp),
             selectedTabIndex = selectedTab,

@@ -32,8 +32,6 @@ fun SchoolNoticesView(vm: SchoolNoticesViewModel = viewModel { SchoolNoticesView
         vm.launchedEffect()
     }
 
-    Header("School notices")
-
     listOfSchoolNotices.forEach {
         Card(
             Modifier

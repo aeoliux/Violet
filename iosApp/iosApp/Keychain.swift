@@ -36,3 +36,15 @@ func getPassFunc() -> String? {
     let password = String(decoding: passwordData, as: UTF8.self)
     return password
 }
+
+func deletePassFunc() {
+    let query: [String: Any] = [
+        kSecClass as String: kSecClassGenericPassword as String,
+        kSecAttrAccount as String: "synergiaCredentials",
+        kSecMatchLimit as String: kSecMatchLimitOne,
+        kSecReturnAttributes as String: true,
+        kSecReturnData as String: true,
+    ]
+    
+    SecItemDelete(query as CFDictionary)
+}
