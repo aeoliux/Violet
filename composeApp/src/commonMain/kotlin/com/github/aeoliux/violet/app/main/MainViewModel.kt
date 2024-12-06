@@ -3,6 +3,7 @@ package com.github.aeoliux.violet.app.main
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.aeoliux.violet.api.scraping.messages.MessageLabel
 import com.github.aeoliux.violet.app.agenda.AgendaView
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.fetchData
@@ -10,6 +11,7 @@ import com.github.aeoliux.violet.app.appState.runBackgroundTask
 import com.github.aeoliux.violet.app.attendance.AttendanceView
 import com.github.aeoliux.violet.app.grades.GradesView
 import com.github.aeoliux.violet.app.home.HomeView
+import com.github.aeoliux.violet.app.messages.MessagesView
 import com.github.aeoliux.violet.app.schoolNotices.SchoolNoticesView
 import com.github.aeoliux.violet.app.timetable.TimetableView
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +31,8 @@ class MainViewModel(
         TabItem("Timetable") { TimetableView() },
         TabItem("Attendance") { AttendanceView() },
         TabItem("Agenda") { AgendaView() },
-        TabItem("School notices") { SchoolNoticesView() }
+        TabItem("School notices") { SchoolNoticesView() },
+        TabItem("Messages") { MessagesView() }
     )
 
     private var _isRefreshing = MutableStateFlow(false)

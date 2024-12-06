@@ -179,3 +179,21 @@ SELECT * FROM SchoolNotices WHERE id = ? LIMIT 1;
 
 clearSchoolNotices:
 DELETE FROM SchoolNotices;
+
+CREATE TABLE MessagesIds(
+    category INTEGER NOT NULL,
+    url TEXT UNIQUE NOT NULL,
+    sender TEXT NOT NULL,
+    topic TEXT NOT NULL,
+    sentAt TEXT NOT NULL,
+    hasAttachment INTEGER AS Boolean NOT NULL
+);
+
+insertMessagesIds:
+INSERT INTO MessagesIds VALUES (?, ?, ?, ?, ?, ?);
+
+selectMessagesIds:
+SELECT * FROM MessagesIds ORDER BY sentAt DESC;
+
+clearMessagesIds:
+DELETE FROM MessagesIds;

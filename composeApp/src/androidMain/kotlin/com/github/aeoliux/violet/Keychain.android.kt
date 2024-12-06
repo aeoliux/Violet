@@ -41,7 +41,6 @@ actual class Keychain(private val context: Context) {
 
     @OptIn(ExperimentalEncodingApi::class)
     actual fun savePass(password: String) {
-        println(password)
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val iv = cipher.iv
@@ -73,7 +72,6 @@ actual class Keychain(private val context: Context) {
         cipher.init(Cipher.DECRYPT_MODE, key, gcmParameterSpec)
 
         val final = String(cipher.doFinal(cipherText), Charsets.UTF_8)
-        println(final)
         return final
     }
 

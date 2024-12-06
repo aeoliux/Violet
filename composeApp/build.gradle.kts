@@ -63,6 +63,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ksoup)
 
             // both
             implementation(libs.kotlinx.datetime)
@@ -81,7 +82,7 @@ android {
     defaultConfig {
         applicationId = "com.github.aeoliux.violet"
         minSdk = 32
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }

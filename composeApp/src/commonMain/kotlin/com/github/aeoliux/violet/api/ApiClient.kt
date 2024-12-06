@@ -33,6 +33,7 @@ import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
@@ -45,7 +46,7 @@ class ApiClient {
     var colors = LinkedHashMap<UInt, String>()
     var classrooms = LinkedHashMap<UInt, String>()
 
-    private val client = HttpClient {
+    val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true

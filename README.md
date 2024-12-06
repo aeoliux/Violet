@@ -11,3 +11,5 @@ and from [here](https://nightly.link/aeoliux/Violet/workflows/build/main/release
 - Timetable
 - Attendance
 - Agenda
+- School notices
+- Basic message receiving (links and other HTML stuff are not parsed **for now**)

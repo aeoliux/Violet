@@ -1,10 +1,12 @@
 package com.github.aeoliux.violet.app.appState
 
+import com.github.aeoliux.violet.api.scraping.messages.getMessages
 import com.github.aeoliux.violet.app.storage.Database
 import com.github.aeoliux.violet.app.storage.insertAgenda
 import com.github.aeoliux.violet.app.storage.insertAttendances
 import com.github.aeoliux.violet.app.storage.insertGrades
 import com.github.aeoliux.violet.app.storage.insertLessons
+import com.github.aeoliux.violet.app.storage.insertMessageIds
 import com.github.aeoliux.violet.app.storage.insertSchoolNotices
 import com.github.aeoliux.violet.app.storage.selectClassInfo
 import com.github.aeoliux.violet.app.storage.setAboutMe
@@ -65,6 +67,12 @@ suspend fun AppState.fetchData(login: String? = null, password: String? = null) 
         setFetchStatus("Does your school do anything?") {
             Database.insertSchoolNotices(
                 client.value.schoolNotices()
+            )
+        }
+
+        setFetchStatus("Did you get a message?") {
+            Database.insertMessageIds(
+                client.value.getMessages()
             )
         }
 

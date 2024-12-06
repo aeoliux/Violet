@@ -114,6 +114,7 @@ fun MainView() {
                                     IconButton({ vm.showOrHideSettings() }) {
                                         Icon(
                                             imageVector = Icons.Filled.Settings,
+                                            tint = MaterialTheme.colorScheme.onBackground,
                                             contentDescription = "Show/hide settings"
                                         )
                                     }
