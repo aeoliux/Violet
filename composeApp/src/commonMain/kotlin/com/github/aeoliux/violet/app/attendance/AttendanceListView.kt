@@ -17,12 +17,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.github.aeoliux.violet.api.Attendance
 import com.github.aeoliux.violet.api.toColorLong
+import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.ExpandableList
 
 @Composable
 fun AttendanceListView(
     attendance: Attendance
 ) {
+    val appState = LocalAppState.current
+
     attendance.forEach { (date, attendances) ->
         Card(
             Modifier
@@ -61,7 +64,11 @@ fun AttendanceListView(
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                         ) {
-                            Text("At ${attendanceInfo.addDate} ${attendanceInfo.addedBy} added ${attendanceInfo.type} on lesson no. ${lessonNo}")
+                            Text(
+                                "At ${attendanceInfo.addDate} ${
+                                    appState.safe("Someone", attendanceInfo.addedBy)
+                                } added ${attendanceInfo.type} on lesson no. $lessonNo"
+                            )
                         }
                     }
                 }

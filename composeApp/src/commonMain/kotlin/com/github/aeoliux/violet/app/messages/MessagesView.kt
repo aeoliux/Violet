@@ -77,7 +77,7 @@ fun MessagesView(
                     Modifier.padding(10.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(it.sender)
+                    Text(appState.safe("Someone", it.sender))
                     Text(it.topic)
                 }
             }

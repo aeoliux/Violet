@@ -49,7 +49,7 @@ fun SchoolNoticesView(vm: SchoolNoticesViewModel = viewModel { SchoolNoticesView
                         )
                         Text(
                             fontSize = 15.sp,
-                            text = "Added at ${it.createdAt} by ${it.addedBy}"
+                            text = "Added at ${it.createdAt} by ${appState.safe("human (?)", it.addedBy)}"
                         )
                     }
                 }

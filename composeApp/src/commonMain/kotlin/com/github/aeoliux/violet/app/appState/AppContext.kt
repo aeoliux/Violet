@@ -19,6 +19,8 @@ class AppState(
 
     var databaseUpdated: MutableState<Boolean> = mutableStateOf(false),
     var statusMessage: MutableState<String?> = mutableStateOf<String?>(null),
+
+    var safeMode: MutableState<Boolean> = mutableStateOf(false)
 ) {
     lateinit var keychain: Keychain
 
@@ -29,6 +31,13 @@ class AppState(
 
     fun appLaunchedEffect() {
         isLoggedIn.value = Database.selectAboutMe() != null
+    }
+
+    fun <T> safe(yes: T, no: T): T {
+        return if (safeMode.value)
+            yes
+        else
+            no
     }
 }
 

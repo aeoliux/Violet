@@ -42,7 +42,7 @@ fun HomeView(vm: HomeViewModel = viewModel { HomeViewModel() }) {
                 Modifier.fillMaxWidth().wrapContentHeight().padding(10.dp),
                 verticalArrangement = Arrangement.Top
             ) {
-                Text(text = "Hi, ${me?.firstName}", fontSize = 40.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Hi, ${appState.safe("Human (?)", me?.firstName?:"")}", fontSize = 40.sp, fontWeight = FontWeight.Bold)
                 Text(text = "Lucky number is/will be $luckyNumber", fontSize = 20.sp)
             }
         }

@@ -16,7 +16,9 @@ suspend fun ApiClient.getMessage(url: String): Message {
 
     val messageData = soup.select("#formWiadomosci > div > div > table > tbody > tr > td:nth-child(2)")
     val meta = messageData.select("table:nth-child(2) > tbody > tr > td:nth-child(2)")
-    val content = messageData.select("div").html().replace("<br>", "")
+    val content = messageData.select("div").html()
+        .replace("\n ", "\n")
+        .replace("<br>", "")
 
     var topic = ""
     var date = ""

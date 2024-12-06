@@ -28,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.aeoliux.violet.api.types.Grade
 import com.github.aeoliux.violet.api.toColorLong
+import com.github.aeoliux.violet.app.appState.LocalAppState
 
 @Composable
 fun GradeComponent(grade: Grade) {
+    val appState = LocalAppState.current
     var showDescription by remember { mutableStateOf(false) }
 
     Row(
@@ -65,7 +67,7 @@ fun GradeComponent(grade: Grade) {
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(grade.addedBy)
+            Text(appState.safe("Someone", grade.addedBy))
             Text(grade.category)
         }
     }

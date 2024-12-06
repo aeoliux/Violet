@@ -12,12 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material.icons.sharp.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -85,7 +90,7 @@ fun MainView() {
                             .fillMaxSize()
                             .verticalScroll(scrollState)
                     ) {
-                        Row {
+                        Row(Modifier.wrapContentHeight()) {
                             Column {
                                 IconButton({ coroutineScope.launch { drawerState.open() } }) {
                                     Icon(
@@ -102,7 +107,7 @@ fun MainView() {
                             ) {
                                 appState.statusMessage.value?.let {
                                     Text(color = MaterialTheme.colorScheme.onBackground, text = "Syncing...")
-                                    Text(color = MaterialTheme.colorScheme.onBackground, text = it)
+//                                    Text(color = MaterialTheme.colorScheme.onBackground, text = it)
                                 }
                             }
 
@@ -111,6 +116,20 @@ fun MainView() {
                                 horizontalAlignment = Alignment.End
                             ) {
                                 Row {
+                                    IconButton({ appState.safeMode.value = !appState.safeMode.value }) {
+                                        Icon(
+                                            imageVector = if (appState.safeMode.value)
+                                                Icons.Filled.Warning
+                                            else
+                                                Icons.Rounded.Warning,
+                                            tint = if (appState.safeMode.value)
+                                                MaterialTheme.colorScheme.error
+                                            else
+                                                MaterialTheme.colorScheme.onBackground,
+                                            contentDescription = "Enable/disable safe mode"
+                                        )
+                                    }
+
                                     IconButton({ vm.showOrHideSettings() }) {
                                         Icon(
                                             imageVector = Icons.Filled.Settings,

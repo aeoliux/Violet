@@ -12,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,15 +20,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.appState.fetchMessage
 
 @Composable
+@OptIn(ExperimentalTextApi::class)
 fun MessageView(
     url: String,
     appState: AppState = LocalAppState.current,
@@ -65,7 +74,7 @@ fun MessageView(
     Column(Modifier.padding(start = 15.dp, end = 15.dp)) {
         message?.let {
             val labels = listOf("From", "Topic", "Sent at")
-            val vals = listOf(it.sender, it.topic, it.date)
+            val vals = listOf(appState.safe("a human (?)", it.sender), it.topic, it.date)
 
             labels.forEachIndexed { index, label ->
                 val value = vals[index]
@@ -93,11 +102,20 @@ fun MessageView(
             }
 
             Card {
-                Column(Modifier.fillMaxWidth().padding(20.dp)) {
+                Column(Modifier.fillMaxWidth().padding(10.dp)) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Justify,
-                        text = it.content
+                        fontSize = 12.sp,
+                        text = it.content,
+                        style = LocalTextStyle.current.merge(
+                            TextStyle(
+                                lineHeight = 1.5.em,
+                                lineHeightStyle = LineHeightStyle(
+                                    trim = LineHeightStyle.Trim.Both,
+                                    alignment = LineHeightStyle.Alignment.Center
+                                ),
+                            )
+                        )
                     )
                 }
             }

@@ -10,14 +10,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.github.aeoliux.violet.api.types.Grade
+import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.Dialog
 
 @Composable
 fun GradeDialog(grade: Grade, onDismiss: () -> Unit) {
+    val appState = LocalAppState.current
+
     Dialog({ onDismiss() }) {
         Column(Modifier.wrapContentSize()) {
             Text("Grade: ${grade.grade}")
-            Text("Added by: ${grade.addedBy}")
+            Text("Added by: ${appState.safe("Someone", grade.addedBy)}")
             Text("Category: ${grade.category}")
             Text("Weight: ${grade.weight}")
             Text("Date: ${grade.addDate}")

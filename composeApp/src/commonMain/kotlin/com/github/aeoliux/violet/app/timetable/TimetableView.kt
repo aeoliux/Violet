@@ -100,7 +100,7 @@ fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
                                 }
 
                                 Text(
-                                    text = "with ${lesson.teacher} starts at $time in ${lesson.classroom}",
+                                    text = "with ${appState.safe("a teacher probably", lesson.teacher)} starts at $time in ${appState.safe("a classroom", lesson.classroom)}",
                                     textDecoration = decoration
                                 )
                             }

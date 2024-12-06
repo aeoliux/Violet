@@ -85,7 +85,7 @@ fun AgendaView(vm: AgendaViewModel = viewModel { AgendaViewModel() }) {
                                             " ($lessonNo)"
                                         else
                                             ""
-                                    }, ${agendaItem.createdBy}, ${agendaItem.subject}")
+                                    }, ${appState.safe("Someone", agendaItem.createdBy)}, ${agendaItem.subject}")
                                 }
                             }
                         }
