@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material.icons.sharp.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -33,26 +31,27 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.Header
 import com.github.aeoliux.violet.app.login.LoginView
 import com.github.aeoliux.violet.app.settings.SettingsView
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun MainView() {
+fun MainView(vm: MainViewModel = koinViewModel<MainViewModel>()) {
     val appState = LocalAppState.current
-    val vm = viewModel { MainViewModel(appState) }
 
     val selectedView by vm.selectedView.collectAsState()
     val settings by vm.settings.collectAsState()
+    val isRefreshing by vm.isRefreshing.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
@@ -106,8 +105,7 @@ fun MainView() {
                                 verticalArrangement = Arrangement.Center,
                             ) {
                                 appState.statusMessage.value?.let {
-                                    Text(color = MaterialTheme.colorScheme.onBackground, text = "Syncing...")
-//                                    Text(color = MaterialTheme.colorScheme.onBackground, text = it)
+                                    Text(color = MaterialTheme.colorScheme.onBackground, text = it)
                                 }
                             }
 
@@ -138,17 +136,21 @@ fun MainView() {
                                         )
                                     }
 
-                                    appState.statusMessage.value?.let {
+                                    if (isRefreshing) {
                                         CircularProgressIndicator(
                                             Modifier
                                                 .padding(end = 10.dp)
                                         )
-                                    } ?: IconButton({ vm.refresh() }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Refresh,
-                                            contentDescription = "Sync data",
-                                            tint = MaterialTheme.colorScheme.onBackground
-                                        )
+                                    } else {
+                                        IconButton({
+                                            vm.refresh(appState.databaseUpdated)
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Refresh,
+                                                contentDescription = "Sync data",
+                                                tint = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        }
                                     }
                                 }
                             }

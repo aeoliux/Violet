@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Classroom(
-    val Id: UInt,
+    val Id: Int,
     val Name: String,
     val Symbol: String,
     val Description: String = ""
@@ -12,7 +12,7 @@ data class Classroom(
 
 @Serializable
 data class Classrooms(val Classrooms: List<Classroom>) {
-    fun toMap(): LinkedHashMap<UInt, String> {
+    fun toMap(): LinkedHashMap<Int, String> {
         return Classrooms.fold(LinkedHashMap()) { acc, classroom ->
             acc[classroom.Id] = classroom.Name
             acc

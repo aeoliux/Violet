@@ -1,53 +1,81 @@
 package com.github.aeoliux.violet.app.storage
 
-import com.github.aeoliux.violet.api.Attendance
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
 import com.github.aeoliux.violet.api.types.AttendanceItem
+import com.github.aeoliux.violet.api.Attendance as AttendanceMap
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
-fun Database.selectAttendances(): Attendance? {
-    return try {
-        dbQuery.selectAttendances().executeAsList().fold(LinkedHashMap()) { acc, attendance ->
-            val date = LocalDate.parse(attendance.date)
-            val lessonNo = attendance.lessonNo.toUInt()
+@Entity(tableName = "Attendance")
+data class Attendance(
+    @PrimaryKey(autoGenerate = true) val key: Int = 0,
+    val id: Int,
+    val date: LocalDate,
+    val lessonNo: Int,
 
-            if (acc[date] == null)
-                acc[date] = LinkedHashMap()
+    val addedBy: String,
+    val addDate: LocalDateTime,
+    val semester: Int,
+    val typeShort: String,
+    val type: String,
+    val color: String,
+)
 
-            acc[date]!![lessonNo] = AttendanceItem(
-                addedBy = attendance.addedBy,
-                addDate = LocalDateTime.parse(attendance.addDate),
-                semester = attendance.semester.toUInt(),
-                typeShort = attendance.typeShort,
-                type = attendance.type,
-                color = attendance.color
-            )
+@Dao
+interface AttendanceDao {
+    @Insert
+    suspend fun insertAttendance(attendance: Attendance)
 
-            acc
-        }
-    } catch (_: NullPointerException) {
-        null
-    }
+    @Query("DELETE FROM Attendance")
+    suspend fun deleteAttendance()
+
+    @Query("SELECT * FROM Attendance ORDER BY date DESC")
+    suspend fun getAttendance(): List<Attendance>
 }
 
-fun Database.insertAttendances(attendances: Attendance) {
-    dbQuery.transaction {
-        dbQuery.clearAttendances()
+class AttendanceRepository(private val database: AppDatabase) {
+    suspend fun deleteAttendance() = database.getAttendanceDao().deleteAttendance()
 
-        attendances.forEach { (date, attendances) ->
-            attendances.forEach { (lessonNo, attendance) ->
-                dbQuery.insertAttendance(
-                    date = date.toString(),
-                    lessonNo = lessonNo.toLong(),
-
-                    addedBy = attendance.addedBy,
-                    addDate = attendance.addDate.toString(),
-                    semester = attendance.semester.toLong(),
-                    typeShort = attendance.typeShort,
-                    type = attendance.type,
-                    color = attendance.color
-                )
+    suspend fun insertAttendance(attendance: AttendanceMap) {
+        attendance.forEach { (date, attendance) ->
+            attendance.forEach { (lessonNo, item) ->
+                database.getAttendanceDao().insertAttendance(Attendance(
+                    id = item.id,
+                    date = date,
+                    lessonNo = lessonNo,
+                    addedBy = item.addedBy,
+                    addDate = item.addDate,
+                    semester = item.semester,
+                    typeShort = item.typeShort,
+                    type = item.type,
+                    color = item.color
+                ))
             }
+        }
+    }
+
+    suspend fun getAttendance(): AttendanceMap {
+        return database.getAttendanceDao().getAttendance().fold(AttendanceMap()) { acc, item ->
+            val attendance = AttendanceItem(
+                id = item.id,
+                addedBy = item.addedBy,
+                addDate = item.addDate,
+                semester = item.semester,
+                typeShort = item.typeShort,
+                type = item.type,
+                color = item.color
+            )
+
+            if (acc[item.date] == null)
+                acc[item.date] = LinkedHashMap()
+
+            acc[item.date]!![item.lessonNo] = attendance
+
+            acc
         }
     }
 }

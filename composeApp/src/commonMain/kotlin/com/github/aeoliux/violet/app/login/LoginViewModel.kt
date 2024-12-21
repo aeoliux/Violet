@@ -1,17 +1,20 @@
 package com.github.aeoliux.violet.app.login
 
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.aeoliux.violet.app.appState.AppState
-import com.github.aeoliux.violet.app.appState.fetchData
-import com.github.aeoliux.violet.app.appState.logIn
+import com.github.aeoliux.violet.Keychain
+import com.github.aeoliux.violet.api.ApiClient
+import com.github.aeoliux.violet.app.storage.AboutUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val appState: AppState
+    private val client: ApiClient,
+    private val keychain: Keychain,
+    private val aboutUserRepository: AboutUserRepository
 ): ViewModel() {
     private var _login = MutableStateFlow("")
     val login get() = _login.asStateFlow()
@@ -22,16 +25,21 @@ class LoginViewModel(
     private var _showLoadingIndicator = MutableStateFlow(false)
     val showLoadingIndicator get() = _showLoadingIndicator.asStateFlow()
 
-    fun logIn() {
+    fun logIn(output: MutableState<Boolean>) {
         viewModelScope.launch {
             _showLoadingIndicator.update { true }
 
-            appState.fetchData(login.value, password.value)
+            client.proceedLogin(_login.value, _password.value)
+            val me = client.me()
+            keychain.savePass("${_login.value} ${_password.value}")
+            aboutUserRepository.insertMe(me)
 
             _showLoadingIndicator.update { false }
 
             _login.update { "" }
             _password.update { "" }
+
+            output.value = !output.value
         }
     }
 

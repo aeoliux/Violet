@@ -1,19 +1,21 @@
 package com.github.aeoliux.violet.app.home
 
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.aeoliux.violet.api.types.ClassInfo
+import com.github.aeoliux.violet.app.storage.ClassInfo
 import com.github.aeoliux.violet.api.types.Me
-import com.github.aeoliux.violet.app.storage.Database
-import com.github.aeoliux.violet.app.storage.selectAboutMe
-import com.github.aeoliux.violet.app.storage.selectClassInfo
-import com.github.aeoliux.violet.app.storage.selectLuckyNumber
+import com.github.aeoliux.violet.app.storage.AboutUserRepository
+import com.github.aeoliux.violet.app.storage.LuckyNumberRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(
+    private val aboutUserRepository: AboutUserRepository,
+    private val luckyNumberRepository: LuckyNumberRepository
+): ViewModel() {
     private var _isLoaded = MutableStateFlow(false)
     val isLoaded get() = _isLoaded.asStateFlow()
 
@@ -26,11 +28,13 @@ class HomeViewModel: ViewModel() {
     private var _luckyNumber = MutableStateFlow(0)
     val luckyNumber get() = _luckyNumber.asStateFlow()
 
-    fun launchedEffect() {
+    fun launchedEffect(semesterOutput: MutableState<Int>) {
         viewModelScope.launch {
-            _me.update { Database.selectAboutMe() }
-            _classInfo.update { Database.selectClassInfo() }
-            _luckyNumber.update { Database.selectLuckyNumber()?.first?.toInt()?: 0 }
+            _me.update { aboutUserRepository.getMe() }
+            _classInfo.update { aboutUserRepository.getClassInfo() }
+            _luckyNumber.update { luckyNumberRepository.getLuckyNumber() }
+
+            semesterOutput.value = _classInfo.value?.semester?:1
 
             _isLoaded.update { true }
         }

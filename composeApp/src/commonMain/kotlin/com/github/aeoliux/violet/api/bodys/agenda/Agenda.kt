@@ -11,19 +11,19 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HomeworkClassroom(
-    val Id: UInt,
+    val Id: Int,
     val Symbol: String,
     val Name: String,
-    val Size: UInt
+    val Size: Int
 )
 
 @Serializable
 data class Homework(
-    val Id: UInt,
+    val Id: Int,
     val Content: String,
     val Date: String,
     val Category: IdAndUrl,
-    val LessonNo: UInt? = null,
+    val LessonNo: Int? = null,
     val TimeFrom: String,
     val TimeTo: String,
     val CreatedBy: IdAndUrl,
@@ -35,13 +35,14 @@ data class Homework(
 @Serializable
 data class Homeworks(val HomeWorks: List<Homework>) {
     fun toAgenda(
-        categories: LinkedHashMap<UInt, Pair<String, String>>,
-        users: LinkedHashMap<UInt, User>,
-        classrooms: LinkedHashMap<UInt, String>,
-        subjects: LinkedHashMap<UInt, String>
+        categories: LinkedHashMap<Int, Pair<String, String>>,
+        users: LinkedHashMap<Int, User>,
+        classrooms: LinkedHashMap<Int, String>,
+        subjects: LinkedHashMap<Int, String>
     ): Agenda {
         return HomeWorks.fold(Agenda()) { acc, homework ->
             val newHomework = AgendaItem(
+                id = homework.Id,
                 content = homework.Content,
                 category = categories[homework.Category.Id]?.first?: "",
                 createdBy = users[homework.CreatedBy.Id]?.teacher()?: "",
@@ -57,7 +58,7 @@ data class Homeworks(val HomeWorks: List<Homework>) {
             if (acc[date] == null)
                 acc[date] = LinkedHashMap()
 
-            acc[date]!![homework.LessonNo?: 0u] =
+            acc[date]!![homework.LessonNo?: 0] =
                 acc[date]!![homework.LessonNo?: 0]?.plus(newHomework)?: listOf(newHomework)
 
             acc

@@ -1,7 +1,5 @@
 package com.github.aeoliux.violet.app.grades
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
@@ -12,15 +10,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.api.types.Grade
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.ExpandableList
-import com.github.aeoliux.violet.app.components.Header
 import com.github.aeoliux.violet.app.components.LoadingIndicator
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
+fun GradesView(vm: GradesViewModel = koinViewModel<GradesViewModel>()) {
     val appState = LocalAppState.current
 
     val isLoaded by vm.isLoaded.collectAsState()
@@ -46,8 +43,8 @@ fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
                 ExpandableList({
                     Text(modifier = Modifier.padding(15.dp), text = subject)
                 }) {
-                    GradeSemesterView(1u, grades)
-                    GradeSemesterView(2u, grades)
+                    GradeSemesterView(1, grades)
+                    GradeSemesterView(2, grades)
                 }
             }
         }
@@ -56,7 +53,7 @@ fun GradesView(vm: GradesViewModel = viewModel { GradesViewModel() }) {
 }
 
 @Composable
-internal fun GradeSemesterView(semester: UInt, grades: List<Grade>) {
+internal fun GradeSemesterView(semester: Int, grades: List<Grade>) {
     val appState = LocalAppState.current
 
     ExpandableList(

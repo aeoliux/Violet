@@ -7,16 +7,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsView(
-    vm: SettingsViewModel = viewModel { SettingsViewModel() }
+    vm: SettingsViewModel = koinViewModel<SettingsViewModel>()
 ) {
     val appState = LocalAppState.current
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button({
-            vm.logOut(appState.keychain)
+            vm.logOut()
             appState.isLoggedIn.value = false
         }) {
             Text("Log out")

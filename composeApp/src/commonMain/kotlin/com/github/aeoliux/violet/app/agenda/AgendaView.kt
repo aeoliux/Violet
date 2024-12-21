@@ -18,17 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.api.toColorLong
 import com.github.aeoliux.violet.app.appState.LocalAppState
-import com.github.aeoliux.violet.app.components.Header
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun AgendaView(vm: AgendaViewModel = viewModel { AgendaViewModel() }) {
+fun AgendaView(vm: AgendaViewModel = koinViewModel<AgendaViewModel>()) {
     val appState = LocalAppState.current
     val isLoaded by vm.isLoaded.collectAsState()
     val agenda by vm.agenda.collectAsState()
@@ -81,7 +80,7 @@ fun AgendaView(vm: AgendaViewModel = viewModel { AgendaViewModel() }) {
                                     )
 
                                     Text("${agendaItem.timeFrom} ${
-                                        if (lessonNo != 0u)
+                                        if (lessonNo != 0)
                                             " ($lessonNo)"
                                         else
                                             ""

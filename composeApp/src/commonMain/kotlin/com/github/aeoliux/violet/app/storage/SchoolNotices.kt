@@ -1,49 +1,55 @@
 package com.github.aeoliux.violet.app.storage
 
-import com.github.aeoliux.violet.api.types.SchoolNotice
-import comgithubaeoliuxvioletstorage.SelectListOfSchoolNotices
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import com.github.aeoliux.violet.api.types.SchoolNotice as SchoolNoticeFinal
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
+@Entity(tableName = "SchoolNotices")
+data class SchoolNotice(
+    @PrimaryKey(autoGenerate = true) val key: Int = 0,
+    val id: String,
 
-fun Database.selectListOfSchoolNotices(): List<SelectListOfSchoolNotices>? {
-    try {
-        val result = dbQuery.selectListOfSchoolNotices().executeAsList()
-        return result
-    } catch (_: NullPointerException) {
-        return null
-    }
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val subject: String,
+    val content: String,
+    val addedBy: String,
+    val createdAt: LocalDateTime
+)
+
+@Dao
+interface SchoolNoticesDao {
+    @Insert
+    suspend fun insertSchoolNotice(schoolNotice: SchoolNotice)
+
+    @Query("DELETE FROM SchoolNotices")
+    suspend fun deleteSchoolNotices()
+
+    @Query("SELECT * FROM SchoolNotices ORDER BY startDate DESC")
+    suspend fun getSchoolNotices(): List<SchoolNotice>
 }
 
-fun Database.selectSchoolNotice(id: Long): SchoolNotice? {
-    val result = dbQuery.selectSchoolNotice(id).executeAsOneOrNull()
+class SchoolNoticesRepository(private val database: AppDatabase) {
+    suspend fun deleteSchoolNotices() = database.getSchoolNoticesDao().deleteSchoolNotices()
 
-    return if (result != null)
-        SchoolNotice(
-            startDate = LocalDate.parse(result.startDate),
-            endDate = LocalDate.parse(result.endDate),
-            subject = result.subject,
-            content = result.content,
-            addedBy = result.addedBy,
-            createdAt = LocalDateTime.parse(result.createdAt)
-        )
-    else
-        null
-}
-
-fun Database.insertSchoolNotices(sn: List<SchoolNotice>) {
-    dbQuery.transaction {
-        dbQuery.clearSchoolNotices()
-
-        sn.forEach { sn ->
-            dbQuery.insertSchoolNotices(
-                startDate = sn.startDate.toString(),
-                endDate = sn.endDate.toString(),
-                subject = sn.subject,
-                content = sn.content,
-                addedBy = sn.addedBy,
-                createdAt = sn.createdAt.toString()
+    suspend fun insertSchoolNotices(schoolNotices: List<SchoolNoticeFinal>) = schoolNotices.forEach {
+        database.getSchoolNoticesDao().insertSchoolNotice(
+            SchoolNotice(
+                id = it.id,
+                startDate = it.startDate,
+                endDate = it.endDate,
+                subject = it.subject,
+                content = it.content,
+                addedBy = it.addedBy,
+                createdAt = it.createdAt
             )
-        }
+        )
     }
+
+    suspend fun getSchoolNotices(): List<SchoolNotice> = database.getSchoolNoticesDao().getSchoolNotices()
 }

@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClassItem(
-    val Id: UInt,
-    val Number: UInt,
+    val Id: Int,
+    val Number: Int,
     val Symbol: String,
     val BeginSchoolYear: String,
     val EndFirstSemester: String,
@@ -21,7 +21,7 @@ data class ClassItem(
 
 @Serializable
 data class Class(val Class: ClassItem) {
-    public fun toClassInfo(users: LinkedHashMap<UInt, User>): ClassInfo {
+    public fun toClassInfo(users: LinkedHashMap<Int, User>): ClassInfo {
         val classTutors = arrayOf<String>()
         classTutors.plus(users[Class.ClassTutor.Id]?.firstName + " " + users[Class.ClassTutor.Id]?.lastName)
         Class.ClassTutors.forEach {
@@ -35,7 +35,7 @@ data class Class(val Class: ClassItem) {
             Class.Number,
             Class.Symbol,
             classTutors.toList(),
-            if (endOfFirstSemester - now > 0) 1u else 2u
+            if (endOfFirstSemester - now > 0) 1 else 2
         )
     }
 }

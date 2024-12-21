@@ -6,7 +6,9 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinxSerialization)
-    alias(libs.plugins.sqldelight)
+
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -24,6 +26,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = false
+            linkerOpts.add("-lsqlite3")
         }
     }
     
@@ -35,12 +38,15 @@ kotlin {
             implementation(libs.androidx.material.icons.extended)
 
             implementation(libs.ktor.client.android)
-            implementation(libs.sqldelight.android.driver)
+            implementation(libs.koin.android)
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.ios)
-            implementation(libs.sqldelight.native.driver)
+        }
+
+        iosMain {
+            kotlin.srcDir("build/generated/ksp/metadata")
         }
 
         commonMain.dependencies {
@@ -61,6 +67,14 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ksoup)
+
+            // backend
+            implementation(libs.koin.core)
+            implementation(libs.koin.core.viewmodel)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose)
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
 
             // both
             implementation(libs.kotlinx.datetime)
@@ -105,11 +119,28 @@ android {
     }
 }
 
-sqldelight {
-    databases {
-        create("AppDatabase") {
-            packageName.set("com.github.aeoliux.violet.app.storage")
-        }
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+//    ksp(libs.room.compiler)
+//    add("kspCommonMainMetadata", libs.room.compiler)
+//    add("kspAndroid", libs.room.compiler)
+
+    listOf(
+        "kspAndroid",
+        // "kspJvm",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64"
+    ).forEach {
+        add(it, libs.room.compiler)
     }
 }
 
+//tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+//    if (name != "kspCommonMainKotlinMetadata") {
+//        dependsOn("kspCommonMainKotlinMetadata")
+//    }
+//}

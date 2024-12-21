@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
 data class Me(
-    val id: UInt,
+    val id: Int,
     val firstName: String,
     val lastName: String,
     val email: String,
@@ -27,30 +27,38 @@ enum class GradeType {
     Semester,
     SemesterProposition,
     Final,
-    FinalProposition,
+    FinalProposition;
+
+    companion object {
+        fun fromInt(index: Int): GradeType = GradeType.entries[index]
+    }
+
+    fun toInt(): Int = GradeType.entries.indexOfFirst { this == it }
 }
 
 data class Grade(
+    val id: Int,
     val grade: String,
     val addDate: LocalDateTime,
     val color: String,
     val gradeType: GradeType,
     val category: String,
     val addedBy: String,
-    val weight: UInt,
-    val semester: UInt,
+    val weight: Int,
+    val semester: Int,
     val comment: String?,
 )
 
 data class ClassInfo(
-    val number: UInt,
+    val number: Int,
     val symbol: String,
     val classTutors: List<String>,
-    val semester: UInt
+    val semester: Int
 )
 
 data class Lesson(
-    val lessonNo: UInt,
+    val id: Int,
+    val lessonNo: Int,
     val subject: String,
     val teacher: String,
     val classroom: String,
@@ -59,15 +67,17 @@ data class Lesson(
 )
 
 data class AttendanceItem(
+    val id: Int,
     val addedBy: String,
     val addDate: LocalDateTime,
-    val semester: UInt,
+    val semester: Int,
     val typeShort: String,
     val type: String,
     val color: String,
 )
 
 data class AgendaItem(
+    val id: Int,
     val content: String,
     val category: String,
     val createdBy: String,
@@ -80,6 +90,7 @@ data class AgendaItem(
 )
 
 data class SchoolNotice(
+    val id: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val subject: String,

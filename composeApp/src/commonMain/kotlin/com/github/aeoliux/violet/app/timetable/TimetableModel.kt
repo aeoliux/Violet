@@ -1,8 +1,5 @@
 package com.github.aeoliux.violet.app.timetable
 
-import com.github.aeoliux.violet.api.Timetable
-import com.github.aeoliux.violet.app.storage.Database
-import com.github.aeoliux.violet.app.storage.selectLessons
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -10,10 +7,6 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
 
 class TimetableModel {
-    fun loadTimetable(): Timetable {
-        return Database.selectLessons()?: LinkedHashMap()
-    }
-
     fun weekDay(): Int {
         var date = Clock.System.now()
             .toLocalDateTime(TimeZone.currentSystemDefault())

@@ -23,11 +23,12 @@ data class SchoolNotice(
 @Serializable
 data class SchoolNotices(val SchoolNotices: List<SchoolNotice>) {
     fun toSNList(
-        users: LinkedHashMap<UInt, User>
+        users: LinkedHashMap<Int, User>
     ): List<com.github.aeoliux.violet.api.types.SchoolNotice> {
         return SchoolNotices.fold<SchoolNotice, List<com.github.aeoliux.violet.api.types.SchoolNotice>>(emptyList()) { acc, cur ->
             acc.plus(
                 com.github.aeoliux.violet.api.types.SchoolNotice(
+                    id = cur.Id,
                     startDate = LocalDate.parse(cur.StartDate),
                     endDate = LocalDate.parse(cur.EndDate),
                     subject = cur.Subject,

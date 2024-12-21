@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GradeData(
-    val Id: UInt,
+    val Id: Int,
     val Lesson: IdAndUrl,
     val Subject: IdAndUrl,
     val Student: IdAndUrl,
@@ -18,7 +18,7 @@ data class GradeData(
     val AddedBy: IdAndUrl,
     val Grade: String,
     val AddDate: String,
-    val Semester: UInt,
+    val Semester: Int,
     val IsConstituent: Boolean,
     val IsSemester: Boolean,
     val IsSemesterProposition: Boolean,
@@ -31,9 +31,9 @@ data class Grades(val Grades: List<GradeData>) {
     fun toGrades(
         categories: GradesCategories,
         comments: GradesComments,
-        users: LinkedHashMap<UInt, User>,
-        subjects: LinkedHashMap<UInt, String>,
-        colors: LinkedHashMap<UInt, String>
+        users: LinkedHashMap<Int, User>,
+        subjects: LinkedHashMap<Int, String>,
+        colors: LinkedHashMap<Int, String>
     ): LinkedHashMap<String, List<Grade>> {
         return this.Grades.fold(LinkedHashMap()) { acc, gradeData ->
             val category = categories.getCategoryById(gradeData.Category.Id)
@@ -59,13 +59,14 @@ data class Grades(val Grades: List<GradeData>) {
             val teacher = users[gradeData.AddedBy.Id]?.firstName + " " + users[gradeData.AddedBy.Id]?.lastName
 
             val grade = Grade(
+                gradeData.Id,
                 gradeData.Grade,
                 LocalDateTime.parse(gradeData.AddDate, localDateTimeFormat),
                 colors[category!!.Color.Id]?: "000000",
                 gradeType,
                 category.Name,
                 teacher,
-                if (category.CountToTheAverage) category.Weight else 0u,
+                if (category.CountToTheAverage) category.Weight else 0,
                 gradeData.Semester,
                 comment
             )

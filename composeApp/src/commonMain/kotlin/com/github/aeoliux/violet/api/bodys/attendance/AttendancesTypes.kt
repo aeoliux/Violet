@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AttendanceType(
-    val Id: UInt,
+    val Id: Int,
     val Name: String,
     val Short: String,
     val Standard: Boolean,
     val ColorRGB: String? = null,
-    val Order: UInt,
+    val Order: Int,
     val Color: IdAndUrl? = null
 )
 

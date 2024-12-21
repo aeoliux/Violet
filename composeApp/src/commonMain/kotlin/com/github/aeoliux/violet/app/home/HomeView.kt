@@ -18,9 +18,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.LoadingIndicator
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun HomeView(vm: HomeViewModel = viewModel { HomeViewModel() }) {
+fun HomeView(vm: HomeViewModel = koinViewModel<HomeViewModel>()) {
     val appState = LocalAppState.current
 
     val me by vm.me.collectAsState()
@@ -29,8 +30,7 @@ fun HomeView(vm: HomeViewModel = viewModel { HomeViewModel() }) {
     val luckyNumber by vm.luckyNumber.collectAsState()
 
     LaunchedEffect(appState.databaseUpdated.value) {
-        vm.launchedEffect()
-        appState.semester.value = classInfo?.semester?: 1u
+        vm.launchedEffect(appState.semester)
     }
 
     if (isLoaded) {

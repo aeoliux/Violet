@@ -11,11 +11,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AttendanceEntry(
-    val Id: UInt,
+    val Id: Int,
     val Date: String,
     val AddDate: String,
-    val LessonNo: UInt,
-    val Semester: UInt,
+    val LessonNo: Int,
+    val Semester: Int,
     val Type: IdAndUrl,
     val AddedBy: IdAndUrl
 )
@@ -23,20 +23,21 @@ data class AttendanceEntry(
 @Serializable
 data class Attendances(val Attendances: List<AttendanceEntry>) {
     fun toAttendanceMap(
-        colors: LinkedHashMap<UInt, String>,
+        colors: LinkedHashMap<Int, String>,
         types: List<AttendanceType>,
-        users: LinkedHashMap<UInt, User>
+        users: LinkedHashMap<Int, User>
     ): Attendance {
         return Attendances.fold(LinkedHashMap()) { acc, att ->
             val date = LocalDate.parse(att.Date)
             val type = types.firstOrNull { it.Id == att.Type.Id }?: return@fold acc
-            if (type.Order == 1u || type.Id == 100u)
+            if (type.Order == 1 || type.Id == 100)
                 return@fold acc
 
             val color = type.ColorRGB?: colors[type.Color?.Id]?: return@fold acc
             val teacher = users[att.AddedBy.Id]?: return@fold acc
 
             val attendance = AttendanceItem(
+                id = att.Id,
                 addedBy = teacher.teacher(),
                 addDate = LocalDateTime.parse(att.AddDate, format = localDateTimeFormat),
                 semester = att.Semester,

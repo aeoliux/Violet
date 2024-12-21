@@ -40,11 +40,11 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 
-class ApiClient {
-    var users = LinkedHashMap<UInt, User>()
-    var subjects = LinkedHashMap<UInt, String>()
-    var colors = LinkedHashMap<UInt, String>()
-    var classrooms = LinkedHashMap<UInt, String>()
+class ApiClient constructor() {
+    var users = LinkedHashMap<Int, User>()
+    var subjects = LinkedHashMap<Int, String>()
+    var colors = LinkedHashMap<Int, String>()
+    var classrooms = LinkedHashMap<Int, String>()
 
     val client = HttpClient {
         install(ContentNegotiation) {
@@ -95,7 +95,7 @@ class ApiClient {
         return gradesData.toGrades(categories, comments, users, subjects, colors)
     }
 
-    suspend fun luckyNumber(): Pair<UInt, LocalDate> {
+    suspend fun luckyNumber(): Pair<Int, LocalDate> {
         return data<LuckyNumbers>("LuckyNumbers").parse()
     }
 
@@ -135,5 +135,5 @@ class ApiClient {
 }
 
 typealias Timetable = LinkedHashMap<LocalDate, LinkedHashMap<LocalTime, List<Lesson>>>
-typealias Attendance = LinkedHashMap<LocalDate, LinkedHashMap<UInt, AttendanceItem>>
-typealias Agenda = LinkedHashMap<LocalDate, LinkedHashMap<UInt, List<AgendaItem>>>
+typealias Attendance = LinkedHashMap<LocalDate, LinkedHashMap<Int, AttendanceItem>>
+typealias Agenda = LinkedHashMap<LocalDate, LinkedHashMap<Int, List<AgendaItem>>>

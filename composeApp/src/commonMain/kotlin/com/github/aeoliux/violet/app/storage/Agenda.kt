@@ -1,62 +1,91 @@
 package com.github.aeoliux.violet.app.storage
 
-import com.github.aeoliux.violet.api.Agenda
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
 import com.github.aeoliux.violet.api.types.AgendaItem
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
-fun Database.selectAgenda(): Agenda? {
-    try {
-        val agendas = dbQuery.selectAgenda().executeAsList()
+@Entity(tableName = "Agenda")
+data class Agenda (
+    @PrimaryKey(autoGenerate = true) val key: Int = 0,
+    val id: Int,
+    val date: LocalDate,
+    val lessonNo: Int,
 
-        return agendas.fold(LinkedHashMap()) { acc, agenda ->
-            val newAgenda = AgendaItem(
-                content = agenda.content,
-                category = agenda.category,
-                createdBy = agenda.createdBy,
-                addedAt = LocalDateTime.parse(agenda.addedAt),
-                color = agenda.color,
-                subject = agenda.subject,
-                classroom = agenda.classroom,
-                timeFrom = agenda.timeFrom,
-                timeTo = agenda.timeTo
+    val content: String,
+    val category: String,
+    val createdBy: String,
+    val addedAt: LocalDateTime,
+    val color: String,
+    val subject: String?,
+    val classroom: String?,
+    val timeFrom: String,
+    val timeTo: String
+)
+
+@Dao
+interface AgendaDao {
+    @Insert
+    suspend fun insertAgenda(agenda: Agenda)
+
+    @Query("DELETE FROM Agenda")
+    suspend fun deleteAgenda()
+
+    @Query("SELECT * FROM Agenda ORDER BY date ASC")
+    suspend fun getAgenda(): List<Agenda>
+}
+
+class AgendaRepository(private val database: AppDatabase) {
+    suspend fun deleteAgenda() = database.getAgendaDao().deleteAgenda()
+
+    suspend fun getAgenda(): com.github.aeoliux.violet.api.Agenda {
+        return database.getAgendaDao().getAgenda().fold(com.github.aeoliux.violet.api.Agenda()) { acc, item ->
+            val agenda = AgendaItem(
+                id = item.id,
+                content = item.content,
+                category = item.category,
+                createdBy = item.createdBy,
+                addedAt = item.addedAt,
+                color = item.color,
+                subject = item.subject,
+                classroom = item.classroom,
+                timeFrom = item.timeFrom,
+                timeTo = item.timeTo
             )
 
-            val date = LocalDate.parse(agenda.date)
-            if (acc[date] == null)
-                acc[date] = LinkedHashMap()
+            if (acc[item.date] == null)
+                acc[item.date] = LinkedHashMap()
 
-            acc[date]!![agenda.lessonNo.toUInt()] =
-                acc[date]!![agenda.lessonNo.toUInt()]?.plus(newAgenda)?: listOf(newAgenda)
+            acc[item.date]!![item.lessonNo] = acc[item.date]!![item.lessonNo]?.plus(agenda)?: listOf(agenda)
 
             acc
         }
-    } catch (e: NullPointerException) {
-        return null
     }
-}
 
-fun Database.insertAgenda(agendas: Agenda) {
-    dbQuery.transaction {
-        dbQuery.clearAgenda()
+    suspend fun insertAgenda(agenda: com.github.aeoliux.violet.api.Agenda) {
+        agenda.forEach { (date, agenda) ->
+            agenda.forEach { (lessonNo, agenda) ->
+                agenda.forEach { item ->
+                    database.getAgendaDao().insertAgenda(Agenda(
+                        id = item.id,
+                        date = date,
+                        lessonNo = lessonNo,
 
-        agendas.forEach { (date, agendas) ->
-            agendas.forEach { (lessonNo, agendas) ->
-                agendas.forEach { agenda ->
-                    dbQuery.insertAgenda(
-                        date = date.toString(),
-                        lessonNo = lessonNo.toLong(),
-
-                        content = agenda.content,
-                        category = agenda.category,
-                        createdBy = agenda.createdBy,
-                        addedAt = agenda.addedAt.toString(),
-                        color = agenda.color,
-                        subject = agenda.subject,
-                        classroom = agenda.classroom,
-                        timeFrom = agenda.timeFrom,
-                        timeTo = agenda.timeTo
-                    )
+                        content = item.content,
+                        category = item.category,
+                        createdBy = item.createdBy,
+                        addedAt = item.addedAt,
+                        color = item.color,
+                        subject = item.subject,
+                        classroom = item.classroom,
+                        timeFrom = item.timeFrom,
+                        timeTo = item.timeTo
+                    ))
                 }
             }
         }

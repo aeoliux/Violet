@@ -5,13 +5,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LuckyNumber(
-    val LuckyNumber: UInt,
+    val LuckyNumber: Int,
     val LuckyNumberDay: String,
 )
 
 @Serializable
 data class LuckyNumbers(val LuckyNumber: LuckyNumber) {
-    fun parse(): Pair<UInt, LocalDate> {
+    fun parse(): Pair<Int, LocalDate> {
         return Pair(LuckyNumber.LuckyNumber, LocalDate.parse(LuckyNumber.LuckyNumberDay))
     }
 }

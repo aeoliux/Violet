@@ -3,22 +3,20 @@ package com.github.aeoliux.violet.app.timetable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.api.Timetable
-import com.github.aeoliux.violet.app.storage.Database
-import com.github.aeoliux.violet.app.storage.selectLessons
+import com.github.aeoliux.violet.app.storage.TimetableRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
 
 class TimetableViewModel(
-    private val model: TimetableModel = TimetableModel()
+    private val repository: TimetableRepository
 ): ViewModel() {
+    private val model: TimetableModel = TimetableModel()
+
     private var _timetable = MutableStateFlow<Timetable>(LinkedHashMap())
     val timetable get() = _timetable.asStateFlow()
 
@@ -35,7 +33,7 @@ class TimetableViewModel(
 
     fun launchedEffect() {
         viewModelScope.launch {
-            val t = model.loadTimetable()
+            val t = repository.getTimetable()
             _timetable.update { t }
 
             if (t.keys.size != 0) {

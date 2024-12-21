@@ -1,8 +1,10 @@
 package com.github.aeoliux.violet
 
 import androidx.compose.ui.window.ComposeUIViewController
-import com.github.aeoliux.violet.app.storage.Database
-import com.github.aeoliux.violet.app.storage.DatabaseDriverFactory
+import com.github.aeoliux.violet.app.appModules
+import org.koin.core.context.startKoin
+import org.koin.dsl.bind
+import org.koin.dsl.module
 import platform.UIKit.UIViewController
 
 fun MainViewController(
@@ -10,11 +12,16 @@ fun MainViewController(
     getPassFunc: () -> String?,
     deletePassFunc: () -> Unit
 ): UIViewController {
-    Database.open(DatabaseDriverFactory().createDriver())
+    val keychain = Keychain(savePassFunc, getPassFunc, deletePassFunc)
+    val koinModules = appModules + module {
+        single { keychain } bind Keychain::class
+    }
+
+    startKoin {
+        modules(koinModules)
+    }
 
     return ComposeUIViewController {
-        App(
-            Keychain(savePassFunc, getPassFunc, deletePassFunc)
-        )
+        App()
     }
 }

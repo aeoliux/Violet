@@ -20,6 +20,7 @@ data class TimetableItemTeacher(
 
 @Serializable
 data class TimetableItem(
+    val Lesson: IdAsStringAndUrl,
     val Classroom: IdAsStringAndUrl? = null,
     val DateFrom: String,
     val DateTo: String,
@@ -36,7 +37,7 @@ data class TimetableItem(
 data class Timetables(
     val Timetable: Map<String, List<List<TimetableItem>>>
 ) {
-    fun toTimetableMap(classrooms: LinkedHashMap<UInt, String>): Timetable {
+    fun toTimetableMap(classrooms: LinkedHashMap<Int, String>): Timetable {
         val map = Timetable()
 
         Timetable.keys.forEach { date ->
@@ -53,10 +54,11 @@ data class Timetables(
                     )
 
                     val lesson = Lesson(
-                        lessonNo = index.toUInt(),
+                        id = it.Lesson.Id.toInt(),
+                        lessonNo = index.toInt(),
                         subject = it.Subject.Name,
                         teacher = "${it.Teacher.FirstName} ${it.Teacher.LastName}",
-                        classroom = classrooms[it.Classroom?.Id?.toUInt()]?: "unknown classroom",
+                        classroom = classrooms[it.Classroom?.Id?.toInt()]?: "unknown classroom",
                         isCanceled = it.IsCanceled,
                         subclassName = it.VirtualClassName
                     )

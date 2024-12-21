@@ -21,12 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
-import com.github.aeoliux.violet.app.components.Header
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun TimetableView(vm: TimetableViewModel = viewModel { TimetableViewModel() }) {
+fun TimetableView(vm: TimetableViewModel = koinViewModel<TimetableViewModel>()) {
     val appState = LocalAppState.current
 
     val timetable by vm.timetable.collectAsState()

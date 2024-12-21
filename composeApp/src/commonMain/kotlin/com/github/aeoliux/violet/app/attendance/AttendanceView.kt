@@ -23,9 +23,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.Header
 import com.github.aeoliux.violet.app.main.TabItem
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun AttendanceView(vm: AttendanceViewModel = viewModel { AttendanceViewModel() }) {
+fun AttendanceView(vm: AttendanceViewModel = koinViewModel<AttendanceViewModel>()) {
     val appState = LocalAppState.current
 
     val attendance by vm.attendance.collectAsState()

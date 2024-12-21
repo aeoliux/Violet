@@ -1,48 +1,72 @@
 package com.github.aeoliux.violet.app.storage
 
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
 import com.github.aeoliux.violet.api.scraping.messages.MessageCategories
-import com.github.aeoliux.violet.api.scraping.messages.MessageLabel
 import com.github.aeoliux.violet.api.scraping.messages.MessagesList
+import com.github.aeoliux.violet.api.scraping.messages.MessageLabel as MessageLabelFinal
 import kotlinx.datetime.LocalDateTime
 
-fun Database.selectMessageIds(): MessagesList? {
-    try {
-        val result = dbQuery.selectMessagesIds().executeAsList()
+@Entity(tableName = "MessageLabels")
+data class MessageLabel(
+    @PrimaryKey(autoGenerate = true) val key: Int = 0,
+    val category: MessageCategories,
 
-        return result.fold(MessagesList()) { acc, msgId ->
-            val msgLabel = MessageLabel(
-                url = msgId.url,
-                sender = msgId.sender,
-                sentAt = LocalDateTime.parse(msgId.sentAt),
-                topic = msgId.topic,
-                hasAttachment = msgId.hasAttachment,
-            )
+    val url: String,
+    val sender: String,
+    val topic: String,
+    val sentAt: LocalDateTime?,
+    val hasAttachment: Boolean,
+)
 
-            val category: MessageCategories = MessageCategories.fromInt(msgId.category.toInt())
-            acc[category] = acc[category]?.plus(msgLabel)?: listOf(msgLabel)
+@Dao
+interface MessageLabelsDao {
+    @Insert
+    suspend fun insertMessageLabel(label: MessageLabel)
 
-            acc
-        }
-    } catch (_: NullPointerException) {
-        return null
-    }
+    @Query("DELETE FROM MessageLabels")
+    suspend fun deleteMessageLabels()
+
+    @Query("SELECT * FROM MessageLabels")
+    suspend fun getMessageLabels(): List<MessageLabel>
 }
 
-fun Database.insertMessageIds(ids: MessagesList) {
-    dbQuery.transaction {
-        dbQuery.clearMessagesIds()
+class MessageLabelsRepository(private val database: AppDatabase) {
+    suspend fun deleteMessageLabels() = database.getMessageLabelsDao().deleteMessageLabels()
 
-        ids.forEach { (category, ids) ->
-            ids.forEach { id ->
-                dbQuery.insertMessagesIds(
-                    category = category.categoryId.toLong(),
-                    url = id.url,
-                    sender = id.sender,
-                    topic = id.topic,
-                    sentAt = id.sentAt.toString(),
-                    hasAttachment = id.hasAttachment
-                )
-            }
+    suspend fun insertMessageLabels(labels: MessagesList) = labels.forEach { (category, labels) ->
+        labels.forEach {
+            database.getMessageLabelsDao().insertMessageLabel(
+                MessageLabel(
+                category = category,
+
+                url = it.url,
+                sender = it.sender,
+                topic = it.topic,
+                sentAt = it.sentAt,
+                hasAttachment = it.hasAttachment
+            )
+            )
         }
     }
+
+    suspend fun getMessageLabels(): MessagesList =
+        database.getMessageLabelsDao()
+            .getMessageLabels()
+            .fold(MessagesList()) { acc, it ->
+                val att = MessageLabelFinal(
+                    url = it.url,
+                    sender = it.sender,
+                    topic = it.topic,
+                    sentAt = it.sentAt,
+                    hasAttachment = it.hasAttachment
+                )
+
+                acc[it.category] = acc[it.category]?.plus(att)?: listOf(att)
+
+                acc
+            }
 }

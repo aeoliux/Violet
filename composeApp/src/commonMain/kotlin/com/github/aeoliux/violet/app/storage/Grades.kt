@@ -1,51 +1,83 @@
 package com.github.aeoliux.violet.app.storage
 
-import com.github.aeoliux.violet.api.types.Grade
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import com.github.aeoliux.violet.api.types.GradeType
 import kotlinx.datetime.LocalDateTime
 
-fun Database.selectGrades(): LinkedHashMap<String, List<Grade>>? {
-    try {
-        val grades = dbQuery.selectAllGrades().executeAsList()
+@Entity(tableName = "Grades")
+data class Grade(
+    @PrimaryKey(autoGenerate = true) val key: Int = 0,
+    val id: Int,
+    val subject: String,
 
-        return grades.fold(LinkedHashMap()) { acc, grade ->
-            val newGrade = Grade(
-                grade = grade.grade,
-                addDate = LocalDateTime.parse(grade.addDate),
-                color = grade.color,
-                gradeType = grade.gradeType,
-                category = grade.category,
-                addedBy = grade.addedBy,
-                weight = grade.weight.toUInt(),
-                semester = grade.semester.toUInt(),
-                comment = grade.comment
-            )
+    val grade: String,
+    val addDate: LocalDateTime,
+    val color: String,
+    val gradeType: GradeType,
+    val category: String,
+    val addedBy: String,
+    val weight: Int,
+    val semester: Int,
+    val comment: String?
+)
 
-            acc[grade.subject] = acc[grade.subject]?.plus(newGrade)?: listOf(newGrade)
-            acc
-        }
-    } catch (_: NullPointerException) {
-        return null
-    }
+@Dao
+interface GradesDao {
+    @Insert
+    suspend fun insertGrade(grade: Grade)
+
+    @Query("DELETE FROM Grades")
+    suspend fun deleteGrades()
+
+    @Query("SELECT * FROM Grades")
+    suspend fun getGrades(): List<Grade>
 }
 
-fun Database.insertGrades(grades: LinkedHashMap<String, List<Grade>>) {
-    dbQuery.transaction {
-        dbQuery.clearGrades()
+class GradesRepository(private val database: AppDatabase) {
+    suspend fun deleteGrades() = database.getGradesDao().deleteGrades()
 
+    suspend fun getGrades(): LinkedHashMap<String, List<com.github.aeoliux.violet.api.types.Grade>> {
+        return database.getGradesDao().getGrades().fold(LinkedHashMap()) { acc, item ->
+            val grade = com.github.aeoliux.violet.api.types.Grade(
+                id = item.id,
+                grade = item.grade,
+                addDate = item.addDate,
+                color = item.color,
+                gradeType = item.gradeType,
+                category = item.category,
+                addedBy = item.addedBy,
+                weight = item.weight,
+                semester = item.semester,
+                comment = item.comment
+            )
+
+            acc[item.subject] = acc[item.subject]?.plus(grade)?: listOf(grade)
+
+            acc
+        }
+    }
+
+    suspend fun insertGrades(grades: LinkedHashMap<String, List<com.github.aeoliux.violet.api.types.Grade>>) {
         grades.forEach { (subject, grades) ->
-            grades.forEach { grade ->
-                dbQuery.insertGrade(
+            grades.forEach { item ->
+                database.getGradesDao().insertGrade(Grade(
+                    id = item.id,
                     subject = subject,
-                    grade = grade.grade,
-                    addDate = grade.addDate.toString(),
-                    color = grade.color,
-                    gradeType = grade.gradeType,
-                    category = grade.category,
-                    addedBy = grade.addedBy,
-                    weight = grade.weight.toLong(),
-                    semester = grade.semester.toLong(),
-                    comment = grade.comment
-                )
+
+                    grade = item.grade,
+                    addDate = item.addDate,
+                    color = item.color,
+                    gradeType = item.gradeType,
+                    category = item.category,
+                    addedBy = item.addedBy,
+                    weight = item.weight,
+                    semester = item.semester,
+                    comment = item.comment
+                ))
             }
         }
     }

@@ -20,31 +20,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.aeoliux.violet.api.scraping.messages.Message
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.LocalAppState
-import com.github.aeoliux.violet.app.appState.fetchMessage
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-@OptIn(ExperimentalTextApi::class)
 fun MessageView(
     url: String,
     appState: AppState = LocalAppState.current,
-    vm: MessageViewModel = viewModel {
-        MessageViewModel({
-            appState.fetchMessage(it)
-        })
-    },
+    vm: MessageViewModel = koinViewModel<MessageViewModel>(),
     onClose: () -> Unit
 ) {
     val message by vm.message.collectAsState()

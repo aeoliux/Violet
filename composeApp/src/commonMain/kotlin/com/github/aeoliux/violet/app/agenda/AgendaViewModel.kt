@@ -4,14 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.api.Agenda
 import com.github.aeoliux.violet.api.types.AgendaItem
-import com.github.aeoliux.violet.app.storage.Database
-import com.github.aeoliux.violet.app.storage.selectAgenda
+import com.github.aeoliux.violet.app.storage.AgendaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AgendaViewModel: ViewModel() {
+class AgendaViewModel(private val repository: AgendaRepository): ViewModel() {
     private var _agenda = MutableStateFlow(Agenda())
     val agenda get() = _agenda.asStateFlow()
 
@@ -26,7 +25,7 @@ class AgendaViewModel: ViewModel() {
 
     fun launchedEffect() {
         viewModelScope.launch {
-            _agenda.update { Database.selectAgenda()?: Agenda() }
+            _agenda.update { repository.getAgenda() }
             _isLoaded.update { true }
         }
     }

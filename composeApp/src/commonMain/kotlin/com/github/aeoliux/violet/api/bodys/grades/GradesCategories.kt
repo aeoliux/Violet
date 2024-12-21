@@ -5,16 +5,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GradeCategory(
-    val Id: UInt,
+    val Id: Int,
     val Color: IdAndUrl,
     val Name: String,
     val CountToTheAverage: Boolean,
-    val Weight: UInt = 0u
+    val Weight: Int = 0
 )
 
 @Serializable
 data class GradesCategories(val Categories: List<GradeCategory>) {
-    fun getCategoryById(id: UInt): GradeCategory? {
+    fun getCategoryById(id: Int): GradeCategory? {
         return this.Categories.firstOrNull { it.Id == id }
     }
 }

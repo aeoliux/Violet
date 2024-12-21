@@ -1,6 +1,5 @@
 package com.github.aeoliux.violet.app.schoolNotices
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,15 +15,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.ExpandableList
-import com.github.aeoliux.violet.app.components.Header
-import com.github.aeoliux.violet.app.storage.Database
-import com.github.aeoliux.violet.app.storage.selectSchoolNotice
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SchoolNoticesView(vm: SchoolNoticesViewModel = viewModel { SchoolNoticesViewModel() }) {
+fun SchoolNoticesView(vm: SchoolNoticesViewModel = koinViewModel<SchoolNoticesViewModel>()) {
     val appState = LocalAppState.current
     val listOfSchoolNotices by vm.listOfSchoolNotices.collectAsState()
 
@@ -54,7 +50,7 @@ fun SchoolNoticesView(vm: SchoolNoticesViewModel = viewModel { SchoolNoticesView
                     }
                 }
             ) {
-                val schoolNotice = Database.selectSchoolNotice(it.id)!!
+                val schoolNotice = it
 
                 Column(Modifier.padding(10.dp)) {
                     Text("Starts at: ${schoolNotice.startDate}")

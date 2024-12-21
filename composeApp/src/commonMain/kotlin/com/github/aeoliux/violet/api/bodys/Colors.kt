@@ -4,13 +4,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Color(
-    val Id: UInt,
+    val Id: Int,
     val RGB: String
 )
 
 @Serializable
 data class Colors(val Colors: List<Color>) {
-    fun toMap(): LinkedHashMap<UInt, String> {
+    fun toMap(): LinkedHashMap<Int, String> {
         return Colors.fold(LinkedHashMap()) { acc, color ->
             acc[color.Id] = color.RGB
             acc

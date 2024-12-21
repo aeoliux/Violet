@@ -29,11 +29,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.components.LoadingIndicator
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun LoginView() {
+fun LoginView(vm: LoginViewModel = koinViewModel<LoginViewModel>()) {
     val appState = LocalAppState.current
-    val vm: LoginViewModel = viewModel { LoginViewModel(appState) }
 
     val login by vm.login.collectAsState()
     val password by vm.password.collectAsState()
@@ -91,13 +91,15 @@ fun LoginView() {
                     .focusRequester(passwordFocus),
                 keyboardActions = KeyboardActions(onDone = {
                     focusManager.clearFocus()
-                    vm.logIn()
+                    vm.logIn(appState.databaseUpdated)
                 }),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 )
             )
-            Button({ vm.logIn() }) {
+            Button({
+                vm.logIn(appState.databaseUpdated)
+            }) {
                 Text("Log in")
             }
         }

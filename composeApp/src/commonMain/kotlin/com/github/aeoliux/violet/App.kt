@@ -3,10 +3,7 @@ package com.github.aeoliux.violet
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -20,11 +17,13 @@ import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.LocalAppState
 import com.github.aeoliux.violet.app.main.AppAlertDialog
 import com.github.aeoliux.violet.app.main.MainView
+import com.github.aeoliux.violet.app.storage.AboutUserRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 
 @Composable
 @Preview
-fun App(keychain: Keychain) {
+fun App() {
     MaterialTheme(
         colorScheme = if (isSystemInDarkTheme())
             darkColorScheme()
@@ -32,10 +31,11 @@ fun App(keychain: Keychain) {
             lightColorScheme(),
         typography = Typography()
     ) {
-        val appState = remember { AppState().setKeychain(keychain) }
+        val appState = remember { AppState() }
+        val aboutUserRepository = koinInject<AboutUserRepository>()
 
-        LaunchedEffect(Unit) {
-            appState.appLaunchedEffect()
+        LaunchedEffect(appState.databaseUpdated.value) {
+            appState.isLoggedIn.value = aboutUserRepository.getMe() != null
         }
 
         CompositionLocalProvider(LocalAppState provides appState) {

@@ -1,20 +1,36 @@
 package com.github.aeoliux.violet.app.storage
 
-import kotlinx.datetime.LocalDate
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Upsert
 
-fun Database.selectLuckyNumber(): Pair<UInt, LocalDate>? {
-    try {
-        val resp = dbQuery.selectLuckyNumber().executeAsOne()
+@Entity(tableName = "LuckyNumber")
+data class LuckyNumber(
+    @PrimaryKey var key: Int = 0,
+    var luckyNumber: Int
+)
 
-        return Pair(resp.number.toUInt(), LocalDate.parse(resp.date))
-    } catch (_: NullPointerException) {
-        return null
-    }
+@Dao
+interface LuckyNumberDao {
+    @Upsert
+    suspend fun insertLuckyNumber(luckyNumber: LuckyNumber)
+
+    @Query("DELETE FROM LuckyNumber")
+    suspend fun deleteLuckyNumber()
+
+    @Query("SELECT luckyNumber FROM LuckyNumber LIMIT 1")
+    suspend fun getLuckyNumber(): Int
 }
 
-fun Database.setLuckyNumber(luckyNumber: Pair<UInt, LocalDate>) {
-    dbQuery.transaction {
-        dbQuery.clearLuckyNumber()
-        dbQuery.insertLuckyNumber(luckyNumber.first.toLong(), luckyNumber.second.toString())
-    }
+class LuckyNumberRepository(private val database: AppDatabase) {
+    suspend fun insertLuckyNumber(luckyNumber: Int) = database.getLuckyNumberDao()
+        .insertLuckyNumber(
+            LuckyNumber(luckyNumber = luckyNumber)
+        )
+
+    suspend fun getLuckyNumber() = database.getLuckyNumberDao().getLuckyNumber()
+    suspend fun deleteLuckyNumber() = database.getLuckyNumberDao().deleteLuckyNumber()
 }
