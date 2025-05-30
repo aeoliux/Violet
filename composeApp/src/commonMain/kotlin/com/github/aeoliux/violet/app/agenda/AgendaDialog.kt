@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.github.aeoliux.violet.api.types.AgendaItem
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.appState.formatDateTime
 import com.github.aeoliux.violet.app.components.Dialog
 
 @Composable
@@ -19,7 +20,7 @@ fun AgendaDialog(agendaItem: AgendaItem, onDismiss: () -> Unit) {
             agendaItem.subject?.let { Text("Subject: $it") }
             agendaItem.classroom?.let { Text("Classroom: ${appState.safe("your favorite", it)}") }
             Text("Added by: ${appState.safe("Someone", agendaItem.createdBy)}")
-            Text("Added at: ${agendaItem.addedAt}")
+            Text("Added at: ${agendaItem.addedAt.formatDateTime()}")
             Text("Starts at: ${agendaItem.timeFrom}")
             Text("Content: ${agendaItem.content}")
         }

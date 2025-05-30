@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.api.scraping.messages.Message
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.appState.formatDateTime
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -67,7 +68,7 @@ fun MessageView(
     Column(Modifier.padding(start = 15.dp, end = 15.dp)) {
         message?.let {
             val labels = listOf("From", "Topic", "Sent at")
-            val vals = listOf(appState.safe("a human (?)", it.sender), it.topic, it.date)
+            val vals = listOf(appState.safe("a human (?)", it.sender), it.topic, it.date.formatDateTime())
 
             labels.forEachIndexed { index, label ->
                 val value = vals[index]

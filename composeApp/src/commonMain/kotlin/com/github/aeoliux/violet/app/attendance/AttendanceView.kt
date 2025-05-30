@@ -34,8 +34,8 @@ fun AttendanceView(vm: AttendanceViewModel = koinViewModel<AttendanceViewModel>(
     val selectedView by vm.selectedView.collectAsState()
 
     val views = listOf(
-        TabItem("List") { AttendanceListView(attendance) },
-        TabItem("Table") { AttendanceTableView(attendance) }
+        TabItem("List", { AttendanceListView(attendance) }),
+        TabItem("Table", { AttendanceTableView(attendance) })
     )
 
     LaunchedEffect(appState.databaseUpdated.value) {

@@ -1,32 +1,37 @@
 [versions]
-agp = "8.5.2"
-android-compileSdk = "34"
-androidx-activityCompose = "1.9.3"
+agp = "8.6.1"
+android-compileSdk = "35"
+androidx-activityCompose = "1.10.1"
 androidx-lifecycle = "2.8.3"
-compose-plugin = "1.6.11"
+compose-plugin = "1.8.1"
 koin = "3.3.0"
 koinCoreViewmodel = "4.1.0-Beta1"
-kotlin = "2.1.0"
+kotlin = "2.1.21"
 
 ksoup = "0.2.1"
+lifecycleViewmodelSavedstate = "2.9.0"
 material3 = "1.5.1"
-materialIconsCore = "1.7.6"
-materialIconsExtended = "1.7.6"
+materialIconsCore = "1.7.8"
+materialIconsExtended = "1.7.8"
 kotlinxDatetime = "0.6.1"
-kotlinxSerializationJson = "1.7.2"
+kotlinxSerializationJson = "1.7.3"
 ktor = "2.3.12"
 
-room = "2.7.0-alpha12"
-sqlite = "2.5.0-SNAPSHOT"
-ksp = "2.1.0-1.0.29"
+navigationCompose = "2.9.0-beta01"
+room = "2.7.1"
+savedstate = "1.3.0"
+sqlite = "2.5.1"
+ksp = "2.1.21-2.0.1"
 
 [libraries]
+androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycleViewmodelSavedstate" }
 androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 
+androidx-savedstate = { module = "androidx.savedstate:savedstate", version.ref = "savedstate" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCoreViewmodel" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koinCoreViewmodel" }
@@ -45,6 +50,7 @@ lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifec
 
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

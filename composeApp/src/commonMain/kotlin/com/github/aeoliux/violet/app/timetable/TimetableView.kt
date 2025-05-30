@@ -1,11 +1,15 @@
 package com.github.aeoliux.violet.app.timetable
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
@@ -15,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +27,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.appState.formatWeek
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -49,7 +55,7 @@ fun TimetableView(vm: TimetableViewModel = koinViewModel<TimetableViewModel>()) 
                 ) {
                     Text(
                         modifier = Modifier.padding(16.dp),
-                        text = date.toString(),
+                        text = date.formatWeek(),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -70,38 +76,57 @@ fun TimetableView(vm: TimetableViewModel = koinViewModel<TimetableViewModel>()) 
                         .padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
                 ) {
                     lessons.forEach { lesson ->
-                        val decoration = if (lesson.isCanceled) TextDecoration.LineThrough else TextDecoration.None
+                        Column {
+                            val border = BorderStroke(3.dp, Color.Red)
 
-                        Card(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 5.dp)
-                        ) {
-                            Column(Modifier.padding(10.dp)) {
-                                Row {
-                                    Column(Modifier.padding(end = 20.dp)) {
-                                        Text(
-                                            text = lesson.lessonNo.toString(),
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 40.sp,
-                                            textDecoration = decoration
-                                        )
-                                    }
-
-                                    Column(verticalArrangement = Arrangement.Center) {
-                                        Text(
-                                            text = lesson.subject,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 20.sp,
-                                            textDecoration = decoration
-                                        )
-                                    }
+                            if (lesson.isCanceled)
+                                Row(
+                                    Modifier.wrapContentWidth().background(Color.Red)
+                                        .padding(top = 5.dp)
+                                ) {
+                                    Text(text = "Cancelled", color = Color.White, modifier = Modifier.padding(5.dp))
                                 }
 
-                                Text(
-                                    text = "with ${appState.safe("a teacher probably", lesson.teacher)} starts at $time in ${appState.safe("a classroom", lesson.classroom)}",
-                                    textDecoration = decoration
-                                )
+                            Card(
+                                if (lesson.isCanceled)
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .border(border)
+                                else
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 5.dp)
+                            ) {
+                                Column(Modifier.padding(10.dp)) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Column(
+                                            modifier = Modifier.padding(end = 20.dp),
+                                        ) {
+                                            Text(
+                                                text = lesson.lessonNo.toString(),
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 40.sp,
+                                            )
+                                        }
+
+                                        Column {
+                                            Text(
+                                                text = lesson.subject,
+                                                fontWeight = FontWeight.SemiBold,
+                                                fontSize = 20.sp,
+                                            )
+                                        }
+                                    }
+
+                                    Text(
+                                        text = "$time - ${lesson.timeTo}, ${
+                                            appState.safe(
+                                                "a teacher probably",
+                                                lesson.teacher
+                                            )
+                                        }, ${appState.safe("a classroom", lesson.classroom)}",
+                                    )
+                                }
                             }
                         }
                     }

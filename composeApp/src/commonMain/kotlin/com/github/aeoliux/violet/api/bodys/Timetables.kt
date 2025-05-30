@@ -55,6 +55,12 @@ data class Timetables(
 
                     val lesson = Lesson(
                         id = it.Lesson.Id.toInt(),
+                        timeTo = LocalTime.parse(
+                            if (it.HourTo.length == 5)
+                                it.HourTo.plus(":00")
+                            else
+                                it.HourTo
+                        ),
                         lessonNo = index.toInt(),
                         subject = it.Subject.Name,
                         teacher = "${it.Teacher.FirstName} ${it.Teacher.LastName}",

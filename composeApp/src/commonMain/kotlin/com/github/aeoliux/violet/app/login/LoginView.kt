@@ -32,7 +32,7 @@ import com.github.aeoliux.violet.app.components.LoadingIndicator
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun LoginView(vm: LoginViewModel = koinViewModel<LoginViewModel>()) {
+fun LoginView(onSuccess: suspend () -> Unit, vm: LoginViewModel = koinViewModel<LoginViewModel>()) {
     val appState = LocalAppState.current
 
     val login by vm.login.collectAsState()
@@ -91,14 +91,16 @@ fun LoginView(vm: LoginViewModel = koinViewModel<LoginViewModel>()) {
                     .focusRequester(passwordFocus),
                 keyboardActions = KeyboardActions(onDone = {
                     focusManager.clearFocus()
-                    vm.logIn(appState.databaseUpdated)
+                    vm.logIn(appState.databaseUpdated, onSuccess)
                 }),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 )
             )
             Button({
-                vm.logIn(appState.databaseUpdated)
+                vm.logIn(appState.databaseUpdated, {
+                    onSuccess()
+                })
             }) {
                 Text("Log in")
             }

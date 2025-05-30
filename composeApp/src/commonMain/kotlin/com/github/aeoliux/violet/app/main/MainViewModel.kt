@@ -1,13 +1,27 @@
 package com.github.aeoliux.violet.app.main
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.List
+import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.sharp.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.Keychain
 import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.app.agenda.AgendaView
+import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.Model
 import com.github.aeoliux.violet.app.appState.runBackgroundTask
 import com.github.aeoliux.violet.app.attendance.AttendanceView
@@ -15,6 +29,7 @@ import com.github.aeoliux.violet.app.grades.GradesView
 import com.github.aeoliux.violet.app.home.HomeView
 import com.github.aeoliux.violet.app.messages.MessagesView
 import com.github.aeoliux.violet.app.schoolNotices.SchoolNoticesView
+import com.github.aeoliux.violet.app.settings.SettingsView
 import com.github.aeoliux.violet.app.storage.AboutUserRepository
 import com.github.aeoliux.violet.app.storage.AgendaRepository
 import com.github.aeoliux.violet.app.storage.AttendanceRepository
@@ -29,7 +44,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class TabItem(val text: String, val destination: @Composable () -> Unit)
+data class TabItem(val text: String, val destination: @Composable () -> Unit, val important: Boolean = false, val icon: ImageVector? = null)
 
 class MainViewModel(
     private val client: ApiClient,
@@ -41,51 +56,40 @@ class MainViewModel(
     private val luckyNumberRepository: LuckyNumberRepository,
     private val messageLabelsRepository: MessageLabelsRepository,
     private val schoolNoticesRepository: SchoolNoticesRepository,
-    private val timetableRepository: TimetableRepository
+    private val timetableRepository: TimetableRepository,
 ): ViewModel() {
+
     val tabs = listOf(
-        TabItem("Home") { HomeView() },
-        TabItem("Grades") { GradesView() },
-        TabItem("Timetable") { TimetableView() },
-        TabItem("Attendance") { AttendanceView() },
-        TabItem("Agenda") { AgendaView() },
-        TabItem("School notices") { SchoolNoticesView() },
-        TabItem("Messages") { MessagesView() }
+        TabItem("Home", { HomeView() }, true, Icons.Rounded.Home),
+        TabItem("Grades", { GradesView() }, true, Icons.Rounded.Star),
+        TabItem("Timetable", { TimetableView() }, true, Icons.Rounded.List),
+        TabItem("Attendance", { AttendanceView() }, false, Icons.Rounded.CheckCircle),
+        TabItem("Agenda", { AgendaView() }, false, Icons.Rounded.DateRange),
+        TabItem("School notices", { SchoolNoticesView() }, false, Icons.Rounded.Notifications),
+        TabItem("Messages", { MessagesView() }, false, Icons.Rounded.Email),
+        TabItem("Settings", { SettingsView() }, false, Icons.Rounded.Settings),
     )
 
     private var _isRefreshing = MutableStateFlow(false)
     val isRefreshing get() = _isRefreshing.asStateFlow()
 
-    private var _selectedView = MutableStateFlow(0)
-    val selectedView get() = _selectedView.asStateFlow()
-
-    private var _settings = MutableStateFlow(false)
-    val settings get() = _settings.asStateFlow()
-
     fun refresh(status: MutableState<Boolean>) {
         viewModelScope.launch {
             runBackgroundTask {
                 _isRefreshing.update { true }
-                Model.logIn(client, keychain)
-                Model.getData(
-                    client, aboutUserRepository, agendaRepository, attendanceRepository, gradesRepository, luckyNumberRepository, messageLabelsRepository, schoolNoticesRepository, timetableRepository
-                )
+                try {
+                    Model.logIn(client, keychain)
+                    Model.getData(
+                        client, aboutUserRepository, agendaRepository, attendanceRepository, gradesRepository, luckyNumberRepository, messageLabelsRepository, schoolNoticesRepository, timetableRepository
+                    )
+                } catch (e: Exception) {
+                    println(e.message)
+                }
+
                 _isRefreshing.update { false }
 
                 status.value = !status.value
             }
-        }
-    }
-
-    fun selectView(view: Int) {
-        viewModelScope.launch {
-            _selectedView.update { view }
-        }
-    }
-
-    fun showOrHideSettings() {
-        viewModelScope.launch {
-            _settings.update { !it }
         }
     }
 }

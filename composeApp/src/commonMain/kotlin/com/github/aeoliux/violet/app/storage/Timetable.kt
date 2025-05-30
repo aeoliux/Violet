@@ -18,6 +18,7 @@ data class Timetable(
     val date: LocalDate,
     val time: LocalTime,
 
+    val timeTo: LocalTime,
     val lessonNo: Int,
     val subject: String,
     val teacher: String,
@@ -49,6 +50,7 @@ class TimetableRepository(private val database: AppDatabase) {
                     date = date,
                     time = time,
 
+                    timeTo = it.timeTo,
                     lessonNo = it.lessonNo,
                     subject = it.subject,
                     teacher = it.teacher,
@@ -65,6 +67,7 @@ class TimetableRepository(private val database: AppDatabase) {
         .fold(TimetableFinal()) { acc, it ->
             val lesson = Lesson(
                 id = it.id,
+                timeTo = it.timeTo,
                 lessonNo = it.lessonNo,
                 subject = it.subject,
                 teacher = it.teacher,

@@ -25,21 +25,27 @@ class LoginViewModel(
     private var _showLoadingIndicator = MutableStateFlow(false)
     val showLoadingIndicator get() = _showLoadingIndicator.asStateFlow()
 
-    fun logIn(output: MutableState<Boolean>) {
+    fun logIn(output: MutableState<Boolean>, onSuccess: suspend () -> Unit) {
         viewModelScope.launch {
             _showLoadingIndicator.update { true }
 
-            client.proceedLogin(_login.value, _password.value)
-            val me = client.me()
-            keychain.savePass("${_login.value} ${_password.value}")
-            aboutUserRepository.insertMe(me)
+            try {
+                client.proceedLogin(_login.value, _password.value)
+                val me = client.me()
+                keychain.savePass("${_login.value} ${_password.value}")
+                aboutUserRepository.insertMe(me)
 
-            _showLoadingIndicator.update { false }
+                _login.update { "" }
+                _password.update { "" }
 
-            _login.update { "" }
-            _password.update { "" }
+                onSuccess()
+            } catch (e: Exception) {
+
+                println(e)
+            }
 
             output.value = !output.value
+            _showLoadingIndicator.update { false }
         }
     }
 

@@ -25,6 +25,7 @@ import com.github.aeoliux.violet.api.Attendance
 import com.github.aeoliux.violet.api.toColorLong
 import com.github.aeoliux.violet.api.types.max
 import com.github.aeoliux.violet.api.types.min
+import com.github.aeoliux.violet.app.appState.formatDate
 
 @Composable
 fun AttendanceTableView(
@@ -44,7 +45,7 @@ fun AttendanceTableView(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        date.toString(),
+                        date.formatDate(),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )

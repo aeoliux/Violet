@@ -1,19 +1,14 @@
 package com.github.aeoliux.violet.app.storage
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabaseConstructor
 
+fun initializeDatabase(context: Context): AppDatabase {
+    val dbFile = context.getDatabasePath("violetRoom.db")
+    val dbBuilder = Room.databaseBuilder<AppDatabase>(
+        context = context,
+        name = dbFile.absolutePath
+    )
 
-object AppDatabaseConstructor {
-    fun initialize(context: Context): AppDatabase {
-        val dbFile = context.getDatabasePath("violetRoom.db")
-        val dbBuilder = Room.databaseBuilder<AppDatabase>(
-            context = context,
-            name = dbFile.absolutePath
-        )
-
-        return getRoomDatabase(dbBuilder)
-    }
+    return getRoomDatabase(dbBuilder)
 }

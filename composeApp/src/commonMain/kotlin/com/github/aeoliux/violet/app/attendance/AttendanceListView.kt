@@ -14,10 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.github.aeoliux.violet.api.Attendance
 import com.github.aeoliux.violet.api.toColorLong
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.appState.formatDate
+import com.github.aeoliux.violet.app.appState.formatDateTime
 import com.github.aeoliux.violet.app.components.ExpandableList
 
 @Composable
@@ -37,7 +41,7 @@ fun AttendanceListView(
                 header = {
                     Text(
                         modifier = Modifier.padding(15.dp),
-                        text = date.toString()
+                        text = date.formatDate()
                     )
                 }
             ) {
@@ -65,9 +69,14 @@ fun AttendanceListView(
                                 .wrapContentHeight()
                         ) {
                             Text(
-                                "At ${attendanceInfo.addDate} ${
+                                text = "${attendanceInfo.type} at lesson $lessonNo",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp
+                            )
+                            Text(
+                                text = "Added at ${attendanceInfo.addDate.formatDateTime()} by ${
                                     appState.safe("Someone", attendanceInfo.addedBy)
-                                } added ${attendanceInfo.type} on lesson no. $lessonNo"
+                                }"
                             )
                         }
                     }

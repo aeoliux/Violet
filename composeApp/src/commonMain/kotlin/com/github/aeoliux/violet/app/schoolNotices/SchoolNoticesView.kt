@@ -16,6 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.appState.formatDate
+import com.github.aeoliux.violet.app.appState.formatDateTime
 import com.github.aeoliux.violet.app.components.ExpandableList
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -45,7 +47,7 @@ fun SchoolNoticesView(vm: SchoolNoticesViewModel = koinViewModel<SchoolNoticesVi
                         )
                         Text(
                             fontSize = 15.sp,
-                            text = "Added at ${it.createdAt} by ${appState.safe("human (?)", it.addedBy)}"
+                            text = "By ${appState.safe("human (?)", it.addedBy)} at ${it.createdAt.formatDateTime()}"
                         )
                     }
                 }
@@ -53,8 +55,8 @@ fun SchoolNoticesView(vm: SchoolNoticesViewModel = koinViewModel<SchoolNoticesVi
                 val schoolNotice = it
 
                 Column(Modifier.padding(10.dp)) {
-                    Text("Starts at: ${schoolNotice.startDate}")
-                    Text("Ends at: ${schoolNotice.endDate}\n\n")
+                    Text("Starts at: ${schoolNotice.startDate.formatDate()}")
+                    Text("Ends at: ${schoolNotice.endDate.formatDate()}\n\n")
 
                     Text(
                         modifier = Modifier.fillMaxWidth(),

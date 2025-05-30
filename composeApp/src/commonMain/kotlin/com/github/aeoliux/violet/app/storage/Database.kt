@@ -21,7 +21,7 @@ import kotlinx.coroutines.IO
     ClassInfo::class
                      ], version = 1, exportSchema = false)
 @TypeConverters(RoomTypeConverters::class)
-@ConstructedBy(AppDatabaseCtor::class)
+@ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun getAgendaDao(): AgendaDao
     abstract fun getGradesDao(): GradesDao
@@ -43,4 +43,7 @@ fun getRoomDatabase(
         .build()
 }
 
-expect object AppDatabaseCtor: RoomDatabaseConstructor<AppDatabase>
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object AppDatabaseConstructor: RoomDatabaseConstructor<AppDatabase> {
+    override fun initialize(): AppDatabase
+}

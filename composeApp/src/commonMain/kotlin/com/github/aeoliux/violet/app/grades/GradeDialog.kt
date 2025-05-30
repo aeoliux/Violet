@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.github.aeoliux.violet.api.types.Grade
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.appState.formatDateTime
 import com.github.aeoliux.violet.app.components.Dialog
 
 @Composable
@@ -23,7 +24,7 @@ fun GradeDialog(grade: Grade, onDismiss: () -> Unit) {
             Text("Added by: ${appState.safe("Someone", grade.addedBy)}")
             Text("Category: ${grade.category}")
             Text("Weight: ${grade.weight}")
-            Text("Date: ${grade.addDate}")
+            Text("Date: ${grade.addDate.formatDateTime()}")
             grade.comment?.let {
                 Text("Comment: $it")
             }
