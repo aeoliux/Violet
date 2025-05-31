@@ -30,7 +30,8 @@ fun ExpandableList(
     header: @Composable () -> Unit,
     expanded: Boolean = false,
     onChange: (() -> Unit)? = null,
-    content: @Composable () -> Unit) {
+    content: @Composable () -> Unit
+) {
     var isExpanded by remember { mutableStateOf(expanded) }
 
     Column(Modifier.fillMaxWidth()) {
@@ -43,10 +44,10 @@ fun ExpandableList(
                         onChange()
                 }
                 .wrapContentHeight(),
-            horizontalArrangement = Arrangement.Start,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(Modifier.fillMaxHeight(),
+            Column(Modifier.fillMaxHeight().fillMaxWidth(fraction = 0.9f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -55,12 +56,12 @@ fun ExpandableList(
 
             Column(Modifier
                 .fillMaxSize()
-                .width(50.dp)
                 .padding(end = 15.dp),
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.Center
             ) {
                 Icon(
+                    modifier = Modifier.padding(start = 10.dp),
                     imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = if (isExpanded) "Expand" else "Collapse"
                 )

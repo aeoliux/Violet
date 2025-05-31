@@ -41,20 +41,17 @@ data class Grades(val Grades: List<GradeData>) {
                 acc
 
             val comment = comments.getCommentByGradeId(gradeData.Id)
-            val gradeType = {
-                if (gradeData.IsConstituent)
-                    GradeType.Constituent
-                else if (gradeData.IsSemester)
-                    GradeType.Semester
-                else if (gradeData.IsSemesterProposition)
-                    GradeType.SemesterProposition
-                else if (gradeData.IsFinal)
-                    GradeType.Final
-                else if (gradeData.IsFinalProposition)
-                    GradeType.FinalProposition
 
+            val gradeType = if (gradeData.IsSemester)
+                GradeType.Semester
+            else if (gradeData.IsSemesterProposition)
+                GradeType.SemesterProposition
+            else if (gradeData.IsFinal)
+                GradeType.Final
+            else if (gradeData.IsFinalProposition)
+                GradeType.FinalProposition
+            else
                 GradeType.Constituent
-            }()
 
             val teacher = users[gradeData.AddedBy.Id]?.firstName + " " + users[gradeData.AddedBy.Id]?.lastName
 

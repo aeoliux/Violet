@@ -1,6 +1,7 @@
 package com.github.aeoliux.violet.app.grades
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.aeoliux.violet.api.types.Grade
@@ -47,17 +49,7 @@ fun GradeComponent(grade: Grade) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                Modifier
-                    .height(50.dp)
-                    .width(50.dp)
-                    .padding(5.dp)
-                    .background(grade.color.toColorLong()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(grade.grade, color = Color.Black)
-            }
+            GradeBox(grade, 5.dp)
         }
 
         Column(
@@ -74,5 +66,29 @@ fun GradeComponent(grade: Grade) {
 
     if (showDescription) {
         GradeDialog(grade) { showDescription = false }
+    }
+}
+
+@Composable
+fun GradeBox(grade: Grade, padding: Dp, proposal: Boolean = false) {
+    val modifier = remember {
+        val m = Modifier
+            .height(50.dp)
+            .width(50.dp)
+            .padding(padding)
+
+
+        if (proposal)
+            m.border(width = 1.dp, color = grade.color.toColorLong())
+        else
+            m.background(grade.color.toColorLong())
+    }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(grade.grade, color = Color.Black)
     }
 }

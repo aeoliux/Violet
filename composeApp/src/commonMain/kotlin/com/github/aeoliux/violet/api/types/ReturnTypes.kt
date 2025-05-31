@@ -1,5 +1,6 @@
 package com.github.aeoliux.violet.api.types
 
+import androidx.collection.emptyLongSet
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -48,7 +49,17 @@ data class Grade(
     val weight: Int,
     val semester: Int,
     val comment: String?,
-)
+) {
+    fun value(): Float {
+        return (this.grade.getOrNull(0)?.digitToIntOrNull()?.toFloat() ?: 0.0f) +
+                when (this.grade.getOrNull(1)) {
+                    '+' -> 0.5f
+                    '-' -> -0.25f
+                    null -> 0.0f
+                    else -> 0.0f
+                }
+    }
+}
 
 data class ClassInfo(
     val number: Int,
