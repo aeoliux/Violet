@@ -7,5 +7,5 @@ data class Message(
     val date: LocalDateTime,
     val topic: String,
     val content: String,
-    val attachments: List<String>
+    val attachments: List<Pair<String, String>>
 )

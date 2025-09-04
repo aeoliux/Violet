@@ -10,6 +10,7 @@ import com.github.aeoliux.violet.app.storage.AttendanceRepository
 import com.github.aeoliux.violet.app.storage.GradesRepository
 import com.github.aeoliux.violet.app.storage.LuckyNumberRepository
 import com.github.aeoliux.violet.app.storage.MessageLabelsRepository
+import com.github.aeoliux.violet.app.storage.MessagesRepository
 import com.github.aeoliux.violet.app.storage.SchoolNoticesRepository
 import com.github.aeoliux.violet.app.storage.TimetableRepository
 import kotlinx.coroutines.launch
@@ -23,13 +24,20 @@ class SettingsViewModel(
     private val luckyNumberRepository: LuckyNumberRepository,
     private val messageLabelsRepository: MessageLabelsRepository,
     private val schoolNoticesRepository: SchoolNoticesRepository,
-    private val timetableRepository: TimetableRepository
+    private val timetableRepository: TimetableRepository,
+    private val messagesRepository: MessagesRepository
 ): ViewModel() {
     fun logOut() {
         viewModelScope.launch {
             Model.deleteData(
-                keychain, aboutUserRepository, agendaRepository, attendanceRepository, gradesRepository, luckyNumberRepository, messageLabelsRepository, schoolNoticesRepository, timetableRepository
+                keychain, aboutUserRepository, agendaRepository, attendanceRepository, gradesRepository, luckyNumberRepository, messageLabelsRepository, schoolNoticesRepository, timetableRepository, messagesRepository
             )
+        }
+    }
+
+    fun clearMessages() {
+        viewModelScope.launch {
+            messagesRepository.clearStorage()
         }
     }
 }

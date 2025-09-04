@@ -26,9 +26,12 @@ import com.github.aeoliux.violet.api.types.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
+import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
+import io.ktor.http.Cookie
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.datetime.Clock
@@ -46,6 +49,8 @@ class ApiClient constructor() {
     var colors = LinkedHashMap<Int, String>()
     var classrooms = LinkedHashMap<Int, String>()
 
+    var cookieStorage = AcceptAllCookiesStorage()
+
     val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
@@ -54,7 +59,9 @@ class ApiClient constructor() {
             })
         }
 
-        install(HttpCookies)
+        install(HttpCookies) {
+            storage = cookieStorage
+        }
     }
 
     suspend fun proceedLogin(login: String, password: String) {

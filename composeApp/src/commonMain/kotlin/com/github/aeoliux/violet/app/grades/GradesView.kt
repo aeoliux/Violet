@@ -52,7 +52,6 @@ fun GradesView(vm: GradesViewModel = koinViewModel<GradesViewModel>()) {
             ) {
                 ExpandableList({
                     val average = remember { grades.filter { it.gradeType == GradeType.Constituent }.countAverage() }
-                    println(listOf(average, subject))
 
                     GradesExpandableListHeader(
                         text = subject,

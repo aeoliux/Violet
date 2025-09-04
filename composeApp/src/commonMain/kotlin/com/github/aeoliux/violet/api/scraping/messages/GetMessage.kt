@@ -20,6 +20,27 @@ suspend fun ApiClient.getMessage(url: String): Message {
         .replace("\n ", "\n")
         .replace("<br>", "")
 
+    val attachments: List<Pair<String, String>> =
+        messageData.select("table:nth-child(4) > tbody > tr").foldIndexed(emptyList()) { i, acc, elem ->
+            if (i == 0)
+                acc
+            else
+                acc.plus(
+                    Pair(
+                        elem
+                            .select("td:nth-child(1)")
+                            .text(),
+                        elem
+                            .select("td:nth-child(2) > a > img")
+                            .attr("onclick")
+                            .split("\"")[1]
+                            .replace("\\", "")
+                    )
+                )
+        }
+
+    println(attachments)
+
     var topic = ""
     var date = ""
     var sender: String? = null
@@ -37,6 +58,6 @@ suspend fun ApiClient.getMessage(url: String): Message {
         date = LocalDateTime.parse(date, localDateTimeFormat),
         topic = topic,
         content = content,
-        attachments = emptyList()
+        attachments = attachments
     )
 }

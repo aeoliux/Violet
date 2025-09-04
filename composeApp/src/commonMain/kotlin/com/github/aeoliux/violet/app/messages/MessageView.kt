@@ -3,10 +3,13 @@ package com.github.aeoliux.violet.app.messages
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -29,90 +32,148 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.aeoliux.violet.api.scraping.messages.Message
+import com.github.aeoliux.violet.api.scraping.messages.MessageLabel
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.LocalAppState
+import com.github.aeoliux.violet.app.appState.WebView
 import com.github.aeoliux.violet.app.appState.formatDateTime
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MessageView(
-    url: String,
+    label: MessageLabel,
     appState: AppState = LocalAppState.current,
     vm: MessageViewModel = koinViewModel<MessageViewModel>(),
     onClose: () -> Unit
 ) {
     val message by vm.message.collectAsState()
+    val download by vm.download.collectAsState()
 
     LaunchedEffect(Unit) {
-        vm.fetchMessage(url)
+        vm.fetchMessage(label)
     }
 
-    Row(Modifier.fillMaxWidth()) {
-        IconButton(
-            onClick = {
-                vm.closeMessage()
-                onClose()
-            },
-            modifier = Modifier.padding(start = 15.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                tint = MaterialTheme.colorScheme.onBackground,
-                contentDescription = "Go back"
-            )
+    if (download != null) {
+        WebView(
+            url = "https://synergia.librus.pl${download!!.second}",
+            domains = listOf("https://synergia.librus.pl", "https://sandbox.librus.pl"),
+            capture = "action=CSDownload",
+            saveTo = download!!.first,
+            onFinish =  { vm.closeDownload() },
+            modifier = Modifier
+        )
+    } else {
+        Row(Modifier.fillMaxWidth()) {
+            IconButton(
+                onClick = {
+                    vm.closeMessage()
+                    onClose()
+                },
+                modifier = Modifier.padding(start = 15.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    contentDescription = "Go back"
+                )
+            }
         }
-    }
 
-    Divider(Modifier.padding(15.dp))
+        Divider(Modifier.padding(15.dp))
 
-    Column(Modifier.padding(start = 15.dp, end = 15.dp)) {
-        message?.let {
-            val labels = listOf("From", "Topic", "Sent at")
-            val vals = listOf(appState.safe("a human (?)", it.sender), it.topic, it.date.formatDateTime())
+        Column(Modifier.padding(start = 15.dp, end = 15.dp)) {
+            message?.let {
+                val labels = listOf("From", "Topic", "Sent at")
+                val vals = listOf(
+                    appState.safe("a human (?)", it.sender),
+                    it.topic,
+                    it.date.formatDateTime()
+                )
 
-            labels.forEachIndexed { index, label ->
-                val value = vals[index]
-                value?.let {
-                    Row {
+                labels.forEachIndexed { index, label ->
+                    val value = vals[index]
+                    value?.let {
+                        Row {
+                            Text(
+                                fontWeight = FontWeight.SemiBold,
+                                text = label,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = it,
+                                textAlign = TextAlign.End,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+
+                        Divider(Modifier.padding(top = 15.dp, bottom = 15.dp))
+                    }
+                }
+
+                Card {
+                    Column(Modifier.fillMaxWidth().padding(10.dp)) {
                         Text(
-                            fontWeight = FontWeight.SemiBold,
-                            text = label,
-                            color = MaterialTheme.colorScheme.onBackground
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = 12.sp,
+                            text = it.content,
+                            style = LocalTextStyle.current.merge(
+                                TextStyle(
+                                    lineHeight = 1.5.em,
+                                    lineHeightStyle = LineHeightStyle(
+                                        trim = LineHeightStyle.Trim.Both,
+                                        alignment = LineHeightStyle.Alignment.Center
+                                    ),
+                                )
+                            )
                         )
                     }
+                }
+            } ?: CircularProgressIndicator()
+        }
+
+        message?.attachments?.let {
+            Column(
+                modifier = Modifier.fillMaxSize()
+                    .padding(start = 15.dp, end = 15.dp, top = 50.dp, bottom = 50.dp),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Divider(Modifier.padding(top = 15.dp, bottom = 15.dp))
+                Row {
+                    Text(
+                        fontWeight = FontWeight.SemiBold,
+                        text = "Attachments",
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                it.forEach {
                     Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        Modifier.fillMaxWidth().padding(top = 5.dp),
+                        horizontalArrangement = Arrangement.SpaceAround
                     ) {
+                        IconButton({
+                            vm.downloadFile(it.first, it.second)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Rounded.KeyboardArrowDown,
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = "Download"
+                            )
+                        }
+
                         Text(
-                            text = "$it",
+                            text = it.first,
                             textAlign = TextAlign.End,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }
-
-                    Divider(Modifier.padding(top = 15.dp, bottom = 15.dp))
                 }
             }
-
-            Card {
-                Column(Modifier.fillMaxWidth().padding(10.dp)) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        fontSize = 12.sp,
-                        text = it.content,
-                        style = LocalTextStyle.current.merge(
-                            TextStyle(
-                                lineHeight = 1.5.em,
-                                lineHeightStyle = LineHeightStyle(
-                                    trim = LineHeightStyle.Trim.Both,
-                                    alignment = LineHeightStyle.Alignment.Center
-                                ),
-                            )
-                        )
-                    )
-                }
-            }
-        }?: CircularProgressIndicator()
+        }
     }
 }

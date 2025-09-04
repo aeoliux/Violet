@@ -9,6 +9,7 @@ import com.github.aeoliux.violet.app.storage.AttendanceRepository
 import com.github.aeoliux.violet.app.storage.GradesRepository
 import com.github.aeoliux.violet.app.storage.LuckyNumberRepository
 import com.github.aeoliux.violet.app.storage.MessageLabelsRepository
+import com.github.aeoliux.violet.app.storage.MessagesRepository
 import com.github.aeoliux.violet.app.storage.SchoolNoticesRepository
 import com.github.aeoliux.violet.app.storage.TimetableRepository
 
@@ -89,7 +90,8 @@ object Model {
         luckyNumberRepository: LuckyNumberRepository,
         messageLabelsRepository: MessageLabelsRepository,
         schoolNoticesRepository: SchoolNoticesRepository,
-        timetableRepository: TimetableRepository
+        timetableRepository: TimetableRepository,
+        messagesRepository: MessagesRepository
     ) {
         aboutUserRepository.deleteMe()
         aboutUserRepository.deleteClassInfo()
@@ -100,6 +102,7 @@ object Model {
         messageLabelsRepository.deleteMessageLabels()
         schoolNoticesRepository.deleteSchoolNotices()
         timetableRepository.deleteTimetable()
+        messagesRepository.clearStorage()
 
         keychain.deletePass()
     }

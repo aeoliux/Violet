@@ -18,7 +18,8 @@ import kotlinx.coroutines.IO
     SchoolNotice::class,
     Timetable::class,
     Me::class,
-    ClassInfo::class
+    ClassInfo::class,
+    Message::class
                      ], version = 1, exportSchema = false)
 @TypeConverters(RoomTypeConverters::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -31,6 +32,7 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun getTimetableDao(): TimetableDao
     abstract fun getAboutUserDao(): AboutUserDao
     abstract fun getLuckyNumberDao(): LuckyNumberDao
+    abstract fun getMessagesDao(): MessagesDao
 }
 
 fun getRoomDatabase(

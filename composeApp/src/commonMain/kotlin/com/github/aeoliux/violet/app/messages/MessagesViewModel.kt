@@ -3,6 +3,7 @@ package com.github.aeoliux.violet.app.messages
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.api.scraping.messages.MessageCategories
+import com.github.aeoliux.violet.api.scraping.messages.MessageLabel
 import com.github.aeoliux.violet.api.scraping.messages.MessagesList
 import com.github.aeoliux.violet.app.storage.MessageLabelsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ class MessagesViewModel(private val repository: MessageLabelsRepository): ViewMo
     private var _messages = MutableStateFlow(MessagesList())
     val messages get() = _messages.asStateFlow()
 
-    private var _selectedMessage = MutableStateFlow<String?>(null)
+    private var _selectedMessage = MutableStateFlow<MessageLabel?>(null)
     val selectedMessage get() = _selectedMessage.asStateFlow()
 
     fun selectCategory(category: MessageCategories) {
@@ -34,9 +35,9 @@ class MessagesViewModel(private val repository: MessageLabelsRepository): ViewMo
         }
     }
 
-    fun selectMessage(url: String?) {
+    fun selectMessage(label: MessageLabel?) {
         viewModelScope.launch {
-            _selectedMessage.update { url }
+            _selectedMessage.update { label }
         }
     }
 }

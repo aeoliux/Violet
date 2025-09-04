@@ -1,5 +1,6 @@
 package com.github.aeoliux.violet.app.main
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -10,11 +11,14 @@ import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +27,7 @@ import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.app.agenda.AgendaView
 import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.Model
+import com.github.aeoliux.violet.app.appState.WebView
 import com.github.aeoliux.violet.app.appState.runBackgroundTask
 import com.github.aeoliux.violet.app.attendance.AttendanceView
 import com.github.aeoliux.violet.app.grades.GradesView
@@ -67,6 +72,14 @@ class MainViewModel(
         TabItem("Agenda", { AgendaView() }, false, Icons.Rounded.DateRange),
         TabItem("School notices", { SchoolNoticesView() }, false, Icons.Rounded.Notifications),
         TabItem("Messages", { MessagesView() }, false, Icons.Rounded.Email),
+        TabItem("Open in WebView", { WebView(
+            "https://synergia.librus.pl/uczen/index",
+            listOf("https://synergia.librus.pl"),
+            null,
+            null,
+            {},
+            Modifier.fillMaxSize()
+        ) }, false, Icons.Rounded.Share),
         TabItem("Settings", { SettingsView() }, false, Icons.Rounded.Settings),
     )
 

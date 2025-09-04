@@ -39,7 +39,7 @@ fun MessagesView(
     if (selectedMessage != null) {
         selectedMessage?.let {
             MessageView(
-                url = it,
+                label = it,
                 onClose = { vm.selectMessage(null) }
             )
         }
@@ -61,7 +61,7 @@ fun MessagesView(
                     .wrapContentHeight()
                     .padding(start = 10.dp, end = 10.dp, top = 2.dp, bottom = 2.dp)
                     .clickable {
-                        vm.selectMessage(it.url)
+                        vm.selectMessage(it)
                     }
             ) {
                 Column(

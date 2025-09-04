@@ -3,6 +3,7 @@ package com.github.aeoliux.violet.app
 import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.app.agenda.AgendaViewModel
 import com.github.aeoliux.violet.app.appState.AppState
+import com.github.aeoliux.violet.app.appState.BrowserHandler
 import com.github.aeoliux.violet.app.attendance.AttendanceViewModel
 import com.github.aeoliux.violet.app.grades.GradesViewModel
 import com.github.aeoliux.violet.app.home.HomeViewModel
@@ -18,6 +19,7 @@ import com.github.aeoliux.violet.app.storage.AttendanceRepository
 import com.github.aeoliux.violet.app.storage.GradesRepository
 import com.github.aeoliux.violet.app.storage.LuckyNumberRepository
 import com.github.aeoliux.violet.app.storage.MessageLabelsRepository
+import com.github.aeoliux.violet.app.storage.MessagesRepository
 import com.github.aeoliux.violet.app.storage.SchoolNoticesRepository
 import com.github.aeoliux.violet.app.storage.TimetableRepository
 import com.github.aeoliux.violet.app.timetable.TimetableViewModel
@@ -28,6 +30,7 @@ import org.koin.dsl.module
 
 expect val keychainModule: Module
 expect val databaseModule: Module
+expect val browserModule: Module
 
 val clientModule = module {
     singleOf(::ApiClient)
@@ -58,11 +61,13 @@ val repositoriesModule = module {
     singleOf(::SchoolNoticesRepository)
     singleOf(::TimetableRepository)
     singleOf(::AboutUserRepository)
+    singleOf(::MessagesRepository)
 }
 
 val appModules = listOf(
     keychainModule,
     databaseModule,
+    browserModule,
     clientModule,
     repositoriesModule,
     viewModelsModule

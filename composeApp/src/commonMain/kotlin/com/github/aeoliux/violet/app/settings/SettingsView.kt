@@ -22,5 +22,12 @@ fun SettingsView(
         }) {
             Text("Log out")
         }
+
+        Button({
+            vm.clearMessages()
+            appState.databaseUpdated.value = !appState.databaseUpdated.value
+        }) {
+            Text("Clear messages storage")
+        }
     }
 }
