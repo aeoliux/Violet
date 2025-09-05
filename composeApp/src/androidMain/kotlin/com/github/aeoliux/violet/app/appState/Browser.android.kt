@@ -30,6 +30,7 @@ import io.ktor.http.Cookie
 import io.ktor.http.Url
 import io.ktor.utils.io.core.Input
 import org.koin.compose.koinInject
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -45,19 +46,23 @@ actual class BrowserHandler(private val context: Context, private val activity: 
         context.startActivity(intent)
     }
 
-    fun saveFile(filename: String, content: ByteArray) {
+    actual suspend fun saveFile(filename: String, content: ByteArray, onFinish: () -> Unit) {
         fileContent = content
+        onFinishDownload = onFinish
         activity.createDocument.launch(filename)
     }
 }
 
 lateinit var fileContent: ByteArray
+lateinit var onFinishDownload: () -> Unit
 
 fun saveTo(uri: Uri, context: Context) {
     val outputStream = context.contentResolver.openOutputStream(uri)
     outputStream?.use {
         it.write(fileContent)
     }
+
+    onFinishDownload()
 }
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -66,14 +71,12 @@ actual fun WebView(
     url: String,
     domains: List<String>,
     capture: String?,
-    saveTo: String?,
-    onFinish: () -> Unit,
+    onFinish: (url: String, cookies: LinkedHashMap<String, String>) -> Unit,
     modifier: Modifier,
 ) {
     val context = koinInject<Context>()
     val apiClient = koinInject<ApiClient>()
     val keychain = koinInject<Keychain>()
-    val browser = koinInject<BrowserHandler>()
 
     var cookies by remember { mutableStateOf(emptyList<Cookie>()) }
     LaunchedEffect(Unit) {
@@ -113,29 +116,21 @@ actual fun WebView(
                         if (request != null && capture != null) {
                             val url = request.url.toString()
                             if (url.contains(capture)) {
-                                val conn = URL(url).openConnection() as HttpsURLConnection
                                 val cookieManager = CookieManager.getInstance()
-                                val cookie = domains.fold("") { acc, domain ->
-                                    acc.plus(cookieManager.getCookie(domain))
+                                val cookies: LinkedHashMap<String, String> = domains.fold(LinkedHashMap()) { acc, domain ->
+                                    if (!acc.containsKey(domain)) acc[domain] = ""
+                                    acc[domain] = acc[domain].plus(cookieManager.getCookie(domain))
+                                    acc
                                 }
-                                println(cookie)
 
-                                conn.setRequestProperty("Cookie", cookie)
-                                conn.connect()
-
-                                val contentTypeHeader = conn.contentType ?: "application/octet-stream"
-                                val encoding = conn.contentEncoding ?: "utf-8"
-
-                                val mimeType = contentTypeHeader.split(";")[0].trim()
-
-                                var inputStream = conn.inputStream
-                                browser.saveFile(saveTo?:"file", conn.inputStream.readBytes())
-                                onFinish()
+                                onFinish(url, cookies)
 
                                 return WebResourceResponse(
-                                    mimeType,
-                                    encoding,
-                                    inputStream
+                                    "text/plain",
+                                    "utf-8",
+                                    ByteArrayInputStream(
+                                        ByteArray(0)
+                                    )
                                 )
                             }
                         }
@@ -153,7 +148,7 @@ actual fun WebView(
 }
 
 fun setCookies(context: Context, url: String, cookies: List<Cookie>) {
-    val cookieManager = android.webkit.CookieManager.getInstance()
+    val cookieManager = CookieManager.getInstance()
     cookieManager.setAcceptCookie(true)
     cookieManager.setAcceptThirdPartyCookies(WebView(context), true)
 

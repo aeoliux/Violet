@@ -3,15 +3,20 @@ package com.github.aeoliux.violet.app.messages
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fleeksoft.io.InputStream
 import com.github.aeoliux.violet.Keychain
 import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.api.scraping.messages.Message
 import com.github.aeoliux.violet.api.scraping.messages.MessageLabel
 import com.github.aeoliux.violet.api.scraping.messages.getMessage
+import com.github.aeoliux.violet.app.appState.AppState
 import com.github.aeoliux.violet.app.appState.BrowserHandler
 import com.github.aeoliux.violet.app.appState.Model
 import com.github.aeoliux.violet.app.storage.AppDatabase
 import com.github.aeoliux.violet.app.storage.MessagesRepository
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +26,7 @@ class MessageViewModel(
     private val client: ApiClient,
     private val keychain: Keychain,
     private val messagesRepository: MessagesRepository,
+    private val appState: AppState,
     private val browserHandler: BrowserHandler
 ): ViewModel() {
     private var _message = MutableStateFlow<Message?>(null)
@@ -57,9 +63,21 @@ class MessageViewModel(
         }
     }
 
-    fun closeDownload() {
+    fun fetchFile(url: String, cookies: LinkedHashMap<String, String>) {
         viewModelScope.launch {
-            _download.update { null }
+            val resp = client.client.get(url) {
+                cookies["https://sandbox.librus.pl"]?.let {
+                    header("Cookie", it)
+                }
+            }
+
+            if (resp.status.value != 200) {
+                println("http status: ${resp.status.value} ${resp.status.description}")
+                return@launch
+            }
+
+            val content: ByteArray = resp.body()
+            browserHandler.saveFile(_download.value!!.first, content, {})
         }
     }
 }

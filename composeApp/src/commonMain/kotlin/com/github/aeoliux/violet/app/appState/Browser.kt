@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 
 expect class BrowserHandler {
     suspend fun openUrl(url: String)
+    suspend fun saveFile(filename: String, content: ByteArray, onFinish: () -> Unit)
 }
 
 @Composable
@@ -12,7 +13,6 @@ expect fun WebView(
     url: String,
     domains: List<String>,
     capture: String?,
-    saveTo: String?,
-    onFinish: () -> Unit,
+    onFinish: (url: String, cookies: LinkedHashMap<String, String>) -> Unit,
     modifier: Modifier,
 )

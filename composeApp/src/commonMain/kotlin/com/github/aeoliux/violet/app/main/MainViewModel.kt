@@ -76,8 +76,7 @@ class MainViewModel(
             "https://synergia.librus.pl/uczen/index",
             listOf("https://synergia.librus.pl"),
             null,
-            null,
-            {},
+            { url, cookies -> Unit },
             Modifier.fillMaxSize()
         ) }, false, Icons.Rounded.Share),
         TabItem("Settings", { SettingsView() }, false, Icons.Rounded.Settings),

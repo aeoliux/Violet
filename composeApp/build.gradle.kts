@@ -96,8 +96,8 @@ android {
 
     defaultConfig {
         applicationId = "com.github.aeoliux.violet"
-        minSdk = 32
-        targetSdk = 35
+        minSdk = 33
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }

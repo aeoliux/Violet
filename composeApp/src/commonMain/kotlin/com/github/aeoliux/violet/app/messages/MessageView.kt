@@ -58,8 +58,7 @@ fun MessageView(
             url = "https://synergia.librus.pl${download!!.second}",
             domains = listOf("https://synergia.librus.pl", "https://sandbox.librus.pl"),
             capture = "action=CSDownload",
-            saveTo = download!!.first,
-            onFinish =  { vm.closeDownload() },
+            onFinish =  { url, cookies -> vm.fetchFile(url, cookies) },
             modifier = Modifier
         )
     } else {
