@@ -54,7 +54,10 @@ fun MainContentView() {
                                     contentDescription = it.first,
                                     tint = MaterialTheme.colorScheme.onBackground
                                 )
-                                Text(it.first)
+                                Text(
+                                    text = it.first,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         }
                     }

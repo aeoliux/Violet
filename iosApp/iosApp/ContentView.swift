@@ -2,32 +2,51 @@ import SwiftUI
 import Shared
 
 struct ContentView: View {
-    @State private var showContent = false
+    @State var viewModel = ViewModel()
+    
     var body: some View {
         VStack {
-            Button("Click me!") {
-                withAnimation {
-                    showContent = !showContent
-                }
-            }
-
-            if showContent {
-                VStack(spacing: 16) {
-                    Image(systemName: "swift")
-                        .font(.system(size: 200))
-                        .foregroundColor(.accentColor)
-                    Text("SwiftUI: \(Greeting().greet())")
-                }
-                .transition(.move(edge: .top).combined(with: .opacity))
+            if self.viewModel.logState {
+                MainContentView()
+            } else {
+                NavigationStack { LoginView() }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
+        .alert(self.viewModel.alertState.alertState.message, isPresented: self.$viewModel.alertShown) {
+            Button("Ok", role: .cancel) { self.viewModel.alertState.alertState.close() }
+        }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+extension ContentView {
+    @Observable
+    class ViewModel {
+        var logState = false
+        var alertShown = false
+        
+        let alertState = AlertStateInjector()
+        let repos = RepositoryHelper()
+        
+        var logStateTask: Task<(), Never>?
+        var alertStateTask: Task<(), Never>?
+        
+        init() {
+            self.logStateTask = Task {
+                for await logState in self.repos.clientManager.logStateFlow {
+                    self.logState = logState.boolValue
+                }
+            }
+            
+            self.alertStateTask = Task {
+                for await alertShown in self.alertState.alertState.shown {
+                    self.alertShown = alertShown.boolValue
+                }
+            }
+        }
+        
+        deinit {
+            self.logStateTask?.cancel()
+            self.alertStateTask?.cancel()
+        }
     }
 }

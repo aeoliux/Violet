@@ -1,6 +1,7 @@
 package com.github.aeoliux
 
 import com.github.aeoliux.repositories.AboutMeRepository
+import com.github.aeoliux.repositories.AlertState
 import com.github.aeoliux.repositories.ClientManager
 import com.github.aeoliux.repositories.GradesRepository
 import com.github.aeoliux.repositories.LuckyNumberRepository
@@ -16,6 +17,7 @@ val appModule = module {
     singleOf(::LuckyNumberRepository)
     singleOf(::GradesRepository)
     singleOf(::TimetableRepository)
+    singleOf(::AlertState)
 }
 
 fun initializeKoin(platformModule: Module) {

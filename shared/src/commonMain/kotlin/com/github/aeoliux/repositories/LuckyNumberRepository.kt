@@ -10,7 +10,7 @@ class LuckyNumberRepository(
 ) {
     fun getLuckyNumberFlow() = this.appDatabase.getLuckyNumberDao().getLuckyNumber()
 
-    suspend fun refresh() = this.client.with { client ->
+    suspend fun refresh(): Unit = this.client.with { client ->
         val new = client.luckyNumber()
         val current = this.appDatabase.getLuckyNumberDao().getLuckyNumber().firstOrNull()
 

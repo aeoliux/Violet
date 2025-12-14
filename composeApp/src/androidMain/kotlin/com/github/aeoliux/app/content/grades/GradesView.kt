@@ -54,7 +54,7 @@ fun GradesView(viewModel: GradesViewModel = koinViewModel<GradesViewModel>()) {
     ) {
         LazyColumn(Modifier.fillMaxSize()) {
             item {
-                Text(text = "Grades", fontSize = 42.sp, modifier = Modifier.padding(bottom = 10.dp))
+                Text(text = "Grades", fontSize = 32.sp, modifier = Modifier.padding(bottom = 10.dp))
             }
 
             grades.forEach { (subject, grades) ->
