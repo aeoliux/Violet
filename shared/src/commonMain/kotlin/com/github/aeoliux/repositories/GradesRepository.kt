@@ -1,23 +1,41 @@
 package com.github.aeoliux.repositories
 
+import com.github.aeoliux.api.types.GradeType
 import com.github.aeoliux.storage.AppDatabase
 import com.github.aeoliux.storage.Grade
+import com.github.aeoliux.storage.GradesDao
+import io.ktor.util.Hash.combine
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
 class GradesRepository(
     private val appDatabase: AppDatabase,
     private val clientManager: ClientManager
 ) {
-    fun getGradesFlow(): Flow<LinkedHashMap<String, List<Grade>>> = this.appDatabase
-        .getGradesDao()
-        .getGrades()
-        .map { grades ->
-            val subjects = grades.map { it.subject }.distinct()
+    fun getGeneralAveragesFlow() = this.appDatabase.getGradesDao().let { dao ->
+        combine(
+            dao.countAverage(),
+            dao.countAverage(GradeType.FinalProposition),
+            dao.countSemestralAverage(1),
+            dao.countSemestralAverage(1, GradeType.SemesterProposition),
+            dao.countSemestralAverage(2),
+            dao.countSemestralAverage(2, GradeType.SemesterProposition)
+        ) { avgs -> avgs }
+    }
 
-            subjects.associateWithTo(linkedMapOf()) { subject ->
-                grades.filter { it.subject == subject }
-            }
+    fun getSubjectsListFlow() = this.appDatabase
+        .getGradesDao()
+        .getSubjects()
+
+    fun getGradesFlow(subject: String) = this.appDatabase
+        .getGradesDao()
+        .getGradesForSubject(subject)
+        .map { grades ->
+            listOf(
+                grades.filter { it.semester == 1 },
+                grades.filter { it.semester == 2 }
+            )
         }
 
     fun getLatestGrades(amount: Int = 5) = this.appDatabase
@@ -32,6 +50,7 @@ class GradesRepository(
                     id = it.id,
                     subject = subject,
                     grade = it.grade,
+                    gradeValue = this.gradeValue(it.grade),
                     addDate = it.addDate,
                     color = it.color,
                     gradeType = it.gradeType,
@@ -46,4 +65,33 @@ class GradesRepository(
 
         this.appDatabase.getGradesDao().upsertMultiple(newGradesMapped)
     }
+
+    internal fun gradeValue(grade: String): Double = grade
+        .toCharArray()
+        .takeIf { it.size <= 2 }
+        ?.let {
+            it
+                .takeIf { it.size == 2 } ?: it.plus(' ')
+        }
+        ?.let { Pair(it[0].digitToIntOrNull() ?: return@let null, it[1]) }
+        ?.let { Pair(it.first, when (it.second) {
+            '+' -> 0.5
+            '-' -> -0.25
+            else -> 0.0
+        })}
+        ?.let { it.first + it.second }
+        ?: 0.0
 }
+
+fun String.trimToTheLimit(limit: Int = 4): String = this
+    .takeIf { it.length > limit }
+    ?.substring(0, limit)
+    ?: this
+
+fun String.fill(with: String = "0", to: Int = 4): String = this
+    .takeIf { it.length < to }
+    ?.plus(
+        (0..<(to - this.length))
+            .joinToString { with }
+    )
+    ?: this

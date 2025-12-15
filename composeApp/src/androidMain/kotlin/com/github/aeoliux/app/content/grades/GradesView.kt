@@ -1,6 +1,8 @@
 package com.github.aeoliux.app.content.grades
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,39 +14,43 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.aeoliux.app.content.toColorLong
+import com.github.aeoliux.app.content.NavRoutes
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.math.roundToLong
 
 @Composable
-fun GradesView(viewModel: GradesViewModel = koinViewModel<GradesViewModel>()) {
-    val grades by viewModel.grades.collectAsState()
+fun GradesView(
+    viewModel: GradesViewModel = koinViewModel<GradesViewModel>(),
+    onNavKey: (navKey: Any) -> Unit
+) {
+    val subjects by viewModel.subjects.collectAsState()
+    val averages by viewModel.averages.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     PullToRefreshBox(
@@ -57,80 +63,111 @@ fun GradesView(viewModel: GradesViewModel = koinViewModel<GradesViewModel>()) {
                 Text(text = "Grades", fontSize = 32.sp, modifier = Modifier.padding(bottom = 10.dp))
             }
 
-            grades.forEach { (subject, grades) ->
+            averages?.let { averages ->
                 item {
-                    var isExpanded by remember { mutableStateOf(false) }
-
-                    HorizontalDivider()
-
-                    Column(
+                    Card(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
                     ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp)
+                        ) {
+                            averages.forEach { (label, averages) ->
+                                averages?.let { averages ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        averages.forEach { (sublabel, average, theme) ->
+                                            Column(
+                                                modifier = Modifier
+                                                    .width(150.dp),
+                                                verticalArrangement = Arrangement.Center,
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .clip(theme.second.toShape())
+                                                        .height(70.dp)
+                                                        .width(70.dp)
+                                                        .background(theme.first),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Text(
+                                                        text = average,
+                                                        fontSize = 18.sp,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        color = Color.White
+                                                    )
+                                                }
+
+                                                Text(
+                                                    text = "$sublabel $label",
+                                                    fontSize = 10.sp
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(Modifier.height(20.dp))
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(40.dp))
+                }
+            }
+
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+                ) {
+                    subjects.forEachIndexed { index, subject ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(50.dp)
-                                .clickable { isExpanded = !isExpanded },
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .clickable { onNavKey(NavRoutes.GradesBySubject(subject)) },
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = subject,
-                                modifier = Modifier.width(350.dp),
+                                modifier = Modifier
+                                    .width(280.dp)
+                                    .padding(start = 15.dp),
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                text = subject
                             )
 
-                            Icon(
-                                imageVector =
-                                    if (isExpanded)
-                                        Icons.Default.KeyboardArrowUp
-                                    else
-                                        Icons.Default.KeyboardArrowDown,
-                                contentDescription = "(Un)expand subject"
-                            )
-                        }
-
-                        if (isExpanded) {
-                            grades.forEach {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(50.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Box(
-                                        Modifier
-                                            .background(it.color.toColorLong(), RoundedCornerShape(10.dp))
-                                            .height(45.dp)
-                                            .width(45.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(text = it.grade, color = Color.Black)
-                                    }
-
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxSize(),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.End
-                                    ) {
-                                        Text(it.addedBy)
-                                        Text(it.category)
-                                    }
-                                }
-
-                                Spacer(Modifier.height(5.dp))
+                            Row(Modifier.padding(end = 15.dp)) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = subject
+                                )
                             }
                         }
+
+                        if (index < subjects.lastIndex)
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.background,
+                                thickness = 5.dp
+                            )
                     }
                 }
             }
 
-            item { HorizontalDivider() }
+            item {
+                Spacer(Modifier.height(25.dp))
+            }
         }
     }
 }

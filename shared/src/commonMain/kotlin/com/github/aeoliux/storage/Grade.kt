@@ -15,6 +15,7 @@ data class Grade(
     val subject: String,
 
     val grade: String,
+    val gradeValue: Double,
     val addDate: LocalDateTime,
     val color: String,
     val gradeType: GradeType,
@@ -27,9 +28,18 @@ data class Grade(
 
 @Dao
 interface GradesDao: BaseDao<Grade> {
-    @Query("SELECT * FROM Grades")
-    fun getGrades(): Flow<List<Grade>>
-
     @Query("SELECT * FROM Grades ORDER BY addDate DESC LIMIT :amount")
     fun getLatestGrades(amount: Int): Flow<List<Grade>>
+
+    @Query("SELECT AVG(gradeValue) AS avg FROM Grades WHERE gradeType = :gradeType")
+    fun countAverage(gradeType: GradeType = GradeType.Final): Flow<Double>
+
+    @Query("SELECT AVG(gradeValue) AS avg FROM Grades WHERE gradeType = :gradeType AND semester = :semester")
+    fun countSemestralAverage(semester: Int, gradeType: GradeType = GradeType.Semester): Flow<Double>
+
+    @Query("SELECT DISTINCT subject FROM Grades")
+    fun getSubjects(): Flow<List<String>>
+
+    @Query("SELECT * FROM Grades WHERE subject = :subject")
+    fun getGradesForSubject(subject: String): Flow<List<Grade>>
 }

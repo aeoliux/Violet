@@ -6,6 +6,8 @@ extension HomeView {
     class ViewModel: RefreshableViewModel {
         let repos = RepositoryHelper()
         
+        var navPath = NavigationPath()
+        
         var aboutMe: AboutMe?
         var luckyNumber: Int = 0
         var timetable = [(Date, [Timetable])]()

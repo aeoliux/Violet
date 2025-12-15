@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import com.github.aeoliux.app.content.grades.GradesBySubjectViewModel
 import com.github.aeoliux.app.content.grades.GradesViewModel
 import com.github.aeoliux.app.content.home.HomeViewModel
 import com.github.aeoliux.app.content.timetable.TimetableViewModel
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
             viewModelOf(::HomeViewModel)
             viewModelOf(::GradesViewModel)
             viewModelOf(::TimetableViewModel)
+            viewModelOf(::GradesBySubjectViewModel)
         }
 
         initializeKoin(platformModule)

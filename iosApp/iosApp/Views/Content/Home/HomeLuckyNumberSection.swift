@@ -7,13 +7,6 @@ struct HomeLuckyNumberSection: View {
     var body: some View {
         Section {
             HStack {
-                Spacer()
-                
-                Text("Next lucky number")
-                    .font(.title3)
-                
-                Spacer()
-                
                 Circle()
                     .fill(Color.orange)
                     .frame(width: 50, height: 50)
@@ -21,6 +14,9 @@ struct HomeLuckyNumberSection: View {
                         Text("\(self.luckyNumber)")
                             .foregroundStyle(.white)
                     }
+                
+                Text("Next lucky number")
+                    .font(.title3)
                 
                 Spacer()
             }

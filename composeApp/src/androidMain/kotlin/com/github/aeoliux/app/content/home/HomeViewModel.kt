@@ -2,6 +2,8 @@ package com.github.aeoliux.app.content.home
 
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.app.RefreshableViewModel
+import com.github.aeoliux.app.content.grades.themeForAverage
+import com.github.aeoliux.app.content.toColorLong
 import com.github.aeoliux.repositories.AboutMeRepository
 import com.github.aeoliux.repositories.GradesRepository
 import com.github.aeoliux.repositories.LuckyNumberRepository
@@ -30,6 +32,16 @@ class HomeViewModel(
 
     val latestGrades = this.gradesRepository
         .getLatestGrades(6)
+        .map { grades ->
+            grades.map { grade ->
+                Pair(
+                    first = grade,
+                    second = grade.gradeValue
+                        .themeForAverage()
+                        .let { Pair(grade.color.toColorLong(), it.second) }
+                )
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     val timetable = this.timetableRepository

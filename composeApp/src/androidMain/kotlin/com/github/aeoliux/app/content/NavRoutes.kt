@@ -20,5 +20,6 @@ object NavRoutes {
 
     object Home
     object Grades
+    data class GradesBySubject(val subject: String)
     object Timetable
 }

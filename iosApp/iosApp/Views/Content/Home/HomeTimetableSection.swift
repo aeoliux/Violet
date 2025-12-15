@@ -13,6 +13,9 @@ struct HomeTimetableSection: View {
                         Text("\(entry.time)")
                             .frame(width: 50)
                         Text(entry.subject)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(1)
+                            .frame(maxWidth: 200, alignment: .leading)
                             .fontWeight(.semibold)
                         
                         Text(entry.classroom)
