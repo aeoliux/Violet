@@ -2,6 +2,7 @@ package com.github.aeoliux.app.content
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
@@ -26,5 +27,21 @@ fun LocalDateTime.prettyFormatted(): String = this.format(
         hour()
         char(':')
         minute()
+    }
+)
+
+fun LocalTime.onlyHourAndMinute(): String = this.format(
+    LocalTime.Format {
+        hour()
+        char(':')
+        minute()
+    }
+)
+
+fun LocalDate.minimalFormat(): String = this.format(
+    LocalDate.Format {
+        day()
+        char('.')
+        monthNumber()
     }
 )

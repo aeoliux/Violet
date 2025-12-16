@@ -58,7 +58,8 @@ fun TimetableView(viewModel: TimetableViewModel = koinViewModel<TimetableViewMod
                             .fillMaxWidth()
                             .padding(bottom = 10.dp),
                         selectedTabIndex = selectedDay,
-                        containerColor = MaterialTheme.colorScheme.background
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        contentColor = MaterialTheme.colorScheme.onSurface
                     ) {
                         weekDays.forEachIndexed { index, date ->
                             Tab(
@@ -79,27 +80,24 @@ fun TimetableView(viewModel: TimetableViewModel = koinViewModel<TimetableViewMod
                     Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .background(MaterialTheme.colorScheme.background)
                 ) {
                     entries.forEach { entry ->
                         CompositionLocalProvider(
                             LocalContentColor provides if (entry.isCanceled)
                                 MaterialTheme.colorScheme.error
                             else
-                                MaterialTheme.colorScheme.onBackground
+                                MaterialTheme.colorScheme.onSurface
                         ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(if (entry.isCanceled) 96.dp else 80.dp)
-                                    .background(MaterialTheme.colorScheme.background),
+                                    .height(if (entry.isCanceled) 96.dp else 80.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxHeight()
-                                        .width(350.dp)
-                                        .background(MaterialTheme.colorScheme.background),
+                                        .width(350.dp),
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     if (entry.isCanceled)
@@ -143,8 +141,7 @@ fun TimetableView(viewModel: TimetableViewModel = koinViewModel<TimetableViewMod
 
                                 Column(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(MaterialTheme.colorScheme.background),
+                                        .fillMaxSize(),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.End
                                 ) {

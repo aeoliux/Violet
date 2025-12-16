@@ -4,10 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,7 +26,7 @@ import com.github.aeoliux.repositories.ClientManager
 import org.koin.compose.koinInject
 
 @Composable
-fun App() {
+fun App(colorScheme: ColorScheme) {
     val clientManager: ClientManager = koinInject()
     var logState by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -31,10 +34,7 @@ fun App() {
     }
 
     MaterialExpressiveTheme(
-        colorScheme = if (isSystemInDarkTheme())
-            darkColorScheme()
-        else
-            lightColorScheme(),
+        colorScheme = colorScheme,
         typography = Typography()
     ) {
         Column(

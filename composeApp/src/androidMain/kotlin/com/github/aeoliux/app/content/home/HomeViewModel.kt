@@ -2,11 +2,14 @@ package com.github.aeoliux.app.content.home
 
 import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.app.RefreshableViewModel
+import com.github.aeoliux.app.content.agenda.theme
 import com.github.aeoliux.app.content.grades.themeForAverage
 import com.github.aeoliux.app.content.toColorLong
 import com.github.aeoliux.repositories.AboutMeRepository
+import com.github.aeoliux.repositories.AgendaRepository
 import com.github.aeoliux.repositories.GradesRepository
 import com.github.aeoliux.repositories.LuckyNumberRepository
+import com.github.aeoliux.repositories.MessagesRepository
 import com.github.aeoliux.repositories.TimetableRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -19,7 +22,9 @@ class HomeViewModel(
     private val luckyNumberRepository: LuckyNumberRepository,
     private val aboutMeRepository: AboutMeRepository,
     private val gradesRepository: GradesRepository,
-    private val timetableRepository: TimetableRepository
+    private val timetableRepository: TimetableRepository,
+    private val agendaRepository: AgendaRepository,
+    private val messagesRepository: MessagesRepository,
 ): RefreshableViewModel() {
     val name = this.aboutMeRepository
         .getAboutMeFlow()
@@ -31,7 +36,7 @@ class HomeViewModel(
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)
 
     val latestGrades = this.gradesRepository
-        .getLatestGrades(6)
+        .getLatestGrades(5)
         .map { grades ->
             grades.map { grade ->
                 Pair(
@@ -51,10 +56,21 @@ class HomeViewModel(
             linkedMapOf()
         ))
 
+    val agenda = this.agendaRepository
+        .getLatestAgendaFlow(5)
+        .map {
+            it.map {
+                Pair(it, it.theme())
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
     fun refresh() = task {
-        aboutMeRepository.refresh()
-        luckyNumberRepository.refresh()
-        gradesRepository.refresh()
-        timetableRepository.refresh()
+        this.aboutMeRepository.refresh()
+        this.luckyNumberRepository.refresh()
+        this.timetableRepository.refresh()
+        this.gradesRepository.refresh()
+        this.agendaRepository.refresh()
+        this.messagesRepository.refresh()
     }
 }

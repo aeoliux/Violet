@@ -10,7 +10,7 @@ import kotlinx.datetime.LocalDateTime
 
 @Entity(tableName = "MessageLabels")
 data class MessageLabel(
-    @PrimaryKey(autoGenerate = true) val key: Int = 0,
+    @PrimaryKey(autoGenerate = false) val key: Int = 0,
     val category: MessageCategories,
 
     val url: String,
@@ -22,6 +22,9 @@ data class MessageLabel(
 
 @Dao
 interface MessageLabelsDao: BaseDao<MessageLabel> {
-    @Query("SELECT * FROM MessageLabels")
+    @Query("SELECT * FROM MessageLabels ORDER BY sentAt DESC")
     fun getMessageLabels(): Flow<List<MessageLabel>>
+
+    @Query("SELECT * FROM MessageLabels WHERE sender LIKE '%' || :query || '%' OR topic LIKE '%' || :query || '%' ORDER BY sentAt DESC")
+    fun getMessageLabelsByQuery(query: String): Flow<List<MessageLabel>>
 }

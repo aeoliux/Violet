@@ -20,18 +20,22 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import com.github.aeoliux.app.content.agenda.AgendaView
 import com.github.aeoliux.app.content.grades.GradeView
 import com.github.aeoliux.app.content.grades.GradesBySubjectView
 import com.github.aeoliux.app.content.grades.GradesView
 import com.github.aeoliux.app.content.home.HomeView
+import com.github.aeoliux.app.content.messages.MessageView
+import com.github.aeoliux.app.content.messages.MessagesView
+import com.github.aeoliux.app.content.messages.MessagesViewModel
 import com.github.aeoliux.app.content.timetable.TimetableView
 import com.github.aeoliux.storage.Grade
 
@@ -41,10 +45,13 @@ fun MainContentView() {
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Scaffold(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-        topBar = { Box(Modifier.background(MaterialTheme.colorScheme.background).fillMaxWidth().height(50.dp)) {} },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        topBar = { Box(Modifier.background(Color.Transparent).fillMaxWidth().height(50.dp)) {} },
         bottomBar = {
-            BottomAppBar {
+            BottomAppBar(
+                containerColor = MaterialTheme.colorScheme.surface
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -82,7 +89,9 @@ fun MainContentView() {
         }
     ) { paddingValues ->
         Box(
-            Modifier.padding(paddingValues).background(MaterialTheme.colorScheme.background)
+            Modifier
+                .padding(paddingValues)
+                .background(Color.Transparent)
         ) {
             NavDisplay(
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
@@ -93,7 +102,11 @@ fun MainContentView() {
                         is NavRoutes.Home -> NavEntry(key) { HomeView { backStack.add(it) } }
                         is NavRoutes.Grades -> NavEntry(key) { GradesView { backStack.add(it) } }
                         is NavRoutes.Timetable -> NavEntry(key) { TimetableView() }
+                        is NavRoutes.Menu -> NavEntry(key) { MenuView { backStack.add(it) } }
                         is NavRoutes.GradesBySubject -> NavEntry(key) { GradesBySubjectView(key.subject) { backStack.add(it) } }
+                        is NavRoutes.Messages -> NavEntry(key) { MessagesView { backStack.add(it) } }
+                        is NavRoutes.Agenda -> NavEntry(key) { AgendaView { backStack.add(it) }}
+                        is MessagesViewModel.MessageMetadata -> NavEntry(key) { MessageView(key) { backStack.add(it) } }
                         is Grade -> NavEntry(key) { GradeView(key) }
                         else -> NavEntry(Unit) { Text("Unknown route") }
                     }

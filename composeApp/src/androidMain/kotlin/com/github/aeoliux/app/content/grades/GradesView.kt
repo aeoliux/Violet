@@ -67,8 +67,7 @@ fun GradesView(
                 item {
                     Card(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+                            .fillMaxWidth()
                     ) {
                         Column(
                             modifier = Modifier
@@ -119,7 +118,7 @@ fun GradesView(
                         }
                     }
 
-                    Spacer(Modifier.height(40.dp))
+                    Spacer(Modifier.height(30.dp))
                 }
             }
 
@@ -127,8 +126,7 @@ fun GradesView(
             item {
                 Card(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+                        .fillMaxWidth()
                 ) {
                     subjects.forEachIndexed { index, subject ->
                         Row(
@@ -158,8 +156,8 @@ fun GradesView(
 
                         if (index < subjects.lastIndex)
                             HorizontalDivider(
-                                color = MaterialTheme.colorScheme.background,
-                                thickness = 5.dp
+                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                thickness = 3.dp
                             )
                     }
                 }

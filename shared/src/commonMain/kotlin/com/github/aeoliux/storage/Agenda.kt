@@ -5,8 +5,19 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DateTimePeriod
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 @Entity(tableName = "Agenda")
 data class Agenda (
@@ -27,13 +38,30 @@ data class Agenda (
 )
 
 @Dao
-interface AgendaDao {
-    @Insert
-    suspend fun insertAgenda(agenda: Agenda)
+@OptIn(ExperimentalTime::class)
+interface AgendaDao: BaseDao<Agenda> {
+    @Query("SELECT * FROM Agenda WHERE date >= :after ORDER BY date ASC LIMIT :amount")
+    fun getLatestAgenda(
+        amount: Int,
+        after: LocalDate = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+    ): Flow<List<Agenda>>
 
-    @Query("DELETE FROM Agenda")
-    suspend fun deleteAgenda()
+    @Query("SELECT * FROM Agenda WHERE date BETWEEN :after AND :until ORDER BY date ASC")
+    fun getAgendaByDate(after: LocalDate, until: LocalDate): Flow<List<Agenda>>
 
-    @Query("SELECT * FROM Agenda ORDER BY date ASC")
-    suspend fun getAgenda(): List<Agenda>
+    fun getAgenda(
+        monthsBack: Int,
+        monthsForward: Int
+    ) = this.getAgendaByDate(
+        after = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+            .minus(DatePeriod(months = monthsBack)),
+        until = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+            .plus(DatePeriod(months = monthsForward))
+    )
 }

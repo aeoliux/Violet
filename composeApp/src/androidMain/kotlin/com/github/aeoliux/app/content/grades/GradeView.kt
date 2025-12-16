@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Comment
@@ -39,6 +40,7 @@ fun GradeView(grade: Grade) {
     val data = listOf(
         Triple(Icons.Default.Grade, "Grade", grade.grade),
         Triple(Icons.Default.Person, "Added by", grade.addedBy),
+        Triple(Icons.Default.Bookmarks, "Subject", grade.subject),
         Triple(Icons.Default.Category, "Category", grade.category),
         Triple(Icons.Default.Numbers, "Value to the average", "${grade.gradeValue.toString().trimToTheLimit().fill()} x ${grade.weight}"),
         Triple(Icons.Default.CalendarToday, "Added at", grade.addDate.prettyFormatted())
@@ -48,8 +50,7 @@ fun GradeView(grade: Grade) {
         item {
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+                    .fillMaxWidth()
             ) {
                 data.forEachIndexed { index, (icon, label, info) ->
                     Row(
@@ -67,7 +68,7 @@ fun GradeView(grade: Grade) {
                             Icon(
                                 imageVector = icon,
                                 contentDescription = label,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
 
                             Spacer(Modifier.width(15.dp))
@@ -86,8 +87,8 @@ fun GradeView(grade: Grade) {
 
                     if ((index < data.lastIndex && grade.comment == null) || grade.comment != null)
                         HorizontalDivider(
-                            color = MaterialTheme.colorScheme.background,
-                            thickness = 5.dp
+                            color = MaterialTheme.colorScheme.surfaceContainer,
+                            thickness = 3.dp
                         )
                 }
 

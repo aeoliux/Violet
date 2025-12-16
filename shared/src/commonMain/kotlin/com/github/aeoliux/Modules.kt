@@ -1,10 +1,12 @@
 package com.github.aeoliux
 
 import com.github.aeoliux.repositories.AboutMeRepository
+import com.github.aeoliux.repositories.AgendaRepository
 import com.github.aeoliux.repositories.AlertState
 import com.github.aeoliux.repositories.ClientManager
 import com.github.aeoliux.repositories.GradesRepository
 import com.github.aeoliux.repositories.LuckyNumberRepository
+import com.github.aeoliux.repositories.MessagesRepository
 import com.github.aeoliux.repositories.TimetableRepository
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -18,6 +20,8 @@ val appModule = module {
     singleOf(::GradesRepository)
     singleOf(::TimetableRepository)
     singleOf(::AlertState)
+    singleOf(::MessagesRepository)
+    singleOf(::AgendaRepository)
 }
 
 fun initializeKoin(platformModule: Module) {
