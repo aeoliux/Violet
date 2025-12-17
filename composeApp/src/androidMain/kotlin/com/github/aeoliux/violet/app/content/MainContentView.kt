@@ -1,0 +1,119 @@
+package com.github.aeoliux.violet.app.content
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.ui.NavDisplay
+import com.github.aeoliux.violet.app.content.agenda.AgendaView
+import com.github.aeoliux.violet.app.content.attendance.AttendanceView
+import com.github.aeoliux.violet.app.content.grades.GradeView
+import com.github.aeoliux.violet.app.content.grades.GradesBySubjectView
+import com.github.aeoliux.violet.app.content.grades.GradesView
+import com.github.aeoliux.violet.app.content.home.HomeView
+import com.github.aeoliux.violet.app.content.messages.MessageView
+import com.github.aeoliux.violet.app.content.messages.MessagesView
+import com.github.aeoliux.violet.app.content.messages.MessagesViewModel
+import com.github.aeoliux.violet.app.content.timetable.TimetableView
+import com.github.aeoliux.violet.storage.Grade
+
+@Composable
+fun MainContentView() {
+    val backStack = remember { mutableStateListOf<Any>(NavRoutes.Home) }
+    var selectedTab by remember { mutableIntStateOf(0) }
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        topBar = { Box(Modifier.background(Color.Transparent).fillMaxWidth().height(50.dp)) {} },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = MaterialTheme.colorScheme.surface
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+                ) {
+                    NavRoutes.tabs.forEachIndexed { index, tab ->
+                        TextButton({
+                            backStack.clear()
+                            selectedTab = index
+                            backStack.add(tab.third)
+                        }) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                CompositionLocalProvider(
+                                    LocalContentColor provides if (selectedTab == index)
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.onBackground
+                                ) {
+                                    Icon(
+                                        imageVector = tab.second,
+                                        contentDescription = tab.first
+                                    )
+                                    Text(
+                                        text = tab.first
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            Modifier
+                .padding(paddingValues)
+                .background(Color.Transparent)
+        ) {
+            NavDisplay(
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                backStack = backStack,
+                onBack = { backStack.removeLastOrNull() },
+                entryProvider = { key ->
+                    when (key) {
+                        is NavRoutes.Home -> NavEntry(key) { HomeView { backStack.add(it) } }
+                        is NavRoutes.Grades -> NavEntry(key) { GradesView { backStack.add(it) } }
+                        is NavRoutes.Timetable -> NavEntry(key) { TimetableView() }
+                        is NavRoutes.Menu -> NavEntry(key) { MenuView { backStack.add(it) } }
+                        is NavRoutes.GradesBySubject -> NavEntry(key) { GradesBySubjectView(key.subject) { backStack.add(it) } }
+                        is NavRoutes.Messages -> NavEntry(key) { MessagesView { backStack.add(it) } }
+                        is NavRoutes.Agenda -> NavEntry(key) { AgendaView { backStack.add(it) }}
+                        is NavRoutes.Attendance -> NavEntry(key) { AttendanceView { backStack.add(it) } }
+                        is MessagesViewModel.MessageMetadata -> NavEntry(key) { MessageView(key) { backStack.add(it) } }
+                        is Grade -> NavEntry(key) { GradeView(key) }
+                        else -> NavEntry(Unit) { Text("Unknown route") }
+                    }
+                }
+            )
+        }
+    }
+}

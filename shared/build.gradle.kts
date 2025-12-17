@@ -60,7 +60,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.github.aeoliux.shared"
+    namespace = "com.github.aeoliux.violet.shared"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

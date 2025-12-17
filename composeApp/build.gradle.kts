@@ -55,11 +55,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.github.aeoliux"
+    namespace = "com.github.aeoliux.violet"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.github.aeoliux"
+        applicationId = "com.github.aeoliux.violet"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
