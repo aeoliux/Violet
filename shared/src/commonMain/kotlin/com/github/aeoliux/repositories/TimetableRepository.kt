@@ -63,7 +63,10 @@ class TimetableRepository(
                         val now = Clock.System.now()
                             .toLocalDateTime(TimeZone.currentSystemDefault())
 
-                        firstDay.isNotEmpty() && (now.date < day || (now.date >= day && now.time < time))
+                        firstDay.isNotEmpty() &&
+                                (now.date < day ||
+                                        (now.date >= day &&
+                                                now.time < firstDay.maxBy { it.timeTo }.timeTo))
                     }
                     ?.let { Pair(day, mapped[0]) }
                     ?: Pair(nextDay, mapped[1])

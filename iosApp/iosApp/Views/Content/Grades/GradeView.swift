@@ -9,6 +9,7 @@ struct GradeView: View {
         self.tabs = [
             ("star.fill", "Grade", grade.grade),
             ("person.fill", "Added by", grade.addedBy),
+            ("document.fill", "Subject", grade.subject),
             ("folder.fill", "Category", grade.category),
             ("number", "Value", String(format: "%.2f x %d", grade.gradeValue, grade.weight)),
             ("calendar.badge.plus", "Added at", datetimeFormat.string(from: grade.addDate.toNSDate()))
@@ -32,7 +33,7 @@ struct GradeView: View {
             }
             
             if let comment = self.comment {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "square.and.pencil")
                             .frame(width: 30)
@@ -40,7 +41,6 @@ struct GradeView: View {
                     }
                     
                     Text(comment)
-                        .padding()
                 }
             }
         }

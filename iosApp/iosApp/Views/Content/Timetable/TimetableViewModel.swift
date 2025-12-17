@@ -35,7 +35,7 @@ extension TimetableView {
                         )
                     }
                     
-                    if self.pathState.isEmpty, let key = (self.timetable.first { $0.date == Date() } ?? self.timetable.first) {
+                    if self.pathState.isEmpty, let key = (self.timetable.first { Calendar.current.isDateInToday($0.date) } ?? self.timetable.first) {
                         self.pathState.append(key)
                     }
                 }
