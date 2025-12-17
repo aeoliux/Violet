@@ -17,6 +17,11 @@ struct MainContentView: View {
                 .tabItem {
                     Label("Timetable", systemImage: "calendar.badge.clock")
                 }
+            
+            MenuView()
+                .tabItem {
+                    Label("Menu", systemImage: "ellipsis.circle")
+                }
         }
     }
 }

@@ -9,4 +9,6 @@ class RepositoryHelper: KoinComponent {
     val gradesRepository: GradesRepository by inject()
     val luckyNumberRepository: LuckyNumberRepository by inject()
     val timetableRepository: TimetableRepository by inject()
+    val agendaRepository: AgendaRepository by inject()
+    val messagesRepository: MessagesRepository by inject()
 }
