@@ -27,4 +27,5 @@ object NavRoutes {
     object Menu
     object Messages
     object Agenda
+    object Attendance
 }

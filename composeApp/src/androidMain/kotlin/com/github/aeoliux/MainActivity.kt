@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import com.github.aeoliux.app.content.attendance.AttendanceViewModel
 import com.github.aeoliux.app.content.agenda.AgendaViewModel
 import com.github.aeoliux.app.content.grades.GradesBySubjectViewModel
 import com.github.aeoliux.app.content.grades.GradesViewModel
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
             viewModelOf(::MessagesViewModel)
             viewModelOf(::MessageViewModel)
             viewModelOf(::AgendaViewModel)
+            viewModelOf(::AttendanceViewModel)
         }
 
         initializeKoin(platformModule)

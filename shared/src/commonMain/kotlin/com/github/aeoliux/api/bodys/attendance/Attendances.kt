@@ -31,8 +31,6 @@ data class Attendances(val Attendances: List<AttendanceEntry>) {
         return Attendances.fold(LinkedHashMap()) { acc, att ->
             val date = LocalDate.parse(att.Date)
             val type = types.firstOrNull { it.Id == att.Type.Id }?: return@fold acc
-            if (type.Order == 1 || type.Id == 100)
-                return@fold acc
 
             val color = type.ColorRGB?: colors[type.Color?.Id]?: return@fold acc
             val teacher = users[att.AddedBy.Id]?: return@fold acc

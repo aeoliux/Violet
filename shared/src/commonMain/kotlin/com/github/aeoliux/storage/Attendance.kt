@@ -7,6 +7,7 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
 
 @Entity(tableName = "Attendance")
 data class Attendance(
@@ -25,6 +26,26 @@ data class Attendance(
 
 @Dao
 interface AttendanceDao: BaseDao<Attendance> {
-    @Query("SELECT * FROM Attendance ORDER BY date DESC")
-    fun getAttendance(): Flow<Attendance>
+    @Query("SELECT * FROM Attendance WHERE NOT typeShort = 'ob' ORDER BY date DESC")
+    fun getUnattendance(): Flow<List<Attendance>>
+
+    @Query("SELECT SUM(CASE WHEN typeShort = 'ob' THEN 1 ELSE 0 END) / COUNT(*) * 100.0 FROM Attendance")
+    fun getAttendancePercentage(): Flow<Double>
+
+    @Query("""
+        SELECT
+            semester AS semester,
+            SUM(CASE WHEN type = 'ob' THEN 1 ELSE 0 END) /
+                COUNT(*) * 100.0 AS percentage
+        FROM Attendance
+        GROUP BY semester
+        ORDER BY semester
+    """)
+    fun getSemestralAttendance(): Flow<List<SemestralAttendance>>
 }
+
+@Serializable
+data class SemestralAttendance(
+    val semester: Int,
+    val percentage: Double
+)

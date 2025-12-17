@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Mail
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,7 +31,8 @@ fun MenuView(
 ) {
     val tabs = listOf(
         Triple("Messages", Icons.Default.Mail, NavRoutes.Messages),
-        Triple("Agenda", Icons.Default.CalendarMonth, NavRoutes.Agenda)
+        Triple("Agenda", Icons.Default.CalendarMonth, NavRoutes.Agenda),
+        Triple("Attendance", Icons.Default.PersonAdd, NavRoutes.Attendance)
     )
 
     LazyColumn {
@@ -62,7 +64,7 @@ fun MenuView(
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
 
-                            Spacer(Modifier.width(5.dp))
+                            Spacer(Modifier.width(15.dp))
 
                             Text(
                                 text = label,

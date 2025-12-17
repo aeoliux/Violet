@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.github.aeoliux.app.content.agenda.AgendaView
+import com.github.aeoliux.app.content.attendance.AttendanceView
 import com.github.aeoliux.app.content.grades.GradeView
 import com.github.aeoliux.app.content.grades.GradesBySubjectView
 import com.github.aeoliux.app.content.grades.GradesView
@@ -106,6 +107,7 @@ fun MainContentView() {
                         is NavRoutes.GradesBySubject -> NavEntry(key) { GradesBySubjectView(key.subject) { backStack.add(it) } }
                         is NavRoutes.Messages -> NavEntry(key) { MessagesView { backStack.add(it) } }
                         is NavRoutes.Agenda -> NavEntry(key) { AgendaView { backStack.add(it) }}
+                        is NavRoutes.Attendance -> NavEntry(key) { AttendanceView { backStack.add(it) } }
                         is MessagesViewModel.MessageMetadata -> NavEntry(key) { MessageView(key) { backStack.add(it) } }
                         is Grade -> NavEntry(key) { GradeView(key) }
                         else -> NavEntry(Unit) { Text("Unknown route") }
