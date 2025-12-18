@@ -5,6 +5,8 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Looks6
 import androidx.compose.material.icons.filled.Menu
+import com.github.aeoliux.violet.storage.Message
+import com.github.aeoliux.violet.storage.MessageLabel
 
 object NavRoutes {
     val tabs = listOf(
@@ -16,10 +18,12 @@ object NavRoutes {
 
     object Home
     object Grades
-    data class GradesBySubject(val subject: String)
     object Timetable
     object Menu
     object Messages
     object Agenda
     object Attendance
+
+    data class GradesBySubject(val subject: String)
+    data class MessageEditor(val message: Message?, val messageLabel: MessageLabel?)
 }

@@ -1,7 +1,9 @@
 package com.github.aeoliux.violet.app.content.messages
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +19,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.NewLabel
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.toShape
@@ -31,22 +36,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aeoliux.violet.app.components.SearchBar
 import com.github.aeoliux.violet.app.components.ShapeBox
+import com.github.aeoliux.violet.app.components.ShapeBoxComposable
+import com.github.aeoliux.violet.app.content.NavRoutes
 import org.koin.compose.koinInject
 
 @Composable
 fun MessagesView(
     viewModel: MessagesViewModel = koinInject<MessagesViewModel>(),
-    onNavKey: (navKey: MessagesViewModel.MessageMetadata) -> Unit
+    onNavKey: (navKey: Any) -> Unit
 ) {
     val messages by viewModel.messageLabels.collectAsState()
     val categoriesOrdered by viewModel.categoriesOrdered.collectAsState()
-
     val searchQuery by viewModel.query.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
@@ -54,7 +61,9 @@ fun MessagesView(
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refresh() }
+        onRefresh = { viewModel.refresh() },
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         LazyColumn(
             modifier = Modifier
@@ -180,7 +189,33 @@ fun MessagesView(
             }
 
             item {
-                Spacer(Modifier.height(25.dp))
+                Spacer(Modifier.height(150.dp))
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .background(Color.Transparent)
+                .padding(bottom = 15.dp)
+        ) {
+            ShapeBoxComposable(
+                shape = MaterialShapes.Cookie9Sided.toShape(),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                modifier = Modifier
+                    .height(80.dp)
+                    .width(80.dp)
+                    .align(Alignment.Center)
+                    .clickable { onNavKey(NavRoutes.MessageEditor(null, null)) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.NewLabel,
+                    contentDescription = "New message",
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                )
             }
         }
     }

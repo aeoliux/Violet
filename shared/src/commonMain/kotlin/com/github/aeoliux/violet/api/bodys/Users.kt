@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class User(
     val Id: Int,
-    val AccountId: String,
+    val AccountNumericIdentifier: Int,
     val FirstName: String = "",
     val LastName: String = "",
     val IsSchoolAdministrator: Boolean = false,
@@ -19,10 +19,12 @@ data class Users(val Users: List<User>) {
         return this.Users.fold(LinkedHashMap()) { acc, user ->
             acc[user.Id] = com.github.aeoliux.violet.api.types.User(
                 id = user.Id,
+                senderId = user.AccountNumericIdentifier,
                 firstName = user.FirstName,
                 lastName = user.LastName,
                 isSchoolAdministrator = user.IsSchoolAdministrator,
-                isEmployee = user.IsEmployee
+                isEmployee = user.IsEmployee,
+                group = user.GroupId
             )
 
             acc

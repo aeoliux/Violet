@@ -29,11 +29,10 @@ fun ShapeBox(
         .height(50.dp)
         .width(50.dp),
 ) {
-    Box(
+    ShapeBoxComposable(
+        shape = shape,
+        containerColor = containerColor,
         modifier = modifier
-            .clip(shape)
-            .background(containerColor),
-        contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
@@ -41,5 +40,25 @@ fun ShapeBox(
             fontWeight = FontWeight.SemiBold,
             color = contentColor
         )
+    }
+}
+
+@Composable
+@SuppressLint("ModifierParameter")
+fun ShapeBoxComposable(
+    shape: Shape,
+    containerColor: Color,
+    modifier: Modifier = Modifier
+        .height(50.dp)
+        .width(50.dp),
+    label: @Composable () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .clip(shape)
+            .background(containerColor),
+        contentAlignment = Alignment.Center
+    ) {
+        label()
     }
 }

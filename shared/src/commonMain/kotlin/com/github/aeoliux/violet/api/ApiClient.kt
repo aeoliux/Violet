@@ -25,11 +25,14 @@ import com.github.aeoliux.violet.api.types.SchoolNotice
 import com.github.aeoliux.violet.api.types.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.datetime.LocalDate
@@ -59,6 +62,10 @@ class ApiClient {
 
         install(HttpCookies) {
             storage = cookieStorage
+        }
+
+        install(DefaultRequest) {
+            header(HttpHeaders.UserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 OPR/123.0.0.0")
         }
     }
 

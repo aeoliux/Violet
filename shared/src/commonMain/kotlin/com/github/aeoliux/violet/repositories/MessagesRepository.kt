@@ -1,8 +1,12 @@
 package com.github.aeoliux.violet.repositories
 
+import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.api.scraping.messages.MessageCategories
 import com.github.aeoliux.violet.api.scraping.messages.getMessage
 import com.github.aeoliux.violet.api.scraping.messages.getMessages
+import com.github.aeoliux.violet.api.scraping.messages.initializeSender
+import com.github.aeoliux.violet.api.scraping.messages.sendMessage
+import com.github.aeoliux.violet.api.types.User
 import com.github.aeoliux.violet.storage.AppDatabase
 import com.github.aeoliux.violet.storage.Message
 import com.github.aeoliux.violet.storage.MessageLabel
@@ -51,6 +55,30 @@ class MessagesRepository(
                     message
                 }
         }
+
+    suspend fun initializeSender(respondsTo: String?) = this.clientManager.with { client ->
+        client.initializeSender(respondsTo)
+    }
+
+    suspend fun sendMessage(
+        topic: String,
+        content: String,
+        users: List<User>,
+        key: String,
+        respondsTo: String?
+    ) = this.clientManager.with { client ->
+        client.sendMessage(
+            topic = topic,
+            content = content,
+            users = users,
+            key = key,
+            respondsTo = respondsTo
+        )
+    }
+
+    suspend fun requestUsers() = this.clientManager.with { client ->
+        client.users
+    }
 
     suspend fun refresh() = this.clientManager.with { client ->
         val labels = client

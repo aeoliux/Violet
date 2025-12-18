@@ -23,18 +23,32 @@ suspend fun ApiClient.getMessage(url: String): Message {
             if (i == 0)
                 acc
             else
-                acc.plus(
-                    Pair(
-                        elem
-                            .select("td:nth-child(1)")
-                            .text(),
-                        elem
-                            .select("td:nth-child(2) > a > img")
-                            .attr("onclick")
-                            .split("\"")[1]
-                            .replace("\\", "")
+                elem.selectFirst("td:nth-child(2) > a > img")?.let {
+                    acc.plus(
+                        Pair(
+                            first = elem
+                                .select("td:nth-child(1)")
+                                .text(),
+                            second = it
+                                .attr("onclick")
+                                .split("\"")[1]
+                                .replace("\\", "")
+                        )
                     )
-                )
+                } ?: acc
+//                acc.plus(
+//                    Pair(
+//                        elem
+//                            .select("td:nth-child(1)")
+//                            .text(),
+//                        elem
+//                            .select("td:nth-child(2) > a > img")
+//                            .attr("onclick")
+//                            .split("\"")[1]
+//                            .replace("\\", "")
+//                    )
+//                )
+
         }
 
     println(attachments)

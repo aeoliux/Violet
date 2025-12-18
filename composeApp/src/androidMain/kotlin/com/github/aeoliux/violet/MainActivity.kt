@@ -15,6 +15,7 @@ import com.github.aeoliux.violet.app.content.agenda.AgendaViewModel
 import com.github.aeoliux.violet.app.content.grades.GradesBySubjectViewModel
 import com.github.aeoliux.violet.app.content.grades.GradesViewModel
 import com.github.aeoliux.violet.app.content.home.HomeViewModel
+import com.github.aeoliux.violet.app.content.messages.MessageEditorViewModel
 import com.github.aeoliux.violet.app.content.messages.MessageViewModel
 import com.github.aeoliux.violet.app.content.messages.MessagesViewModel
 import com.github.aeoliux.violet.app.content.timetable.TimetableViewModel
@@ -46,6 +47,7 @@ class MainActivity : ComponentActivity() {
             viewModelOf(::MessageViewModel)
             viewModelOf(::AgendaViewModel)
             viewModelOf(::AttendanceViewModel)
+            viewModelOf(::MessageEditorViewModel)
         }
 
         initializeKoin(platformModule)

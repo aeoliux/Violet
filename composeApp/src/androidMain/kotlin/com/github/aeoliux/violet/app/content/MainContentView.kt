@@ -34,6 +34,7 @@ import com.github.aeoliux.violet.app.content.grades.GradeView
 import com.github.aeoliux.violet.app.content.grades.GradesBySubjectView
 import com.github.aeoliux.violet.app.content.grades.GradesView
 import com.github.aeoliux.violet.app.content.home.HomeView
+import com.github.aeoliux.violet.app.content.messages.MessageEditorView
 import com.github.aeoliux.violet.app.content.messages.MessageView
 import com.github.aeoliux.violet.app.content.messages.MessagesView
 import com.github.aeoliux.violet.app.content.messages.MessagesViewModel
@@ -108,6 +109,7 @@ fun MainContentView() {
                         is NavRoutes.Messages -> NavEntry(key) { MessagesView { backStack.add(it) } }
                         is NavRoutes.Agenda -> NavEntry(key) { AgendaView { backStack.add(it) }}
                         is NavRoutes.Attendance -> NavEntry(key) { AttendanceView { backStack.add(it) } }
+                        is NavRoutes.MessageEditor -> NavEntry(key) { MessageEditorView(key.messageLabel, key.message) { backStack.removeLastOrNull() } }
                         is MessagesViewModel.MessageMetadata -> NavEntry(key) { MessageView(key) { backStack.add(it) } }
                         is Grade -> NavEntry(key) { GradeView(key) }
                         else -> NavEntry(Unit) { Text("Unknown route") }

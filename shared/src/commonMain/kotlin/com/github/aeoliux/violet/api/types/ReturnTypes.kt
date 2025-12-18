@@ -14,10 +14,12 @@ data class Me(
 
 data class User(
     val id: Int,
+    val senderId: Int,
     val firstName: String,
     val lastName: String,
     val isSchoolAdministrator: Boolean,
-    val isEmployee: Boolean
+    val isEmployee: Boolean,
+    val group: Int
 ) {
     fun teacher(): String {
         return "$firstName $lastName"
