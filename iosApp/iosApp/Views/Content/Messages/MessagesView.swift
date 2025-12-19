@@ -51,6 +51,13 @@ struct MessagesView: View {
             }
         }
         .refreshable { await self.viewModel.refresh() }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink(value: MessageEditorRoute(label: nil, message: nil)) {
+                    Image(systemName: "paperplane")
+                }
+            }
+        }
         .navigationTitle("Messages")
     }
 }

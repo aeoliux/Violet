@@ -68,12 +68,7 @@ extension HomeView {
         
         func refresh() async {
             await self.task {
-                try await self.repos.aboutMeRepository.refresh()
-                try await self.repos.luckyNumberRepository.refresh()
-                try await self.repos.timetableRepository.refresh()
-                try await self.repos.gradesRepository.refresh()
-                try await self.repos.messagesRepository.refresh()
-                try await self.repos.agendaRepository.refresh()
+                try await self.repos.fullRefresh()
             }
         }
     }

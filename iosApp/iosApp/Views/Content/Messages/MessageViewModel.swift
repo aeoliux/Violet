@@ -4,15 +4,20 @@ import SwiftUI
 extension MessageView {
     @Observable
     class ViewModel {
+        var message: Message_?
+        var messageLabel: MessageLabel_?
         var messageTask: Task<(), Never>?
         var tabs: [(String, String, AttributedString?)] = []
         
         let repos = RepositoryHelper()
         
         init(_ messageLabel: MessageLabel_) {
+            self.messageLabel = messageLabel
+            
             self.messageTask = Task {
                 for await message in self.repos.messagesRepository.getMessageFlow(url: messageLabel.url) {
                     if let message = message {
+                        self.message = message
                         self.tabs = [
                             ("person.fill", "By", AttributedString(html: messageLabel.sender)),
                             ("exclamationmark.bubble.fill", "Topic", AttributedString(html: messageLabel.topic)),

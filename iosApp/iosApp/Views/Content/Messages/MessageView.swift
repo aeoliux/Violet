@@ -23,5 +23,14 @@ struct MessageView: View {
                 }
             }
         }
+        .toolbar {
+            if let message = self.viewModel.message, let messageLabel = self.viewModel.messageLabel {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(value: MessageEditorRoute(label: messageLabel, message: message)) {
+                        Image(systemName: "arrowshape.turn.up.backward")
+                    }
+                }
+            }
+        }
     }
 }
