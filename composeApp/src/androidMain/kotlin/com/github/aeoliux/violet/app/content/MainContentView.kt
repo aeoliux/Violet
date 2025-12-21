@@ -1,5 +1,6 @@
 package com.github.aeoliux.violet.app.content
 
+import android.graphics.drawable.shapes.OvalShape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,7 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
@@ -15,12 +18,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -30,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -97,41 +105,25 @@ fun MainContentView() {
             )
         },
         bottomBar = {
-            BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Absolute.SpaceEvenly
-                ) {
-                    NavRoutes.tabs.forEachIndexed { index, tab ->
-                        TextButton({
-                            backStack.clear()
+                NavRoutes.tabs.forEachIndexed { index, (label, icon, key) ->
+                    NavigationBarItem(
+                        selected = selectedTab == index,
+                        onClick = {
+                            backStack.removeLastOrNull()
+                            backStack.add(key)
                             selectedTab = index
-                            backStack.add(tab.third)
-                        }) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                CompositionLocalProvider(
-                                    LocalContentColor provides if (selectedTab == index)
-                                        MaterialTheme.colorScheme.primary
-                                    else
-                                        MaterialTheme.colorScheme.onBackground
-                                ) {
-                                    Icon(
-                                        imageVector = tab.second,
-                                        contentDescription = tab.first
-                                    )
-                                    Text(
-                                        text = tab.first
-                                    )
-                                }
-                            }
-                        }
-                    }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = label
+                            )
+                        },
+                        label = { Text(label) }
+                    )
                 }
             }
         }

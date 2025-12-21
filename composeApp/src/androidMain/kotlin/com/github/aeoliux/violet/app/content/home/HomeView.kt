@@ -164,10 +164,10 @@ fun HomeView(
                                 latestGrades.forEach { (grade, theme) ->
                                     ShapeBox(
                                         modifier = Modifier
-                                            .height(70.dp)
-                                            .width(70.dp)
+                                            .height(60.dp)
+                                            .width(60.dp)
                                             .clickable { onNavKey(grade) },
-                                        fontSize = 20.sp,
+                                        fontSize = 18.sp,
                                         label = grade.grade,
                                         shape = theme.second.toShape(),
                                         containerColor = theme.first,
