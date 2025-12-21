@@ -63,7 +63,7 @@ data class Grades(val Grades: List<GradeData>) {
                 gradeType,
                 category.Name,
                 teacher,
-                if (category.CountToTheAverage) category.Weight else 0,
+                if (category.CountToTheAverage && gradeData.Grade != "-" && gradeData.Grade != "+" && gradeData.Grade != "0") category.Weight else 0,
                 gradeData.Semester,
                 comment
             )

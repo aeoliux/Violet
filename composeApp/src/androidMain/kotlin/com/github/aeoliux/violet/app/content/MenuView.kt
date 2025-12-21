@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -24,6 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.aeoliux.violet.app.layout.LazyLayout
+import com.github.aeoliux.violet.app.layout.SectionHeader
+import com.github.aeoliux.violet.app.layout.SectionListItem
 
 @Composable
 fun MenuView(
@@ -35,63 +39,36 @@ fun MenuView(
         Triple("Attendance", Icons.Default.PersonAdd, NavRoutes.Attendance)
     )
 
-    LazyColumn {
+    LazyLayout(
+        header = "Menu"
+    ) {
         item {
-            Text(text = "Menu", fontSize = 32.sp)
-            Spacer(Modifier.height(10.dp))
+            SectionHeader("Actions")
         }
 
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                tabs.forEachIndexed { index, (label, icon, route) ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .clickable { onNavKey(route) },
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row {
-                            Spacer(Modifier.width(15.dp))
+        itemsIndexed(tabs) { index, (name, icon, route) ->
+            SectionListItem(
+                index = index,
+                lastIndex = tabs.lastIndex,
 
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = label,
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-
-                            Spacer(Modifier.width(15.dp))
-
-                            Text(
-                                text = label,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = label,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .padding(end = 15.dp)
-                        )
-                    }
-
-                    if (index < tabs.lastIndex)
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.surfaceContainer,
-                            thickness = 3.dp
-                        )
+                leading = {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = name,
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                header = name,
+                trailing = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = name
+                    )
+                },
+                onClick = {
+                    onNavKey(route)
                 }
-            }
-        }
-
-        item {
-            Spacer(Modifier.height(25.dp))
+            )
         }
     }
 }

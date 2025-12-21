@@ -18,8 +18,27 @@ class GradesRepository(
             dao.countSemestralAverage(1, GradeType.SemesterProposition),
             dao.countSemestralAverage(2),
             dao.countSemestralAverage(2, GradeType.SemesterProposition)
-        ) { avgs -> avgs }
+        ) { it }
     }
+
+    fun getAveragesForSubject(subject: String) = this.appDatabase
+        .getGradesDao()
+        .getAveragesForSubject(subject)
+
+    fun getAveragesBySubjectAndSemester() = this.appDatabase
+        .getGradesDao()
+        .getAveragesBySubjectAndSemester()
+        .map { averages ->
+            val subjects = averages.map { it.subject }
+
+            subjects.associateWithTo(linkedMapOf()) { subject ->
+                val bySubject = averages.filter { it.subject == subject }
+
+                bySubject
+                    .sortedBy { it.semester }
+                    .map { it.average }
+            }
+        }
 
     fun getSubjectsListFlow() = this.appDatabase
         .getGradesDao()

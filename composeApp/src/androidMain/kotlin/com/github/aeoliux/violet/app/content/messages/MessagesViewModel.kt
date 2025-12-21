@@ -25,21 +25,11 @@ import kotlinx.datetime.LocalTime
 class MessagesViewModel(
     private val messagesRepository: MessagesRepository
 ): RefreshableViewModel() {
-    private var _category = MutableStateFlow(MessageCategories.Received)
+    private var _category = MutableStateFlow(0)
     val category get() = _category.asStateFlow()
 
     private var _query = MutableStateFlow("")
     val query get() = _query.asStateFlow()
-
-    val categoriesOrdered = this._category
-        .map { category ->
-            listOf(category)
-                .plus(
-                    MessageCategories.entries
-                        .filter { it != category }
-                )
-        }
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _core = this._query
@@ -53,14 +43,8 @@ class MessagesViewModel(
         this._category,
         this._query
     ) { labels, category, searchQuery ->
-        labels[category]?.map {
+        labels[MessageCategories.entries[category]]?.map {
             MessageMetadata(
-                senderLabel = {
-                    val split = it.sender.split(" ")
-                    ((split.getOrNull(0)?.uppercase()?.substring(0, 1) ?: "")
-                            +
-                            (split.getOrNull(1)?.uppercase()?.substring(0, 1) ?: ""))
-                }(),
                 messageLabel = it,
                 parsedDatetime = it.sentAt?.date?.minimalFormat()?.let { date ->
                     it.sentAt?.time?.onlyHourAndMinute()?.let { time ->
@@ -75,7 +59,7 @@ class MessagesViewModel(
     }
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    fun setCategory(category: MessageCategories) = this._category.update { category }
+    fun setCategory(category: Int) = this._category.update { category }
     fun setQuery(query: String) = this._query.update { query }
 
     fun refresh() = this.task {
@@ -84,7 +68,6 @@ class MessagesViewModel(
 
     data class MessageMetadata(
         val theme: Pair<Color, RoundedPolygon>,
-        val senderLabel: String,
         val messageLabel: MessageLabel,
         val parsedDatetime: Pair<String, String>?
     )
@@ -92,11 +75,11 @@ class MessagesViewModel(
 
 fun LocalTime.getThemeForOur(): Pair<Color, RoundedPolygon> = this.hour.let {
     when {
-        it > 22 || it < 2 -> Pair(Color.DarkGray, MaterialShapes.Slanted)
-        it > 20 || it < 4 -> Pair(Color.LightGray, MaterialShapes.Arrow)
-        it > 18 || it < 6 -> Pair(Color.Red, MaterialShapes.Cookie4Sided)
-        it > 16 || it < 8 -> Pair(Color.Green, MaterialShapes.Flower)
-        it > 14 || it < 10 -> Pair(Color.Blue, MaterialShapes.Sunny)
+        it !in 2..22 -> Pair(Color.DarkGray, MaterialShapes.Slanted)
+        it !in 4..20 -> Pair(Color.LightGray, MaterialShapes.Arrow)
+        it !in 6..18 -> Pair(Color.Red, MaterialShapes.Cookie4Sided)
+        it !in 8..16 -> Pair(Color.Green, MaterialShapes.Flower)
+        it !in 10..14 -> Pair(Color.Blue, MaterialShapes.Sunny)
         else -> Pair(Color.Cyan, MaterialShapes.SoftBurst)
     }
 }

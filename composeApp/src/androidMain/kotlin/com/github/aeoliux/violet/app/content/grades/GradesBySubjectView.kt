@@ -29,6 +29,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aeoliux.violet.app.components.ShapeBox
+import com.github.aeoliux.violet.app.layout.LazyLayout
+import com.github.aeoliux.violet.app.layout.SectionHeader
+import com.github.aeoliux.violet.app.layout.SectionListItem
 import com.github.aeoliux.violet.storage.Grade
 import org.koin.compose.koinInject
 
@@ -46,88 +49,101 @@ fun GradesBySubjectView(
         viewModel.setSubject(subject)
     }
 
-    PullToRefreshBox(
+    LazyLayout(
+        header = subject,
         isRefreshing = isRefreshing,
         onRefresh = { viewModel.refresh() }
     ) {
-        LazyColumn {
-            item {
-                Text(
-                    text = subject,
-                    fontSize = 32.sp,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+        grades.bySemester.forEach { semester ->
+            semester
+                .takeIf { it.proposal != null || it.final != null || it.constituent.isNotEmpty() }
+                ?.let { grades ->
+                    item {
+                        SectionHeader("Semester ${semester.semester} - summary")
+                    }
 
-            itemsIndexed(grades) { semester, grades ->
-                if (grades.isNotEmpty()) {
-                    Spacer(Modifier.height(30.dp))
-
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 15.dp, bottom = 5.dp),
-                        text = "Semester ${semester + 1}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    val semestral = listOf(
+                        Pair("Proposal", grades.proposal),
+                        Pair("Final", grades.final)
                     )
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        grades.forEachIndexed { index, (grade, theme) ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(80.dp)
-                                    .clickable { onNavEntry(grade) },
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Spacer(Modifier.width(15.dp))
+                        .filter { it.second != null }
 
+                    item {
+                        SectionListItem(
+                            index = 0,
+                            lastIndex = semestral.size,
+
+                            header = "Average",
+                            subheaders = listOf("Your semestral average"),
+                            leading = {
                                 ShapeBox(
                                     modifier = Modifier
-                                        .height(55.dp)
-                                        .width(55.dp),
-                                    label = grade.grade,
-                                    shape = theme.second.toShape(),
-                                    containerColor = theme.first,
+                                        .height(70.dp)
+                                        .width(70.dp),
+                                    label = grades.average,
+                                    shape = grades.averageTheme.second.toShape(),
+                                    containerColor = grades.averageTheme.first,
+                                    contentColor = Color.White
+                                )
+                            }
+                        )
+                    }
+
+                    itemsIndexed(semestral) { index, (label, grade) ->
+                        SectionListItem(
+                            index = index + 1,
+                            lastIndex = semestral.size,
+
+                            onClick = { onNavEntry(grade.grade) },
+
+                            header = label,
+                            leading = {
+                                ShapeBox(
+                                    modifier = Modifier
+                                        .height(70.dp)
+                                        .width(70.dp),
+                                    label = grade.grade.grade,
+                                    shape = grade.shape.toShape(),
+                                    containerColor = grade.color,
                                     contentColor = Color.Black
                                 )
+                            },
+                            subheaders = listOf(
+                                grade!!.grade.addedBy
+                            )
+                        )
+                    }
 
-                                Column(
+                    item {
+                        SectionHeader("Semester ${semester.semester} - grades")
+                    }
+
+                    itemsIndexed(grades.constituent) { index, (grade, color, shape) ->
+                        SectionListItem(
+                            index = index,
+                            lastIndex = grades.constituent.lastIndex,
+
+                            onClick = { onNavEntry(grade) },
+
+                            header = grade.category,
+                            subheaders = listOf(
+                                grade.addedBy
+                            ),
+
+                            leading = {
+                                ShapeBox(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(end = 15.dp),
-                                    horizontalAlignment = Alignment.End,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = grade.addedBy
-                                    )
-
-                                    Text(
-                                        text = grade.category
-                                    )
-                                }
-                            }
-
-                            if (index < grades.lastIndex)
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.surfaceContainer,
-                                    thickness = 3.dp
+                                        .height(70.dp)
+                                        .width(70.dp),
+                                    label = grade.grade,
+                                    shape = shape.toShape(),
+                                    containerColor = color,
+                                    contentColor = Color.Black
                                 )
-                        }
+                            }
+                        )
                     }
                 }
-            }
-
-            item {
-                Spacer(Modifier.height(25.dp))
-            }
         }
     }
 }

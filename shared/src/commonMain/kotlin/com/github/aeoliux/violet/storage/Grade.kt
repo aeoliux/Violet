@@ -42,4 +42,32 @@ interface GradesDao: BaseDao<Grade> {
 
     @Query("SELECT * FROM Grades WHERE subject = :subject")
     fun getGradesForSubject(subject: String): Flow<List<Grade>>
+
+    @Query("""
+        SELECT subject, semester, SUM(gradeValue * weight) / SUM(weight) AS average
+        FROM Grades
+        GROUP BY subject, semester
+        HAVING gradeType = :gradeType
+    """)
+    fun getAveragesBySubjectAndSemester(gradeType: GradeType = GradeType.Constituent): Flow<List<AverageBySubject>>
+
+    @Query("""
+        SELECT semester, SUM(gradeValue * weight) / SUM(weight) AS average
+        FROM Grades
+        WHERE subject = :subject
+        GROUP BY semester
+        HAVING gradeType = :gradeType
+    """)
+    fun getAveragesForSubject(subject: String, gradeType: GradeType = GradeType.Constituent): Flow<List<AverageForSemester>>
 }
+
+data class AverageForSemester(
+    val semester: Int,
+    val average: Double
+)
+
+data class AverageBySubject(
+    val subject: String,
+    val semester: Int,
+    val average: Double
+)

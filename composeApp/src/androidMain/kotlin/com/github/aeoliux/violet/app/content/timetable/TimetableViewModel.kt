@@ -4,8 +4,10 @@ import androidx.lifecycle.viewModelScope
 import com.github.aeoliux.violet.app.RefreshableViewModel
 import com.github.aeoliux.violet.repositories.AlertState
 import com.github.aeoliux.violet.repositories.TimetableRepository
+import com.github.aeoliux.violet.storage.Timetable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -33,7 +35,7 @@ class TimetableViewModel(
     ) { timetable, selectedDay ->
         this._weekDays.update { timetable.keys.toList() }
 
-        val day = this._weekDays.value.getOrNull(selectedDay) ?: return@combine linkedMapOf()
+        val day = this._weekDays.value.getOrNull(selectedDay) ?: return@combine emptyList()
 
         if (!this.tabChosen) {
             val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
@@ -48,8 +50,10 @@ class TimetableViewModel(
             this.tabChosen = true
         }
 
-        timetable[day] ?: linkedMapOf()
-    }.stateIn(viewModelScope, SharingStarted.Lazily, linkedMapOf())
+        return@combine timetable[day]?.flatMap { (_, timetable) ->
+            timetable
+        } ?: emptyList()
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     fun selectDay(day: Int) = _selectedDay.update { day }
 

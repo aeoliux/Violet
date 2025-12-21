@@ -29,6 +29,6 @@ interface TimetableDao: BaseDao<Timetable> {
     @Query("SELECT * FROM Timetable ORDER BY date ASC")
     fun getTimetable(): Flow<List<Timetable>>
 
-    @Query("SELECT * FROM Timetable WHERE date = :date OR date = :or ORDER BY date ASC")
-    fun getTimetableByDate(date: LocalDate, or: LocalDate): Flow<List<Timetable>>
+    @Query("SELECT * FROM Timetable WHERE date >= :date ORDER BY date ASC")
+    fun getTimetableSince(date: LocalDate): Flow<List<Timetable>>
 }

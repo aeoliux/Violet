@@ -1,11 +1,15 @@
 package com.github.aeoliux.violet.repositories
 
+import com.github.aeoliux.violet.api.ApiClient
+import com.github.aeoliux.violet.api.types.Lesson
 import com.github.aeoliux.violet.storage.AppDatabase
 import com.github.aeoliux.violet.storage.Timetable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
@@ -33,44 +37,22 @@ class TimetableRepository(
         }
 
     @OptIn(ExperimentalTime::class)
-    fun getCurrentTimetable(): Flow<Pair<LocalDate, LinkedHashMap<LocalTime, List<Timetable>>>> {
-        val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-        val weekDay = today.dayOfWeek.isoDayNumber
-        val day = if (weekDay > 5) {
-            LocalDate.fromEpochDays(today.toEpochDays() + 8 - weekDay)
-        } else {
-            today
-        }
-
-        val nextDay = day.plus(1, DateTimeUnit.DAY)
-
-        return this.appDatabase
+    fun getCurrentTimetable(): Flow<Pair<LocalDate, List<Timetable>>?> =
+        this.appDatabase
             .getTimetableDao()
-            .getTimetableByDate(day, nextDay)
+            .getTimetableSince(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
             .map { timetable ->
-                val mapped = listOf(
-                    timetable.filter { it.date == day },
-                    timetable.filter { it.date == nextDay }
-                ).map {
-                    byDate -> this.associateTimetableByTimestamp(byDate)
+                val dates = timetable.map { it.date }.distinct()
+
+                val byDate = dates.associateWithTo(linkedMapOf()) { date ->
+                    timetable.filter { it.date == date }
                 }
 
-
-                mapped[0].entries
-                    .lastOrNull()
-                    ?.takeIf { (time, firstDay) ->
-                        val now = Clock.System.now()
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
-
-                        firstDay.isNotEmpty() &&
-                                (now.date < day ||
-                                        (now.date >= day &&
-                                                now.time < firstDay.maxBy { it.timeTo }.timeTo))
-                    }
-                    ?.let { Pair(day, mapped[0]) }
-                    ?: Pair(nextDay, mapped[1])
+                byDate.entries
+                    .sortedBy { it.key }
+                    .getOrNull(0)
+                    ?.let { Pair(it.key, it.value) }
             }
-    }
 
     internal fun associateTimetableByTimestamp(timetable: List<Timetable>): LinkedHashMap<LocalTime, List<Timetable>> {
         val timestamps = timetable
@@ -83,9 +65,16 @@ class TimetableRepository(
             }
     }
 
+    @OptIn(ExperimentalTime::class)
     suspend fun refresh() = this.clientManager.with { client ->
-        val timetable = client
-            .timetable()
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val timetable = this.loopFetchTimetable(
+            client = client,
+            forDay = now.date,
+            now = now
+        )
+            .let { println(it.keys); it }
             .flatMap { (date, timetable) ->
                 timetable.flatMap { (time, timetable) ->
                     timetable.map { entry ->
@@ -108,5 +97,45 @@ class TimetableRepository(
         this.appDatabase
             .getTimetableDao()
             .upsertMultiple(timetable)
+    }
+
+    internal suspend fun loopFetchTimetable(
+        client: ApiClient,
+        forDay: LocalDate,
+        now: LocalDateTime,
+        tries: Int = 1,
+        maxTries: Int = 5
+    ): LinkedHashMap<LocalDate, LinkedHashMap<LocalTime, List<Lesson>>> {
+        val next = client.timetable(
+            this.weekDayForDate(forDay)
+        )
+
+        val lengthAfterToday = next
+            .filter { it.key > now.date }
+            .entries
+            .fold(0) { acc, (date, timetable) ->
+                acc + timetable.entries.fold(0) { acc, (time, timetable) -> acc + timetable.size}
+            }
+
+        return if (lengthAfterToday > 0 || tries >= maxTries)
+            next
+        else
+            this.loopFetchTimetable(
+                client = client,
+                forDay = forDay.plus(DatePeriod(days = 7)),
+                now = now,
+                tries = tries + 1,
+                maxTries = maxTries
+            )
+    }
+
+    @OptIn(ExperimentalTime::class)
+    internal fun weekDayForDate(date: LocalDate): LocalDate {
+        val weekDay = date.dayOfWeek.isoDayNumber
+        return if (weekDay > 5) {
+            LocalDate.fromEpochDays(date.toEpochDays() + 8 - weekDay)
+        } else {
+            LocalDate.fromEpochDays(date.toEpochDays() - weekDay + 1)
+        }
     }
 }

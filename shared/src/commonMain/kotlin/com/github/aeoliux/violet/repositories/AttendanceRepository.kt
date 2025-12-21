@@ -11,6 +11,14 @@ class AttendanceRepository(
         .getAttendanceDao()
         .getUnattendance()
 
+    fun getAttendancePercentage() = this.appDatabase
+        .getAttendanceDao()
+        .getAttendancePercentage()
+
+    fun getAttendancePercentageBySemester() = this.appDatabase
+        .getAttendanceDao()
+        .getSemestralAttendance()
+
     suspend fun refresh() = this.clientManager.with { client ->
         val attendance = client
             .attendance()

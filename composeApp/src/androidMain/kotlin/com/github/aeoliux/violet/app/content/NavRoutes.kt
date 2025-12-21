@@ -16,14 +16,44 @@ object NavRoutes {
         Triple("Menu", Icons.Default.Menu, NavRoutes.Menu)
     )
 
-    object Home
-    object Grades
-    object Timetable
-    object Menu
-    object Messages
-    object Agenda
-    object Attendance
+    object Home: TitledNavKey {
+        override val title: String = "Home"
+    }
 
-    data class GradesBySubject(val subject: String)
-    data class MessageEditor(val message: Message?, val messageLabel: MessageLabel?)
+    object Grades: TitledNavKey {
+        override val title: String = "Grades"
+    }
+    object Timetable: TitledNavKey {
+        override val title: String = "Timetable"
+    }
+
+    object Menu: TitledNavKey {
+        override val title: String = "Menu"
+    }
+
+    object Messages: TitledNavKey {
+        override val title: String = "Messages"
+    }
+    object Agenda: TitledNavKey {
+        override val title: String = "Agenda"
+    }
+
+    object Attendance: TitledNavKey {
+        override val title: String = "Attendance"
+    }
+
+    data class GradesBySubject(val subject: String): TitledNavKey {
+        override val title: String = subject
+    }
+
+    data class MessageEditor(val message: Message?, val messageLabel: MessageLabel?): TitledNavKey {
+        override val title: String = if (message == null || messageLabel == null)
+            "New message"
+        else
+            "Respond"
+    }
+}
+
+interface TitledNavKey {
+    val title: String
 }

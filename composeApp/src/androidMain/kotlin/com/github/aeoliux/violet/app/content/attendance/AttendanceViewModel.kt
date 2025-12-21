@@ -13,6 +13,7 @@ import com.github.aeoliux.violet.storage.Attendance
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlin.math.roundToInt
 
 class AttendanceViewModel(
     private val attendanceRepository: AttendanceRepository,
@@ -37,12 +38,27 @@ class AttendanceViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, linkedMapOf())
 
+    val overallPercentage = this.attendanceRepository
+        .getAttendancePercentage()
+        .map {
+            Percentage(
+                percentage = it.roundToInt(),
+                theme = it.percentageTheme()
+            )
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, Percentage(0, 0.0.percentageTheme()))
+
     fun refresh() = this.task {
         this.attendanceRepository.refresh()
     }
 
     data class AttendanceEntry(
         val attendance: Attendance,
+        val theme: Pair<Color, RoundedPolygon>
+    )
+
+    data class Percentage(
+        val percentage: Int,
         val theme: Pair<Color, RoundedPolygon>
     )
 }
@@ -60,3 +76,13 @@ fun Attendance.themeToAttendanceType(): Pair<Color, RoundedPolygon> = Pair(
         else -> MaterialShapes.Slanted
     }
 )
+
+fun Double.percentageTheme(): Pair<Color, RoundedPolygon> = when {
+    this in 0.0..20.0 -> Pair(Color.Black, MaterialShapes.Ghostish)
+    this in 20.0..40.0 -> Pair(Color.Red, MaterialShapes.Burst)
+    this in 40.0..60.0 -> Pair(Color.Yellow, MaterialShapes.Flower)
+    this in 60.0..80.0 -> Pair(Color.Green, MaterialShapes.Sunny)
+    this in 80.0..90.0 -> Pair(Color.Blue, MaterialShapes.SoftBurst)
+    this in 90.0..100.0 -> Pair(Color.Cyan, MaterialShapes.VerySunny)
+    else -> Pair(Color.Gray, MaterialShapes.Circle)
+}

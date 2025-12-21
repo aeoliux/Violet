@@ -42,7 +42,7 @@ fun LoginView(viewModel: LoginViewModel = koinViewModel<LoginViewModel>()) {
             .fillMaxSize()
             .padding(top = 70.dp),
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.proceed() }
+        onRefresh = {  }
     ) {
         Box(
             Modifier

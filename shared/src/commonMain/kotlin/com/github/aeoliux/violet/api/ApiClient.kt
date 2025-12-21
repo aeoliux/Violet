@@ -112,17 +112,10 @@ class ApiClient {
     }
 
     @OptIn(ExperimentalTime::class)
-    suspend fun timetable(): Timetable {
-        val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-        val weekDay = today.dayOfWeek.isoDayNumber
-        val weekStarts = if (weekDay > 5) {
-            LocalDate.fromEpochDays(today.toEpochDays() + 8 - weekDay)
-        } else {
-            LocalDate.fromEpochDays(today.toEpochDays() - weekDay + 1)
-        }
-
-        return data<Timetables>("Timetables?weekStart=${weekStarts}").toTimetableMap(classrooms)
-    }
+    suspend fun timetable(
+        weekStarts: LocalDate
+    ): Timetable =
+        data<Timetables>("Timetables?weekStart=${weekStarts}").toTimetableMap(classrooms)
 
     suspend fun attendance(): Attendance {
         return data<Attendances>("Attendances").toAttendanceMap(

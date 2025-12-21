@@ -1,6 +1,7 @@
 package com.github.aeoliux.violet.app.content.messages
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,8 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,10 +37,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.aeoliux.violet.app.components.ProfilePicture
 import com.github.aeoliux.violet.app.components.ShapeBoxComposable
+import com.github.aeoliux.violet.app.layout.BottomAction
+import com.github.aeoliux.violet.app.layout.LazyLayout
+import com.github.aeoliux.violet.app.layout.SectionHeader
+import com.github.aeoliux.violet.app.layout.SectionListItem
+import com.github.aeoliux.violet.app.layout.SectionListItemComposable
 import com.github.aeoliux.violet.storage.Message
 import com.github.aeoliux.violet.storage.MessageLabel
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.random.Random
 
 @Composable
 fun MessageEditorView(
@@ -69,124 +79,223 @@ fun MessageEditorView(
             userSelector = false
         }
     } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            LazyColumn {
-                item {
-                    Text(
-                        text = if (respondsTo == null)
-                            "New message"
-                        else
-                            "Respond",
-                        fontSize = 32.sp,
+        LazyLayout(
+            actions = {
+                if ((respondsTo == null || selectedUsers.isEmpty()) && requestKey.isNotEmpty())
+                    BottomAction(
                         modifier = Modifier
-                            .padding(bottom = 20.dp)
+                            .align(Alignment.BottomStart),
+                        shape = MaterialShapes.Cookie4Sided.toShape(),
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Select receivers",
+                        onClick = { userSelector = true }
                     )
 
-                    if (selectedUsers.isNotEmpty())
-                        Text(
-                            text = "This message will be sent to:",
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp
-                        )
+                if (requestKey.isNotEmpty() && selectedUsers.isNotEmpty() && content.isNotEmpty() && topic.isNotEmpty())
+                    BottomAction(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd),
+                        shape = MaterialShapes.SoftBurst.toShape(),
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Send message",
+                        onClick = { viewModel.send { onBack() } }
+                    )
+            }
+        ) {
+            if (selectedUsers.isNotEmpty()) {
+                item {
+                    SectionHeader("Selected receivers")
                 }
 
                 itemsIndexed(selectedUsers) { index, user ->
-                    Spacer(Modifier.height(5.dp))
+                    SectionListItem(
+                        index = index,
+                        lastIndex = selectedUsers.lastIndex,
 
-                    Text(
-                        text = "${index + 1}. ${user.lastName} ${user.firstName}",
+                        header = "${user.lastName} ${user.firstName}",
+                        leading = {
+                            val number = remember { Random.nextInt(0, 6) }
+
+                            ProfilePicture(
+                                name = "${user.lastName} ${user.firstName}",
+                                containerColor = when {
+                                    number == 1 -> Color.Red
+                                    number == 2 -> Color.Green
+                                    number == 3 -> Color.Black
+                                    number == 4 -> Color.Cyan
+                                    number == 5 -> Color.Magenta
+                                    else -> Color.LightGray
+                                },
+                                shape = (when (number) {
+                                            1 -> MaterialShapes.Cookie4Sided
+                                            2 -> MaterialShapes.Flower
+                                        3 -> MaterialShapes.SoftBurst
+                                            4 -> MaterialShapes.Clover4Leaf
+                                            5 -> MaterialShapes.Sunny
+                                            else -> MaterialShapes.Cookie9Sided
+                                        }).toShape()
+                            )
+                        }
                     )
-                }
-
-                item {
-                    HorizontalDivider(Modifier.padding(top = 20.dp, bottom = 20.dp))
-
-                    OutlinedTextField(
-                        value = topic,
-                        onValueChange = { viewModel.setTopic(it) },
-                        label = { Text("Topic") },
-                        maxLines = 1,
-
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-
-                item {
-                    Spacer(Modifier.height(20.dp))
-
-                    OutlinedTextField(
-                        value = content,
-                        minLines = 10,
-                        onValueChange = { viewModel.setContent(it) },
-                        label = { Text("Message") },
-
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-
-                item {
-                    Spacer(Modifier.height(150.dp))
                 }
             }
 
-            if ((respondsTo == null || selectedUsers.isEmpty()) && requestKey.isNotEmpty())
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .background(Color.Transparent)
-                        .padding(bottom = 15.dp)
-                ) {
-                    ShapeBoxComposable(
-                        shape = MaterialShapes.Cookie4Sided.toShape(),
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        modifier = Modifier
-                            .height(80.dp)
-                            .width(80.dp)
-                            .align(Alignment.Center)
-                            .clickable { userSelector = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Select receivers",
-                            tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(25.dp)
-                        )
-                    }
-                }
+            item {
+                SectionHeader("Message")
+            }
 
-            if (requestKey.isNotEmpty() && selectedUsers.isNotEmpty() && content.isNotEmpty() && topic.isNotEmpty())
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .background(Color.Transparent)
-                        .padding(bottom = 15.dp)
-                ) {
-                    ShapeBoxComposable(
-                        shape = MaterialShapes.Cookie9Sided.toShape(),
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        modifier = Modifier
-                            .height(80.dp)
-                            .width(80.dp)
-                            .align(Alignment.Center)
-                            .clickable { viewModel.send { onBack() } }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Send",
-                            tint = MaterialTheme.colorScheme.secondary,
+            item {
+                SectionListItemComposable(
+                    index = 0,
+                    lastIndex = 1,
+
+                    header = {
+                        TextField(
+                            value = topic,
+                            onValueChange = { viewModel.setTopic(it) },
+                            placeholder = { Text("Topic") },
+                            maxLines = 1,
+                            colors = TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent
+                            ),
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(25.dp)
+                                .fillMaxWidth()
+                                .border(0.dp, Color.Transparent)
                         )
                     }
-                }
+                )
+            }
+
+            item {
+                SectionListItemComposable(
+                    index = 1,
+                    lastIndex = 1,
+
+                    header = {
+                        TextField(
+                            value = content,
+                            minLines = 10,
+                            onValueChange = { viewModel.setContent(it) },
+                            placeholder = { Text("Message") },
+                            colors = TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(0.dp, Color.Transparent)
+                        )
+                    }
+                )
+            }
         }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//        ) {
+//            LazyColumn {
+//                item {
+//                    Text(
+//                        text = if (respondsTo == null)
+//                            "New message"
+//                        else
+//                            "Respond",
+//                        fontSize = 32.sp,
+//                        modifier = Modifier
+//                            .padding(bottom = 20.dp)
+//                    )
+//
+//                    if (selectedUsers.isNotEmpty())
+//                        Text(
+//                            text = "This message will be sent to:",
+//                            fontWeight = FontWeight.SemiBold,
+//                            fontSize = 18.sp
+//                        )
+//                }
+//
+//                itemsIndexed(selectedUsers) { index, user ->
+//                    Spacer(Modifier.height(5.dp))
+//
+//                    Text(
+//                        text = "${index + 1}. ${user.lastName} ${user.firstName}",
+//                    )
+//                }
+//
+//                item {
+//                    HorizontalDivider(Modifier.padding(top = 20.dp, bottom = 20.dp))
+//
+
+//                }
+//
+//                item {
+//                    Spacer(Modifier.height(20.dp))
+//
+
+//                }
+//
+//                item {
+//                    Spacer(Modifier.height(150.dp))
+//                }
+//            }
+//
+//            if ((respondsTo == null || selectedUsers.isEmpty()) && requestKey.isNotEmpty())
+//                Box(
+//                    modifier = Modifier
+//                        .align(Alignment.BottomStart)
+//                        .background(Color.Transparent)
+//                        .padding(bottom = 15.dp)
+//                ) {
+//                    ShapeBoxComposable(
+//                        shape = MaterialShapes.Cookie4Sided.toShape(),
+//                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+//                        modifier = Modifier
+//                            .height(80.dp)
+//                            .width(80.dp)
+//                            .align(Alignment.Center)
+//                            .clickable { userSelector = true }
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.Person,
+//                            contentDescription = "Select receivers",
+//                            tint = MaterialTheme.colorScheme.secondary,
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .padding(25.dp)
+//                        )
+//                    }
+//                }
+//
+//            if (requestKey.isNotEmpty() && selectedUsers.isNotEmpty() && content.isNotEmpty() && topic.isNotEmpty())
+//                Box(
+//                    modifier = Modifier
+//                        .align(Alignment.BottomEnd)
+//                        .background(Color.Transparent)
+//                        .padding(bottom = 15.dp)
+//                ) {
+//                    ShapeBoxComposable(
+//                        shape = MaterialShapes.Cookie9Sided.toShape(),
+//                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+//                        modifier = Modifier
+//                            .height(80.dp)
+//                            .width(80.dp)
+//                            .align(Alignment.Center)
+//                            .clickable { viewModel.send { onBack() } }
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.Send,
+//                            contentDescription = "Send",
+//                            tint = MaterialTheme.colorScheme.secondary,
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .padding(25.dp)
+//                        )
+//                    }
+//                }
+//        }
     }
 }

@@ -54,7 +54,7 @@ class HomeViewModel(
         .getCurrentTimetable()
         .stateIn(viewModelScope, SharingStarted.Lazily, Pair(
             Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
-            linkedMapOf()
+            listOf()
         ))
 
     val agenda = this.agendaRepository

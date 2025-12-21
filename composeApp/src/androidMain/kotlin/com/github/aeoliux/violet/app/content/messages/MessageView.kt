@@ -43,10 +43,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import com.github.aeoliux.violet.api.scraping.messages.MessageCategories
+import com.github.aeoliux.violet.app.components.ProfilePicture
 import com.github.aeoliux.violet.app.components.ShapeBox
 import com.github.aeoliux.violet.app.components.ShapeBoxComposable
 import com.github.aeoliux.violet.app.content.NavRoutes
 import com.github.aeoliux.violet.app.content.prettyFormatted
+import com.github.aeoliux.violet.app.layout.BottomAction
+import com.github.aeoliux.violet.app.layout.LazyLayout
+import com.github.aeoliux.violet.app.layout.SectionHeader
+import com.github.aeoliux.violet.app.layout.SectionListItem
+import com.github.aeoliux.violet.app.layout.SectionListItemComposable
 import com.github.aeoliux.violet.storage.Message
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -63,176 +69,121 @@ fun MessageView(
         viewModel.setMetadata(messageLabel)
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+    LazyLayout(
+        actions = {
+            if (message != null && messageLabel.messageLabel.category == MessageCategories.Received)
+                BottomAction(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd),
+                    shape = MaterialShapes.Cookie9Sided.toShape(),
+                    imageVector = Icons.Default.TurnLeft,
+                    contentDescription = "Respond",
+                    onClick = { onNavKey(NavRoutes.MessageEditor(message, messageLabel.messageLabel)) }
+                )
+        }
     ) {
-        LazyColumn {
-            metadata?.let { metadata ->
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(contentColor = MaterialTheme.colorScheme.onSurface),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .fillMaxWidth()
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                ShapeBox(
-                                    label = metadata.senderLabel,
-                                    shape = metadata.theme.second.toShape(),
-                                    containerColor = metadata.theme.first
-                                )
-
-                                Spacer(Modifier.width(20.dp))
-
-                                Text(
-                                    text = metadata.messageLabel.sender,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .width(280.dp)
-                                )
-                            }
-
-                            HorizontalDivider(Modifier.padding(top = 20.dp, bottom = 20.dp))
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Label,
-                                    contentDescription = "Topic"
-                                )
-
-                                Spacer(Modifier.width(15.dp))
-
-                                Text(
-                                    text = "Topic"
-                                )
-                            }
-
-                            Text(
-                                text = metadata.messageLabel.topic,
-                                modifier = Modifier
-                                    .padding(top = 15.dp)
-                            )
-
-                            metadata.messageLabel.sentAt?.let { datetime ->
-                                HorizontalDivider(Modifier.padding(top = 20.dp, bottom = 20.dp))
-
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.CalendarToday,
-                                        contentDescription = "Date"
-                                    )
-
-                                    Spacer(Modifier.width(15.dp))
-
-                                    Text(
-                                        text = "Sent at"
-                                    )
-                                }
-
-                                Text(
-                                    text = datetime.prettyFormatted(),
-                                    modifier = Modifier
-                                        .padding(top = 15.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            message?.let { message ->
-                item {
-                    Spacer(Modifier.height(15.dp))
-
-                    Card(
-                        colors = CardDefaults.cardColors(contentColor = MaterialTheme.colorScheme.onSurface),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(20.dp)
-                        ) {
-                            Row {
-                                Icon(
-                                    imageVector = Icons.Default.Mail,
-                                    contentDescription = "Message content"
-                                )
-
-                                Spacer(Modifier.width(15.dp))
-
-                                Text(
-                                    text = "Message content"
-                                )
-                            }
-
-                            HorizontalDivider(Modifier.padding(top = 20.dp, bottom = 20.dp))
-
-                            val color = MaterialTheme.colorScheme.onSurface
-
-                            AndroidView(
-                                factory = {
-                                    TextView(it).apply {
-                                        setTextColor(color.toArgb())
-                                        movementMethod = LinkMovementMethod.getInstance()
-                                    }
-                                },
-                                update = { textView ->
-                                    textView.text = HtmlCompat.fromHtml(
-                                        message.content,
-                                        HtmlCompat.FROM_HTML_MODE_COMPACT
-                                    )
-                                }
-                            )
-                        }
-                    }
-                }
+        metadata?.let { metadata ->
+            item {
+                SectionHeader("Info")
             }
 
             item {
-                Spacer(Modifier.height(150.dp))
+                SectionListItem(
+                    index = 0,
+                    lastIndex = if (metadata.messageLabel.sentAt == null) 1 else 2,
+                    header = metadata.messageLabel.sender,
+                    leading = {
+                        ProfilePicture(
+                            name = metadata.messageLabel.sender,
+                            shape = metadata.theme.second.toShape(),
+                            containerColor = metadata.theme.first
+                        )
+                    }
+                )
             }
-        }
 
-        if (message != null && messageLabel.messageLabel.category == MessageCategories.Received)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .background(Color.Transparent)
-                    .padding(bottom = 15.dp)
-            ) {
-                ShapeBoxComposable(
-                    shape = MaterialShapes.Cookie9Sided.toShape(),
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    modifier = Modifier
-                        .height(80.dp)
-                        .width(80.dp)
-                        .align(Alignment.Center)
-                        .clickable { onNavKey(NavRoutes.MessageEditor(message, messageLabel.messageLabel)) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.TurnLeft,
-                        contentDescription = "Respond",
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp)
+            item {
+                SectionListItem(
+                    index = 1,
+                    lastIndex = if (metadata.messageLabel.sentAt == null) 1 else 2,
+                    header = "Topic",
+                    leading = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Label,
+                            contentDescription = "Topic"
+                        )
+                    },
+                    subheaders = listOf(
+                        metadata.messageLabel.topic
+                    )
+                )
+            }
+
+            metadata.messageLabel.sentAt?.let { sentAt ->
+                item {
+                    SectionListItem(
+                        index = 2,
+                        lastIndex = 2,
+                        header = "Sent at",
+                        leading = {
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = "Sent at"
+                            )
+                        },
+                        subheaders = listOf(
+                            sentAt.prettyFormatted()
+                        )
                     )
                 }
             }
+        }
+
+        message?.let { message ->
+            item {
+                SectionHeader("Message")
+            }
+
+            item {
+                SectionListItem(
+                    index = 0,
+                    lastIndex = 1,
+                    header = "Message content",
+
+                    leading = {
+                        Icon(
+                            imageVector = Icons.Default.Mail,
+                            contentDescription = "Message content"
+                        )
+                    }
+                )
+            }
+
+            item {
+                SectionListItemComposable(
+                    index = 1,
+                    lastIndex = 1,
+
+                    header = {
+                        val color = MaterialTheme.colorScheme.onSurface
+
+                        AndroidView(
+                            factory = {
+                                TextView(it).apply {
+                                    setTextColor(color.toArgb())
+                                    movementMethod = LinkMovementMethod.getInstance()
+                                }
+                            },
+                            update = { textView ->
+                                textView.text = HtmlCompat.fromHtml(
+                                    message.content,
+                                    HtmlCompat.FROM_HTML_MODE_COMPACT
+                                )
+                            }
+                        )
+                    }
+                )
+            }
+        }
     }
 }

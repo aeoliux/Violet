@@ -29,14 +29,14 @@ interface AttendanceDao: BaseDao<Attendance> {
     @Query("SELECT * FROM Attendance WHERE NOT typeShort = 'ob' ORDER BY date DESC")
     fun getUnattendance(): Flow<List<Attendance>>
 
-    @Query("SELECT SUM(CASE WHEN typeShort = 'ob' THEN 1 ELSE 0 END) / COUNT(*) * 100.0 FROM Attendance")
+    @Query("SELECT SUM(CASE WHEN typeShort = 'ob' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) FROM Attendance")
     fun getAttendancePercentage(): Flow<Double>
 
     @Query("""
         SELECT
             semester AS semester,
-            SUM(CASE WHEN type = 'ob' THEN 1 ELSE 0 END) /
-                COUNT(*) * 100.0 AS percentage
+            SUM(CASE WHEN type = 'ob' THEN 1 ELSE 0 END) *
+                100.0 / COUNT(*) AS percentage
         FROM Attendance
         GROUP BY semester
         ORDER BY semester

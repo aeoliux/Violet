@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -26,11 +27,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.aeoliux.violet.app.content.formatWithWeekday
+import com.github.aeoliux.violet.app.layout.LazyLayout
+import com.github.aeoliux.violet.app.layout.SectionHeader
+import com.github.aeoliux.violet.app.layout.SectionListItem
+import com.github.aeoliux.violet.app.layout.SectionListItemComposable
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -40,126 +46,69 @@ fun TimetableView(viewModel: TimetableViewModel = koinViewModel<TimetableViewMod
     val selectedDay by viewModel.selectedDay.collectAsState()
     val weekDays by viewModel.weekDays.collectAsState()
 
-    PullToRefreshBox(
-        modifier = Modifier.fillMaxSize(),
+    LazyLayout(
+        header = "Timetable",
         isRefreshing = isRefreshing,
         onRefresh = { viewModel.refresh() }
     ) {
-        LazyColumn(Modifier.fillMaxSize()) {
+        if (weekDays.isNotEmpty())
             item {
-                Text(text = "Timetable", fontSize = 32.sp, modifier = Modifier.padding(bottom = 10.dp))
-            }
-
-            if (weekDays.isNotEmpty())
-                item {
-                    PrimaryScrollableTabRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 10.dp),
-                        selectedTabIndex = selectedDay,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    ) {
-                        weekDays.forEachIndexed { index, date ->
-                            Tab(
-                                selected = index == selectedDay,
-                                onClick = { viewModel.selectDay(index) }
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(16.dp),
-                                    text = date.formatWithWeekday()
-                                )
-                            }
-                        }
-                    }
-                }
-
-            items(items = timetable.entries.toList()) { (_, entries) ->
-                Column(
-                    Modifier
+                PrimaryScrollableTabRow(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
+                        .padding(bottom = 10.dp),
+                    selectedTabIndex = selectedDay,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 ) {
-                    entries.forEach { entry ->
-                        CompositionLocalProvider(
-                            LocalContentColor provides if (entry.isCanceled)
-                                MaterialTheme.colorScheme.error
-                            else
-                                MaterialTheme.colorScheme.onSurface
+                    weekDays.forEachIndexed { index, date ->
+                        Tab(
+                            selected = index == selectedDay,
+                            onClick = { viewModel.selectDay(index) }
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(if (entry.isCanceled) 96.dp else 80.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .width(350.dp),
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    if (entry.isCanceled)
-                                        Text(
-                                            modifier = Modifier
-                                                .width(350.dp),
-                                            overflow = TextOverflow.Ellipsis,
-                                            maxLines = 1,
-                                            text = "Canceled!",
-                                            fontSize = 14.sp
-                                        )
-
-                                    Text(
-                                        modifier = Modifier
-                                            .width(350.dp),
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 1,
-                                        text = entry.subject,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 16.sp
-                                    )
-
-                                    Text(
-                                        modifier = Modifier
-                                            .width(350.dp),
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 1,
-                                        text = "${entry.time} - ${entry.timeTo}, ${entry.classroom}",
-                                        fontSize = 12.sp
-                                    )
-
-                                    Text(
-                                        modifier = Modifier
-                                            .width(350.dp),
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 1,
-                                        text = entry.teacher,
-                                        fontSize = 12.sp
-                                    )
-                                }
-
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.End
-                                ) {
-                                    Text(
-                                        text = "${entry.lessonNo}",
-                                        fontSize = 24.sp
-                                    )
-                                }
-                            }
+                            Text(
+                                modifier = Modifier.padding(16.dp),
+                                text = date.formatWithWeekday()
+                            )
                         }
                     }
                 }
-
-                HorizontalDivider(Modifier.padding(top = 10.dp, bottom = 10.dp))
             }
 
+        if (timetable.isNotEmpty())
             item {
-                Spacer(Modifier.height(25.dp))
+                SectionHeader("Lessons")
             }
+
+        itemsIndexed(timetable) { index, entry ->
+            SectionListItemComposable(
+                index = index,
+                lastIndex = timetable.size - 1,
+                header = {
+                    Text(
+                        text = entry.subject.plus(if (entry.isCanceled) " (Canceled)" else ""),
+                        color = if (entry.isCanceled)
+                            MaterialTheme.colorScheme.error
+                        else
+                            MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                subheaders = {
+                    Text(
+                        text = "${entry.time} - ${entry.timeTo}, ${entry.teacher}, ${entry.classroom}",
+                        color = if (entry.isCanceled)
+                            MaterialTheme.colorScheme.error
+                        else
+                            MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                trailing = {
+                    Text(
+                        text = entry.lessonNo.toString(),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            )
         }
     }
 }
