@@ -56,11 +56,11 @@ jobs:
 
       - name: Decode keystore
         shell: bash
-        run: echo "${{ KEYSTORE_BASE64 }}" | base64 --decode > k.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > k.keystore
 
       - name: Sign `Violet.apk`
         shell: bash
-        run: apksigner sign --ks k.keystore --ks-key-alias "${{ KEYSTORE_ALIAS }}" --ks-pass pass:"${{ KEYSTORE_PASS }}" --out Violet.apk composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk
+        run: apksigner sign --ks k.keystore --ks-key-alias "${{ secrets.KEYSTORE_ALIAS }}" --ks-pass pass:"${{ secrets.KEYSTORE_PASS }}" --out Violet.apk composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk
 
       - name: Upload `Violet.apk`
         uses: actions/upload-artifact@v4
