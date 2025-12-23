@@ -48,7 +48,7 @@ jobs:
 
       - name: Get `apksigner`
         shell: bash
-        run: sudo apk install apksigner
+        run: sudo apt install apksigner
 
       - name: Build `Violet.apk`
         shell: bash
