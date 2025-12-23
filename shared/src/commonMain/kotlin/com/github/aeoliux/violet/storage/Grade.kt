@@ -59,6 +59,18 @@ interface GradesDao: BaseDao<Grade> {
         HAVING gradeType = :gradeType
     """)
     fun getAveragesForSubject(subject: String, gradeType: GradeType = GradeType.Constituent): Flow<List<AverageForSemester>>
+
+    @Query("""
+        SELECT semester, SUM(gradeValue * weight) / SUM(weight) AS average
+        FROM Grades
+        WHERE subject = :subject AND semester = :semester AND gradeType = :gradeType
+        LIMIT 1
+    """)
+    suspend fun getNonFlowAveragesForSubjectAndSemester(
+        subject: String,
+        semester: Int,
+        gradeType: GradeType = GradeType.Constituent
+    ): AverageForSemester
 }
 
 data class AverageForSemester(

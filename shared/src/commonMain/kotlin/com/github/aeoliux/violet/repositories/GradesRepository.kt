@@ -25,6 +25,13 @@ class GradesRepository(
         .getGradesDao()
         .getAveragesForSubject(subject)
 
+    suspend fun getNonFlowAveragesForSubjectAndSemester(
+        subject: String,
+        semester: Int
+    ) = this.appDatabase
+        .getGradesDao()
+        .getNonFlowAveragesForSubjectAndSemester(subject, semester)
+
     fun getAveragesBySubjectAndSemester() = this.appDatabase
         .getGradesDao()
         .getAveragesBySubjectAndSemester()

@@ -15,13 +15,7 @@ struct GradesView: View {
                                 
                                 ForEach(self.viewModel.averages[index], id: \.0) { (label, color, average) in
                                     VStack {
-                                        Circle()
-                                            .fill(color)
-                                            .frame(width: 50, height: 50)
-                                            .overlay {
-                                                Text(average)
-                                                    .foregroundStyle(.white)
-                                            }
+                                        AverageComponent(color: color, average: average)
                                         
                                         Text(label)
                                             .frame(width: 175)
@@ -49,5 +43,20 @@ struct GradesView: View {
                     .navigationTitle(subject)
             }
         }
+    }
+}
+
+struct AverageComponent: View {
+    let color: SwiftUI.Color
+    let average: String
+    
+    var body: some View {
+        Circle()
+            .fill(color)
+            .frame(width: 50, height: 50)
+            .overlay {
+                Text(average)
+                    .foregroundStyle(.white)
+            }
     }
 }

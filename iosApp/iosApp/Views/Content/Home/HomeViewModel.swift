@@ -10,7 +10,7 @@ extension HomeView {
         
         var aboutMe: AboutMe?
         var luckyNumber: Int = 0
-        var timetable = [(Date, [Timetable])]()
+        var timetable = [Timetable]()
         var timetableDate: Date?
         var latestGrades: [(Grade_, SwiftUI.Color)] = []
         
@@ -37,18 +37,12 @@ extension HomeView {
             self.timetableTask = Task {
                 for await timetable in self.repos.timetableRepository.getCurrentTimetable() {
                     guard
-                        let date = timetable.first?.toNSDate(),
-                        let timetable = timetable.second,
-                        let time = timetable.allKeys as? [Kotlinx_datetimeLocalTime],
-                        let entries = timetable.allValues as? [[Timetable]]
+                        let date = timetable?.first?.toNSDate(),
+                        let timetable = timetable?.second as? [Timetable]
                     else { continue }
                     
+                    self.timetable = timetable
                     self.timetableDate = date
-                    self.timetable = time.enumerated().map { (index, time) in
-                        let date = time.toNSDate(since: date)
-                        
-                        return (date, entries[index])
-                    }
                 }
             }
             
