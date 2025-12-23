@@ -1,0 +1,69 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Get JDK17
+        shell: bash
+        run: brew install openjdk@17
+
+      - name: Get `packipa`
+        shell: bash
+        run: git clone https://github.com/aeoliux/packipa
+
+      - name: Build `Violet.ipa`
+        shell: bash
+        run: cd iosApp && ../packipa/packipa -r
+
+      - name: Upload `Violet.ipa`
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-iphoneos
+          path: iosApp/Violet.ipa
+
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get JDK17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Get `apksigner`
+        shell: bash
+        run: sudo apk install apksigner
+
+      - name: Build `Violet.apk`
+        shell: bash
+        run: ./gradlew assembleRelease
+
+      - name: Decode keystore
+        shell: bash
+        run: echo "${{ KEYSTORE_BASE64 }}" | base64 --decode > k.keystore
+
+      - name: Sign `Violet.apk`
+        shell: bash
+        run: apksigner sign --ks k.keystore --ks-key-alias "${{ KEYSTORE_ALIAS }}" --ks-pass pass:"${{ KEYSTORE_PASS }}" --out Violet.apk composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk
+
+      - name: Upload `Violet.apk`
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-android
+          path: ./Violet.apk
