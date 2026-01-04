@@ -9,7 +9,7 @@ struct TimetableView: View {
             List {
                 ForEach(self.viewModel.timetable, id: \.date) { timetable in
                     NavigationLink(value: timetable) {
-                        Label(weekDayFormat.string(from: timetable.date), systemImage: "\(Calendar.current.component(.weekday, from: timetable.date)).calendar")
+                        Label(timetableDateFormat.string(from: timetable.date), systemImage: "\(Calendar.current.component(.weekday, from: timetable.date) - 1).calendar")
                     }
                 }
             }
@@ -17,7 +17,7 @@ struct TimetableView: View {
             .navigationTitle("Timetable")
             .navigationDestination(for: ViewModel.NavKey.self) { timetable in
                 TimetableDayView(timetable: timetable, refresh: self.viewModel.refresh)
-                    .navigationTitle("Timetable - \(weekDayFormat.string(from: timetable.date))")
+                    .navigationTitle(timetableDateFormat.string(from: timetable.date))
             }
         }
     }
@@ -27,5 +27,11 @@ let weekDayFormat = {
     let f = DateFormatter()
     f.dateFormat = "EEEE"
     
+    return f
+}()
+
+let timetableDateFormat = {
+    let f = DateFormatter()
+    f.dateFormat = "EEEE, dd MMMM"
     return f
 }()

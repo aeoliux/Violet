@@ -40,10 +40,8 @@ struct MessageEditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if !self.viewModel.content.isEmpty && !self.viewModel.topic.isEmpty && !self.viewModel.selectedUsers.isEmpty && !self.viewModel.requestKey.isEmpty {
-                Button {
-                    Task { try await self.viewModel.sendMessage() }
-                } label: {
-                    Image(systemName: "paperplane")
+                ToolbarTaskButton(systemName: "paperplane") {
+                    try await self.viewModel.sendMessage()
                 }
             }
         }
@@ -51,6 +49,9 @@ struct MessageEditorView: View {
             UsersSelectorView(self.viewModel.allUsers, alreadySelected: self.viewModel.selectedUsers) {
                 self.viewModel.selectedUsers = $0
             }
+        }
+        .alert("Message uploaded. Refresh messages and check outbox to check if this message was really sent", isPresented: self.$viewModel.finished) {
+            Button("Ok", role: .cancel) { self.viewModel.finished = false }
         }
     }
 }

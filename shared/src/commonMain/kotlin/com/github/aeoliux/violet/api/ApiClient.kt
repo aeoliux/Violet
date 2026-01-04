@@ -35,11 +35,14 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CancellationException
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -69,6 +72,7 @@ class ApiClient {
         }
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun connect(login: String, password: String) {
         client.get(Endpoints.authStep1)
         client.submitForm(url = Endpoints.authStep2, formParameters = parameters {
@@ -79,7 +83,7 @@ class ApiClient {
         client.get(Endpoints.authStep3)
 
         if (client.get(Endpoints.url("Me")).status.value != 200)
-            throw IllegalStateException("Invalid credentials")
+            throw IOException("Invalid credentials")
 
         users = data<Users>("Users").toUserMap()
         subjects = data<Subjects>("Subjects").toMap()
@@ -87,18 +91,22 @@ class ApiClient {
         classrooms = data<Classrooms>("Classrooms").toMap()
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     private suspend inline fun <reified T> data(location: String): T {
         return client.get(Endpoints.url(location)).body()
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun me(): com.github.aeoliux.violet.api.types.Me {
         return data<Me>("Me").toMeData()
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun classInfo(): ClassInfo {
         return data<Class>("Classes").toClassInfo(users)
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun grades(): LinkedHashMap<String, List<Grade>> {
         val categories = data<GradesCategories>("Grades/Categories")
         val comments = data<GradesComments>("Grades/Comments")
@@ -107,16 +115,19 @@ class ApiClient {
         return gradesData.toGrades(categories, comments, users, subjects, colors)
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun luckyNumber(): Pair<Int, LocalDate> {
         return data<LuckyNumbers>("LuckyNumbers").parse()
     }
 
     @OptIn(ExperimentalTime::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun timetable(
         weekStarts: LocalDate
     ): Timetable =
         data<Timetables>("Timetables?weekStart=${weekStarts}").toTimetableMap(classrooms)
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun attendance(): Attendance {
         return data<Attendances>("Attendances").toAttendanceMap(
             colors,
@@ -125,6 +136,7 @@ class ApiClient {
         )
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun agenda(): Agenda {
         return data<Homeworks>("HomeWorks")
             .toAgenda(
@@ -135,6 +147,7 @@ class ApiClient {
             )
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun schoolNotices(): List<SchoolNotice> {
         return data<SchoolNotices>("SchoolNotices").toSNList(users)
     }

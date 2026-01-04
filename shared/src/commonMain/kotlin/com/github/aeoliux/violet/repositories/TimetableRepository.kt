@@ -4,6 +4,7 @@ import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.api.types.Lesson
 import com.github.aeoliux.violet.storage.AppDatabase
 import com.github.aeoliux.violet.storage.Timetable
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DatePeriod
@@ -15,6 +16,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 import kotlin.collections.map
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -51,7 +54,13 @@ class TimetableRepository(
                 byDate.entries
                     .sortedBy { it.key }
                     .getOrNull(0)
-                    ?.let { Pair(it.key, it.value) }
+                    ?.let {
+                        Pair(
+                            first = it.key,
+                            second = it.value
+                                .sortedBy { it.lessonNo }
+                        )
+                    }
             }
 
     internal fun associateTimetableByTimestamp(timetable: List<Timetable>): LinkedHashMap<LocalTime, List<Timetable>> {
@@ -66,6 +75,7 @@ class TimetableRepository(
     }
 
     @OptIn(ExperimentalTime::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
@@ -74,7 +84,6 @@ class TimetableRepository(
             forDay = now.date,
             now = now
         )
-            .let { println(it.keys); it }
             .flatMap { (date, timetable) ->
                 timetable.flatMap { (time, timetable) ->
                     timetable.map { entry ->

@@ -10,6 +10,7 @@ struct HomeView: View {
                 HomeLuckyNumberSection(luckyNumber: self.viewModel.luckyNumber)
                 HomeTimetableSection(timetable: self.viewModel.timetable, timetableDate: self.viewModel.timetableDate ?? Date())
                 HomeGradesSection(grades: self.viewModel.latestGrades) { self.viewModel.navPath.append($0) }
+                HomeAgendaSection(agenda: self.viewModel.latestAgenda)
             }
             .refreshable { await self.viewModel.refresh() }
             .navigationTitle("Hi, \(self.viewModel.aboutMe?.firstName ?? "")")

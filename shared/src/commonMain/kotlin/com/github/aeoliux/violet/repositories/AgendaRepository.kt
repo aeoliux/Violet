@@ -2,7 +2,10 @@ package com.github.aeoliux.violet.repositories
 
 import com.github.aeoliux.violet.storage.Agenda
 import com.github.aeoliux.violet.storage.AppDatabase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.map
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 
 class AgendaRepository(
     private val appDatabase: AppDatabase,
@@ -28,6 +31,7 @@ class AgendaRepository(
         .getAgendaDao()
         .getLatestAgenda(amount)
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val agenda = client.agenda()
             .entries

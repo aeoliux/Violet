@@ -9,11 +9,18 @@ struct ContentView: View {
             if self.viewModel.logState {
                 MainContentView()
             } else {
-                NavigationStack { LoginView() }
+                LoginView()
             }
         }
-        .alert(self.viewModel.alertState.alertState.message, isPresented: self.$viewModel.alertShown) {
-            Button("Ok", role: .cancel) { self.viewModel.alertState.alertState.close() }
+        .sheet(isPresented: self.$viewModel.alertShown) {
+            List {
+                Section("Crash log") {
+                    Text(verbatim: self.viewModel.alertState.alertState.message)
+                    Button("Copy") { UIPasteboard.general.string = self.viewModel.alertState.alertState.message }
+                }
+                
+                Button("Ok", role: .cancel) { self.viewModel.alertState.alertState.close() }
+            }
         }
     }
 }

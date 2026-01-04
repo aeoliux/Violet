@@ -9,6 +9,7 @@ extension HomeView {
         var navPath = NavigationPath()
         
         var aboutMe: AboutMe?
+        var latestAgenda = [(SwiftUI.Color, Agenda)]()
         var luckyNumber: Int = 0
         var timetable = [Timetable]()
         var timetableDate: Date?
@@ -18,6 +19,7 @@ extension HomeView {
         var luckyNumberTask: Task<(), Never>?
         var timetableTask: Task<(), Never>?
         var gradesTask: Task<(), Never>?
+        var agendaTask: Task<(), Never>?
         
         override init() {
             super.init()
@@ -51,6 +53,14 @@ extension HomeView {
                     self.latestGrades = grades.map { ($0, $0.color.toColor() ?? SwiftUI.Color.accentColor) }
                 }
             }
+            
+            self.agendaTask = Task {
+                for await agenda in self.repos.agendaRepository.getLatestAgendaFlow(amount: 5) {
+                    self.latestAgenda = agenda.map {
+                        ($0.color.toColor() ?? SwiftUI.Color.primary, $0)
+                    }
+                }
+            }
         }
         
         deinit {
@@ -58,6 +68,7 @@ extension HomeView {
             self.luckyNumberTask?.cancel()
             self.timetableTask?.cancel()
             self.gradesTask?.cancel()
+            self.agendaTask?.cancel()
         }
         
         func refresh() async {

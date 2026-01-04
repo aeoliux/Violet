@@ -10,6 +10,7 @@ import com.github.aeoliux.violet.api.types.User
 import com.github.aeoliux.violet.storage.AppDatabase
 import com.github.aeoliux.violet.storage.Message
 import com.github.aeoliux.violet.storage.MessageLabel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.map
 
 class MessagesRepository(

@@ -15,6 +15,7 @@ extension MessageEditorView {
         var respondsTo: String?
         
         var usersSelector = false
+        var finished = false
         
         var initialTask: Task<(), Error>?
         
@@ -57,6 +58,8 @@ Użytkownik \(messageLabel.sender) \(messageLabel.sentAt != nil ? messageLabel.s
                 key: self.requestKey,
                 respondsTo: self.respondsTo
             )
+            
+            self.finished = true
         }
         
         deinit {

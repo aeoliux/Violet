@@ -1,12 +1,17 @@
 import Shared
+import SwiftUI
 
+@Observable
 open class RefreshableViewModel {
-    private(set) var isRefreshing = false
+    var isRefreshing = false
     private let alertState = AlertStateInjector()
     
     func task<T>(_ closure: () async throws -> T) async -> T? {
         do {
-            return try await closure()
+            self.isRefreshing = true
+            let result = try await closure()
+            self.isRefreshing = false
+            return result
         } catch {
             self.alertState.alertState.show(message: error.localizedDescription)
             return nil

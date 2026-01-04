@@ -2,6 +2,9 @@ package com.github.aeoliux.violet.repositories
 
 import com.github.aeoliux.violet.storage.AppDatabase
 import com.github.aeoliux.violet.storage.Attendance
+import kotlinx.coroutines.CancellationException
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 
 class AttendanceRepository(
     private val appDatabase: AppDatabase,
@@ -19,6 +22,7 @@ class AttendanceRepository(
         .getAttendanceDao()
         .getSemestralAttendance()
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val attendance = client
             .attendance()

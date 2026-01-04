@@ -8,6 +8,8 @@ extension AttendanceView {
         var attendance = [Date : [Attendance]]()
         var dates = [Date]()
         
+        var showSummary = false
+        
         let repos = RepositoryHelper()
         
         override init() {

@@ -3,8 +3,11 @@ package com.github.aeoliux.violet.repositories
 import com.github.aeoliux.violet.api.types.GradeType
 import com.github.aeoliux.violet.storage.AppDatabase
 import com.github.aeoliux.violet.storage.Grade
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 
 class GradesRepository(
     private val appDatabase: AppDatabase,
@@ -65,6 +68,7 @@ class GradesRepository(
         .getGradesDao()
         .getLatestGrades(amount)
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val newGrades = client.grades()
         val newGradesMapped = newGrades.flatMap { (subject, grades) ->

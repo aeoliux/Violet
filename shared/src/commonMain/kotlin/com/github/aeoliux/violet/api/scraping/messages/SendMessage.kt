@@ -2,15 +2,9 @@ package com.github.aeoliux.violet.api.scraping.messages
 
 import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.api.types.User
-import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
-import io.ktor.http.parameters
 
 suspend fun ApiClient.sendMessage(
     topic: String,

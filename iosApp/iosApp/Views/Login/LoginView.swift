@@ -5,15 +5,23 @@ struct LoginView: View {
     @State var viewModel = ViewModel()
     
     var body: some View {
-        List {
-            TextField("Login", text: self.$viewModel.login)         .autocorrectionDisabled().textInputAutocapitalization(.none)
-            SecureField("Password", text: self.$viewModel.password) .autocorrectionDisabled().textInputAutocapitalization(.none)
-            
-            HStack {
-                Button("Confirm") { self.viewModel.proceed() }
+        NavigationStack {
+            List {
+                Section {
+                    TextField("Login", text: self.$viewModel.login)         .autocorrectionDisabled().textInputAutocapitalization(.none)
+                    SecureField("Password", text: self.$viewModel.password) .autocorrectionDisabled().textInputAutocapitalization(.none)
+                    
+                    HStack {
+                        TaskButton(title: "Log in") { try await self.viewModel.proceed() }
+                    }
+                } header: {
+                    Text("Credentials")
+                } footer: {
+                    Text("Use your S\\*nergia credentials to log in to Violet. Your credentials are only being sent to L\\*brus. Password will be stored in your device's secure keychain.")
+                }
             }
+            .navigationTitle("Log in to Violet")
         }
-        .navigationTitle("Log in to S*nergia")
     }
 }
 
@@ -25,10 +33,8 @@ extension LoginView {
         
         let repos = RepositoryHelper()
         
-        func proceed() {
-            self.spawnTask {
-                try await self.repos.clientManager.login(login: self.login, password: self.password)
-            }
+        func proceed() async throws {
+            try await self.repos.clientManager.login(login: self.login, password: self.password)
         }
     }
 }

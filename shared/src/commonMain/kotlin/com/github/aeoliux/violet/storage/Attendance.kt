@@ -35,7 +35,7 @@ interface AttendanceDao: BaseDao<Attendance> {
     @Query("""
         SELECT
             semester AS semester,
-            SUM(CASE WHEN type = 'ob' THEN 1 ELSE 0 END) *
+            SUM(CASE WHEN typeShort = 'ob' THEN 1 ELSE 0 END) *
                 100.0 / COUNT(*) AS percentage
         FROM Attendance
         GROUP BY semester
