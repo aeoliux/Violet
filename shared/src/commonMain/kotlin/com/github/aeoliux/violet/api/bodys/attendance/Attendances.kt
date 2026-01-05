@@ -1,6 +1,7 @@
 package com.github.aeoliux.violet.api.bodys.attendance
 
 import com.github.aeoliux.violet.api.Attendance
+import com.github.aeoliux.violet.api.bodys.HybridIdDeserializer
 import com.github.aeoliux.violet.api.bodys.IdAndUrl
 import com.github.aeoliux.violet.api.localDateTimeFormat
 import com.github.aeoliux.violet.api.types.AttendanceItem
@@ -12,6 +13,7 @@ import kotlin.collections.get
 
 @Serializable
 data class AttendanceEntry(
+    @Serializable(with = HybridIdDeserializer::class)
     val Id: Int,
     val Date: String,
     val AddDate: String,

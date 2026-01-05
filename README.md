@@ -1,5 +1,15 @@
 # Violet
-Custom client for one of the polish school e-diaries.
+Multiplatform custom client for one of the polish school e-diaries.
+
+## Preview
+<img src="./screenshots/android.png" alt="Android preview" height="600">
+<img src="./screenshots/ios.png" alt="iOS preview" height="600">
+
+## Implemented functions
+- Grades info and averages:
+    - yearly
+    - per semester
+    - per subject by semester
 
 ## Builds
 - Releases tab

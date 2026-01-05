@@ -24,7 +24,7 @@ class ClientManager(
 
     var lastConnectionTimestamp: Long = 0
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun login(login: String, password: String) {
         this.connect(login, password)
 
@@ -43,7 +43,7 @@ class ClientManager(
     }
 
     @OptIn(ExperimentalTime::class)
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     internal suspend fun connectWithStoredCredentials() {
         val currentTimestamp = Clock.System.now().epochSeconds
         if (currentTimestamp < this.lastConnectionTimestamp + 60)
@@ -54,7 +54,7 @@ class ClientManager(
         this.connect(login, password)
     }
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     @OptIn(ExperimentalTime::class)
     internal suspend fun connect(login: String, password: String) {
         this.clientMut.value.client.connect(login, password)
@@ -63,7 +63,7 @@ class ClientManager(
         this.lastConnectionTimestamp = Clock.System.now().epochSeconds
     }
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun <T> with(closure: suspend (client: ApiClient) -> T): T {
         this.connectWithStoredCredentials()
         return this.clientMut.value.with(closure)
@@ -73,7 +73,7 @@ class ClientManager(
         val client: ApiClient,
         val connected: Boolean = false
     ) {
-        @Throws(IOException::class, SerializationException::class, CancellationException::class)
+        @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
         suspend fun <T> with(closure: suspend (client: ApiClient) -> T): T {
             when (this.connected) {
                 true -> return closure(this.client)

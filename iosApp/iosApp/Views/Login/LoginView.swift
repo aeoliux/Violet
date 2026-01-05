@@ -8,8 +8,8 @@ struct LoginView: View {
         NavigationStack {
             List {
                 Section {
-                    TextField("Login", text: self.$viewModel.login)         .autocorrectionDisabled().textInputAutocapitalization(.none)
-                    SecureField("Password", text: self.$viewModel.password) .autocorrectionDisabled().textInputAutocapitalization(.none)
+                    TextField("Login", text: self.$viewModel.login)         .autocorrectionDisabled().textInputAutocapitalization(.never)
+                    SecureField("Password", text: self.$viewModel.password) .autocorrectionDisabled().textInputAutocapitalization(.never)
                     
                     HStack {
                         TaskButton(title: "Log in") { try await self.viewModel.proceed() }

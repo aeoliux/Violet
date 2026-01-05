@@ -12,9 +12,12 @@ import com.github.aeoliux.violet.storage.Message
 import com.github.aeoliux.violet.storage.MessageLabel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.map
+import kotlinx.io.IOException
+import kotlinx.serialization.SerializationException
 
 class MessagesRepository(
     private val appDatabase: AppDatabase,
+    private val alertState: AlertState,
     private val clientManager: ClientManager
 ) {
     fun getLabelsFlow(query: String? = null) = (query
@@ -38,23 +41,25 @@ class MessagesRepository(
         .getMessagesDao()
         .selectMessage(url)
         .map {
-            it
-                ?: this.clientManager.with { client ->
-                    val message = client.getMessage(url).let {
-                        Message(
-                            key = this.extractKey(url) ?: return@with null,
-                            url = url,
-                            content = it.content,
-                            attachments = listOf() // TODO!
-                        )
+            this.alertState.task {
+                it
+                    ?: this.clientManager.with { client ->
+                        val message = client.getMessage(url).let {
+                            Message(
+                                key = this.extractKey(url) ?: return@with null,
+                                url = url,
+                                content = it.content,
+                                attachments = listOf() // TODO!
+                            )
+                        }
+
+                        this.appDatabase
+                            .getMessagesDao()
+                            .upsert(message)
+
+                        message
                     }
-
-                    this.appDatabase
-                        .getMessagesDao()
-                        .upsert(message)
-
-                    message
-                }
+            }
         }
 
     suspend fun initializeSender(respondsTo: String?) = this.clientManager.with { client ->
@@ -81,6 +86,7 @@ class MessagesRepository(
         client.users
     }
 
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val labels = client
             .getMessages()

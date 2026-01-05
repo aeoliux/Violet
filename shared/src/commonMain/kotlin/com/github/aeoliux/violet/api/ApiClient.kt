@@ -72,7 +72,7 @@ class ApiClient {
         }
     }
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun connect(login: String, password: String) {
         client.get(Endpoints.authStep1)
         client.submitForm(url = Endpoints.authStep2, formParameters = parameters {
@@ -83,7 +83,7 @@ class ApiClient {
         client.get(Endpoints.authStep3)
 
         if (client.get(Endpoints.url("Me")).status.value != 200)
-            throw IOException("Invalid credentials")
+            error("Invalid credentials")
 
         users = data<Users>("Users").toUserMap()
         subjects = data<Subjects>("Subjects").toMap()
@@ -127,7 +127,7 @@ class ApiClient {
     ): Timetable =
         data<Timetables>("Timetables?weekStart=${weekStarts}").toTimetableMap(classrooms)
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun attendance(): Attendance {
         return data<Attendances>("Attendances").toAttendanceMap(
             colors,

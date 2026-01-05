@@ -14,10 +14,10 @@ struct HomeTimetableSection: View {
                     Text(entry.subject)
                         .multilineTextAlignment(.leading)
                         .lineLimit(1)
-                        .frame(maxWidth: 200, alignment: .leading)
                         .fontWeight(.semibold)
                     
                     Text(entry.classroom)
+                        .lineLimit(1)
                     
                     Spacer()
                     Text("\(entry.lessonNo)")

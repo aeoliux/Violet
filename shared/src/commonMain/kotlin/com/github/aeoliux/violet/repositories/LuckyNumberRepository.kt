@@ -13,7 +13,7 @@ class LuckyNumberRepository(
 ) {
     fun getLuckyNumberFlow() = this.appDatabase.getLuckyNumberDao().getLuckyNumber()
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() = this.client.with { client ->
         val new = client.luckyNumber()
         val current = this.appDatabase.getLuckyNumberDao().getLuckyNumber().firstOrNull()

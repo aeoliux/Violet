@@ -12,7 +12,7 @@ class AboutMeRepository(
 ) {
     fun getAboutMeFlow() = this.appDatabase.getAboutMeDao().getAboutMe()
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() {
         this.client.with { client ->
             val newAboutMe = client.me()

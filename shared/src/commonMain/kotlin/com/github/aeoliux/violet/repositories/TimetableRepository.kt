@@ -75,7 +75,7 @@ class TimetableRepository(
     }
 
     @OptIn(ExperimentalTime::class)
-    @Throws(IOException::class, SerializationException::class, CancellationException::class)
+    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
