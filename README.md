@@ -6,10 +6,27 @@ Multiplatform custom client for one of the polish school e-diaries.
 <img src="./screenshots/ios.png" alt="iOS preview" height="600">
 
 ## Implemented functions
-- Grades info and averages:
-    - yearly
-    - per semester
-    - per subject by semester
+- Native UI
+    - Android - Material3 Expressive
+    - iOS - SwiftUI
+- Lucky number in the Home tab
+- Grades
+    - latest 5 grades shown in Home tab
+    - yearly average
+    - average per semester
+    - averages per subject by semester
+- Timetable
+    - in Home tab - next school day's timetable
+    - cancelled lessons are marked
+    - **substitutions are not marked as substitutions!**
+- Messages
+    - receiving
+    - sending and responding **(Experimental, be carefull!)**
+- Agenda, upcoming events like exams
+- Attendance
+    - unattendances
+    - yearly attendance percentage
+    - attendance percentage by semester (currently only iOS)
 
 ## Builds
 - Releases tab
