@@ -1,6 +1,5 @@
 package com.github.aeoliux.violet.repositories
 
-import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.api.scraping.messages.MessageCategories
 import com.github.aeoliux.violet.api.scraping.messages.getMessage
 import com.github.aeoliux.violet.api.scraping.messages.getMessages
@@ -17,7 +16,6 @@ import kotlinx.serialization.SerializationException
 
 class MessagesRepository(
     private val appDatabase: AppDatabase,
-    private val alertState: AlertState,
     private val clientManager: ClientManager
 ) {
     fun getLabelsFlow(query: String? = null) = (query
@@ -41,25 +39,23 @@ class MessagesRepository(
         .getMessagesDao()
         .selectMessage(url)
         .map {
-            this.alertState.task {
-                it
-                    ?: this.clientManager.with { client ->
-                        val message = client.getMessage(url).let {
-                            Message(
-                                key = this.extractKey(url) ?: return@with null,
-                                url = url,
-                                content = it.content,
-                                attachments = listOf() // TODO!
-                            )
-                        }
-
-                        this.appDatabase
-                            .getMessagesDao()
-                            .upsert(message)
-
-                        message
+            it
+                ?: this.clientManager.with { client ->
+                    val message = client.getMessage(url).let {
+                        Message(
+                            key = this.extractKey(url) ?: return@with null,
+                            url = url,
+                            content = it.content,
+                            attachments = listOf() // TODO!
+                        )
                     }
-            }
+
+                    this.appDatabase
+                        .getMessagesDao()
+                        .upsert(message)
+
+                    message
+                }
         }
 
     suspend fun initializeSender(respondsTo: String?) = this.clientManager.with { client ->

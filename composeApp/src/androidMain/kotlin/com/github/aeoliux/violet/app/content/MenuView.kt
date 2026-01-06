@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Announcement
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Announcement
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.PersonAdd
@@ -34,9 +36,10 @@ fun MenuView(
     onNavKey: (navKey: Any) -> Unit
 ) {
     val tabs = listOf(
-        Triple("Messages", Icons.Default.Mail, NavRoutes.Messages),
         Triple("Agenda", Icons.Default.CalendarMonth, NavRoutes.Agenda),
-        Triple("Attendance", Icons.Default.PersonAdd, NavRoutes.Attendance)
+        Triple("Attendance", Icons.Default.PersonAdd, NavRoutes.Attendance),
+        Triple("School notices", Icons.AutoMirrored.Filled.Announcement, NavRoutes.SchoolNotices),
+        Triple("Messages", Icons.Default.Mail, NavRoutes.Messages)
     )
 
     LazyLayout(

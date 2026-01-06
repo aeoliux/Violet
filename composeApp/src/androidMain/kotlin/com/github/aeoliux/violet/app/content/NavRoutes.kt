@@ -42,6 +42,10 @@ object NavRoutes {
         override val title: String = "Attendance"
     }
 
+    object SchoolNotices: TitledNavKey {
+        override val title: String = "School notices"
+    }
+
     data class GradesBySubject(val subject: String): TitledNavKey {
         override val title: String = subject
     }

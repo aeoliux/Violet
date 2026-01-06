@@ -50,8 +50,8 @@ class MessageEditorViewModel(
     }
 
     internal suspend fun initializeSender(respondsTo: String? = null, name: String? = null) {
-        val key = messagesRepository.initializeSender(respondsTo)
-        val users = messagesRepository.requestUsers()
+        val key = this.messagesRepository.initializeSender(respondsTo) ?: return
+        val users = this.messagesRepository.requestUsers() ?: return
 
         val nameSplit = name?.split(" ")
         if (respondsTo != null && nameSplit != null && nameSplit.size >= 2) {

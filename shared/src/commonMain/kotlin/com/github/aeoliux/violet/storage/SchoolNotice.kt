@@ -10,8 +10,7 @@ import kotlinx.datetime.LocalDateTime
 
 @Entity(tableName = "SchoolNotices")
 data class SchoolNotice(
-    @PrimaryKey(autoGenerate = true) val key: Int = 0,
-    val id: String,
+    @PrimaryKey(autoGenerate = false) val id: Int = 0,
 
     val startDate: LocalDate,
     val endDate: LocalDate,

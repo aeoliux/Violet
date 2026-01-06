@@ -15,6 +15,7 @@ import kotlin.time.ExperimentalTime
 
 class ClientManager(
     private val appDatabase: AppDatabase,
+    private val alertState: AlertState,
     private val keychain: Keychain,
 ) {
     val logStateFlow = this.appDatabase.getAboutMeDao().checkIfLoggedIn()
@@ -25,7 +26,7 @@ class ClientManager(
     var lastConnectionTimestamp: Long = 0
 
     @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
-    suspend fun login(login: String, password: String) {
+    suspend fun login(login: String, password: String) = this.alertState.task {
         this.connect(login, password)
 
         val newAboutMe = this.clientMut.value.client.me()
@@ -64,9 +65,9 @@ class ClientManager(
     }
 
     @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
-    suspend fun <T> with(closure: suspend (client: ApiClient) -> T): T {
+    suspend fun <T> with(closure: suspend (client: ApiClient) -> T): T? = this.alertState.task {
         this.connectWithStoredCredentials()
-        return this.clientMut.value.with(closure)
+        this.clientMut.value.with(closure)
     }
 
     data class ApiClientState(

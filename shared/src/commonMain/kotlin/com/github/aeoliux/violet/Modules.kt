@@ -8,6 +8,7 @@ import com.github.aeoliux.violet.repositories.ClientManager
 import com.github.aeoliux.violet.repositories.GradesRepository
 import com.github.aeoliux.violet.repositories.LuckyNumberRepository
 import com.github.aeoliux.violet.repositories.MessagesRepository
+import com.github.aeoliux.violet.repositories.SchoolNoticesRepository
 import com.github.aeoliux.violet.repositories.TimetableRepository
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -24,6 +25,7 @@ val appModule = module {
     singleOf(::MessagesRepository)
     singleOf(::AgendaRepository)
     singleOf(::AttendanceRepository)
+    singleOf(::SchoolNoticesRepository)
 }
 
 fun initializeKoin(platformModule: Module) {

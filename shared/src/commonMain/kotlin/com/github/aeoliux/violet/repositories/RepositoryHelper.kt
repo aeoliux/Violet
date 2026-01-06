@@ -16,6 +16,7 @@ class RepositoryHelper: KoinComponent {
     val agendaRepository: AgendaRepository by inject()
     val messagesRepository: MessagesRepository by inject()
     val attendanceRepository: AttendanceRepository by inject()
+    val schoolNoticesRepository: SchoolNoticesRepository by inject()
 
     @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun fullRefresh() {
@@ -26,5 +27,6 @@ class RepositoryHelper: KoinComponent {
         this.agendaRepository.refresh()
         this.messagesRepository.refresh()
         this.attendanceRepository.refresh()
+        this.schoolNoticesRepository.refresh()
     }
 }
