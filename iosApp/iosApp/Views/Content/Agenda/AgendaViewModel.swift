@@ -41,9 +41,7 @@ extension AgendaView {
         }
         
         func refresh() async {
-            await self.task {
-                try await self.repos.agendaRepository.refresh()
-            }
+            _ = try? await self.repos.agendaRepository.refresh()
         }
     }
 }

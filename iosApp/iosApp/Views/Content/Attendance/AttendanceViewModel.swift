@@ -35,9 +35,7 @@ extension AttendanceView {
         }
         
         func refresh() async {
-            await self.task {
-                try await self.repos.attendanceRepository.refresh()
-            }
+            _ = try? await self.repos.attendanceRepository.refresh()
         }
         
         deinit {

@@ -31,7 +31,6 @@ class AgendaRepository(
         .getAgendaDao()
         .getLatestAgenda(amount)
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val agenda = client.agenda()
             .entries

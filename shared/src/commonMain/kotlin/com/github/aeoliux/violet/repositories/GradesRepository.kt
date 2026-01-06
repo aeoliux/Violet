@@ -68,7 +68,6 @@ class GradesRepository(
         .getGradesDao()
         .getLatestGrades(amount)
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val newGrades = client.grades()
         val newGradesMapped = newGrades.flatMap { (subject, grades) ->

@@ -12,7 +12,7 @@ struct LoginView: View {
                     SecureField("Password", text: self.$viewModel.password) .autocorrectionDisabled().textInputAutocapitalization(.never)
                     
                     HStack {
-                        TaskButton(title: "Log in") { try await self.viewModel.proceed() }
+                        TaskButton(title: "Log in") { await self.viewModel.proceed() }
                     }
                 } header: {
                     Text("Credentials")
@@ -33,8 +33,8 @@ extension LoginView {
         
         let repos = RepositoryHelper()
         
-        func proceed() async throws {
-            try await self.repos.clientManager.login(login: self.login, password: self.password)
+        func proceed() async {
+            _ = try? await self.repos.clientManager.login(login: self.login, password: self.password)
         }
     }
 }

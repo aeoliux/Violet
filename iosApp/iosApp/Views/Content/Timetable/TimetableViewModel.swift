@@ -47,9 +47,7 @@ extension TimetableView {
         }
         
         func refresh() async {
-            await self.task {
-                try await self.repos.timetableRepository.refresh()
-            }
+            _ = try? await self.repos.timetableRepository.refresh()
         }
         
         struct NavKey: Hashable, Equatable {

@@ -21,7 +21,7 @@ extension MessageEditorView {
         
         init(message: Message_?, messageLabel: MessageLabel_?) {
             self.initialTask = Task {
-                self.allUsers = try await self.repos.messagesRepository.requestUsers()
+                self.allUsers = ((try? await self.repos.messagesRepository.requestUsers()) ?? [:])
                     .compactMap { (id, user) in
                         user as? User
                     }
@@ -46,12 +46,12 @@ Użytkownik \(messageLabel.sender) \(messageLabel.sentAt != nil ? messageLabel.s
                     }
                 }
                 
-                self.requestKey = try await self.repos.messagesRepository.initializeSender(respondsTo: self.respondsTo)
+                self.requestKey = (try? await self.repos.messagesRepository.initializeSender(respondsTo: self.respondsTo)) ?? ""
             }
         }
         
-        func sendMessage() async throws {
-            try await self.repos.messagesRepository.sendMessage(
+        func sendMessage() async {
+            _ = try? await self.repos.messagesRepository.sendMessage(
                 topic: self.topic,
                 content: self.content,
                 users: self.selectedUsers,

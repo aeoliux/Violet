@@ -27,6 +27,7 @@ Multiplatform custom client for one of the polish school e-diaries.
     - unattendances
     - yearly attendance percentage
     - attendance percentage by semester (currently only iOS)
+- School notices
 
 ## Builds
 - Releases tab

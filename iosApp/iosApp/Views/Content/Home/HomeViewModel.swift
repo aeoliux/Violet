@@ -72,9 +72,7 @@ extension HomeView {
         }
         
         func refresh() async {
-            await self.task {
-                try await self.repos.fullRefresh()
-            }
+            _ = try? await self.repos.fullRefresh()
         }
     }
 }

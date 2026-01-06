@@ -3,9 +3,10 @@ import SwiftUI
 
 struct MenuView: View {
     private let tabs = [
-        ("envelope", "Messages", Routes.Messages),
         ("calendar.badge.exclamationmark", "Agenda", Routes.Agenda),
-        ("checkmark.seal", "Attendance", Routes.Attendance)
+        ("checkmark.seal", "Attendance", Routes.Attendance),
+        ("megaphone", "School notices", Routes.SchoolNotices),
+        ("envelope", "Messages", Routes.Messages)
     ]
     
     var body: some View {
@@ -32,6 +33,8 @@ struct MenuView: View {
                     AgendaView()
                 case .Attendance:
                     AttendanceView()
+                case .SchoolNotices:
+                    SchoolNoticesView()
                 }
             }
         }
@@ -42,6 +45,7 @@ private enum Routes {
     case Messages
     case Agenda
     case Attendance
+    case SchoolNotices
 }
 
 struct MessageEditorRoute: Hashable, Equatable {

@@ -25,7 +25,6 @@ class ClientManager(
 
     var lastConnectionTimestamp: Long = 0
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun login(login: String, password: String) = this.alertState.task {
         this.connect(login, password)
 
@@ -64,7 +63,6 @@ class ClientManager(
         this.lastConnectionTimestamp = Clock.System.now().epochSeconds
     }
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun <T> with(closure: suspend (client: ApiClient) -> T): T? = this.alertState.task {
         this.connectWithStoredCredentials()
         this.clientMut.value.with(closure)

@@ -46,9 +46,7 @@ extension GradesView {
         }
         
         func refresh() async {
-            await self.task {
-                try await self.repos.gradesRepository.refresh()
-            }
+            _ = try? await self.repos.gradesRepository.refresh()
         }
     }
 }

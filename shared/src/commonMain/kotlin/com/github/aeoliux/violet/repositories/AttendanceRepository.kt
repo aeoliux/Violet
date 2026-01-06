@@ -22,7 +22,6 @@ class AttendanceRepository(
         .getAttendanceDao()
         .getSemestralAttendance()
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val attendance = client
             .attendance()

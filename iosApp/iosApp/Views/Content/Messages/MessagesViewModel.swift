@@ -46,10 +46,8 @@ extension MessagesView {
             self.labelsTask?.cancel()
         }
         
-        func refresh() async{
-            await self.task {
-                try await self.repos.messagesRepository.refresh()
-            }
+        func refresh() async {
+            _ = try? await self.repos.messagesRepository.refresh()
         }
     }
 }

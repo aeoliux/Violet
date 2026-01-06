@@ -82,7 +82,6 @@ class MessagesRepository(
         client.users
     }
 
-    @Throws(IOException::class, SerializationException::class, CancellationException::class, IllegalStateException::class)
     suspend fun refresh() = this.clientManager.with { client ->
         val labels = client
             .getMessages()
