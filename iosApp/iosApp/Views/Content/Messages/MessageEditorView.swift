@@ -41,7 +41,7 @@ struct MessageEditorView: View {
         .toolbar {
             if !self.viewModel.content.isEmpty && !self.viewModel.topic.isEmpty && !self.viewModel.selectedUsers.isEmpty && !self.viewModel.requestKey.isEmpty {
                 ToolbarTaskButton(systemName: "paperplane") {
-                    try await self.viewModel.sendMessage()
+                    await self.viewModel.sendMessage()
                 }
             }
         }

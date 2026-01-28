@@ -68,7 +68,7 @@ extension GradesPerSubjectView {
         }
         
         func refresh() async {
-            await self.task {
+            _ = await self.task {
                 try await self.repos.gradesRepository.refresh()
             }
         }

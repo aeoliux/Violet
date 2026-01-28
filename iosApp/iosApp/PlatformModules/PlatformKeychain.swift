@@ -41,12 +41,14 @@ public class PlatformKeychain {
     static func deletePassFunc() {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword as String,
-            kSecAttrAccount as String: "synergiaCredentials",
-            kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecReturnAttributes as String: true,
-            kSecReturnData as String: true,
+            kSecAttrAccount as String: "synergiaCredentials"
         ]
         
-        SecItemDelete(query as CFDictionary)
+        let result = SecItemDelete(query as CFDictionary)
+        
+        guard result == errSecSuccess || result == errSecItemNotFound else {
+            print("Keychain error: \(result)")
+            return
+        }
     }
 }

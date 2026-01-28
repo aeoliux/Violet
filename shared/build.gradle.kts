@@ -25,7 +25,7 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "Shared"
-            isStatic = true
+            isStatic = false
         }
     }
     
@@ -39,7 +39,7 @@ kotlin {
             implementation(libs.ksoup)
 
             implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.sqlite)
             implementation(libs.koin.core)
             implementation(libs.swift.skie.annotations)
         }
@@ -47,10 +47,12 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
+            implementation(libs.sqlite.android)
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqlite.bundled)
         }
 
         commonTest.dependencies {

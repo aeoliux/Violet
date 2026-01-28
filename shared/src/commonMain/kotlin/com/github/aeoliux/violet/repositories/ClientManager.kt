@@ -1,5 +1,6 @@
 package com.github.aeoliux.violet.repositories
 
+import com.fleeksoft.charset.toByteArray
 import com.github.aeoliux.violet.api.ApiClient
 import com.github.aeoliux.violet.storage.AboutMe
 import com.github.aeoliux.violet.storage.AppDatabase

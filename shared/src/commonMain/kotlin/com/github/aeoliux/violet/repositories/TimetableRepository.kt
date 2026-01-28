@@ -58,14 +58,14 @@ class TimetableRepository(
                     .firstOrNull {
                         it.value
                             .maxByOrNull { it.timeTo }
-                            ?.let { it.timeTo >= now.time || it.date > now.date }
+                            ?.let { it.timeTo > now.time || it.date > now.date }
                             ?: false
                     }
                     ?.let {
                         Pair(
                             first = it.key,
                             second = it.value
-                                .filter { it.timeTo >= now.time }
+                                .filter { it.timeTo > now.time || it.date > now.date }
                                 .sortedBy { it.lessonNo }
                         )
                     }
@@ -127,14 +127,14 @@ class TimetableRepository(
             this.weekDayForDate(forDay)
         )
 
-        val lengthAfterToday = next
-            .filter { it.key > now.date }
+        val lengthSinceToday = next
+            .filter { it.key >= now.date }
             .entries
             .fold(0) { acc, (_, timetable) ->
                 acc + timetable.entries.fold(0) { acc, (_, timetable) -> acc + timetable.size}
             }
 
-        return if (lengthAfterToday > 0 || tries >= maxTries)
+        return if (lengthSinceToday > 0 || tries >= maxTries)
             next
         else
             this.loopFetchTimetable(

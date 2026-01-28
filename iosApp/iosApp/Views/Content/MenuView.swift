@@ -12,9 +12,17 @@ struct MenuView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(self.tabs, id: \.1) { (icon, label, destination) in
-                    NavigationLink(value: destination) {
-                        Label(label, systemImage: icon)
+                Section("More") {
+                    ForEach(self.tabs, id: \.1) { (icon, label, destination) in
+                        NavigationLink(value: destination) {
+                            Label(label, systemImage: icon)
+                        }
+                    }
+                }
+                
+                Section("Preferences") {
+                    NavigationLink(value: Routes.Settings) {
+                        Label("Settings", systemImage: "gear")
                     }
                 }
             }
@@ -35,6 +43,8 @@ struct MenuView: View {
                     AttendanceView()
                 case .SchoolNotices:
                     SchoolNoticesView()
+                case .Settings:
+                    SettingsView()
                 }
             }
         }
@@ -46,6 +56,7 @@ private enum Routes {
     case Agenda
     case Attendance
     case SchoolNotices
+    case Settings
 }
 
 struct MessageEditorRoute: Hashable, Equatable {

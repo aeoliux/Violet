@@ -26,4 +26,7 @@ interface AboutMeDao: BaseDao<AboutMe> {
     fun _checkIf1(): Flow<Int>
 
     fun checkIfLoggedIn() = this._checkIf1().map { it == 1 }
+
+    @Query("UPDATE AboutMe SET login = :login")
+    suspend fun setUsername(login: String)
 }

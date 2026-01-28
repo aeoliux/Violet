@@ -2,6 +2,9 @@ package com.github.aeoliux.violet.storage
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.SQLiteDriver
+import androidx.sqlite.driver.NativeSQLiteDriver
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -25,3 +28,5 @@ private fun documentDirectory(): String {
     )
     return requireNotNull(documentDirectory?.path)
 }
+
+actual val sqliteDriver: SQLiteDriver = BundledSQLiteDriver()

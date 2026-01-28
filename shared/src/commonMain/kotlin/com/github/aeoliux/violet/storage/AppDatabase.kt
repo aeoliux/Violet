@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.room.Upsert
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.sqlite.SQLiteDriver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
@@ -45,10 +45,12 @@ fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>
 ): AppDatabase {
     return builder
-        .setDriver(BundledSQLiteDriver())
+        .setDriver(sqliteDriver)
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()
 }
+
+expect val sqliteDriver: SQLiteDriver
 
 @Suppress("KotlinNoActualForExpect")
 expect object AppDatabaseConstructor: RoomDatabaseConstructor<AppDatabase> {
