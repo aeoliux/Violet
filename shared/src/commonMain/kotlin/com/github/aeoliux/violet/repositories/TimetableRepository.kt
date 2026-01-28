@@ -40,10 +40,12 @@ class TimetableRepository(
         }
 
     @OptIn(ExperimentalTime::class)
-    fun getCurrentTimetable(): Flow<Pair<LocalDate, List<Timetable>>?> =
-        this.appDatabase
+    fun getCurrentTimetable(): Flow<Pair<LocalDate, List<Timetable>>?> {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+        return this.appDatabase
             .getTimetableDao()
-            .getTimetableSince(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
+            .getTimetableSince(now.date)
             .map { timetable ->
                 val dates = timetable.map { it.date }.distinct()
 
@@ -53,15 +55,22 @@ class TimetableRepository(
 
                 byDate.entries
                     .sortedBy { it.key }
-                    .getOrNull(0)
+                    .firstOrNull {
+                        it.value
+                            .maxByOrNull { it.timeTo }
+                            ?.let { it.timeTo >= now.time || it.date > now.date }
+                            ?: false
+                    }
                     ?.let {
                         Pair(
                             first = it.key,
                             second = it.value
+                                .filter { it.timeTo >= now.time }
                                 .sortedBy { it.lessonNo }
                         )
                     }
             }
+    }
 
     internal fun associateTimetableByTimestamp(timetable: List<Timetable>): LinkedHashMap<LocalTime, List<Timetable>> {
         val timestamps = timetable
@@ -121,8 +130,8 @@ class TimetableRepository(
         val lengthAfterToday = next
             .filter { it.key > now.date }
             .entries
-            .fold(0) { acc, (date, timetable) ->
-                acc + timetable.entries.fold(0) { acc, (time, timetable) -> acc + timetable.size}
+            .fold(0) { acc, (_, timetable) ->
+                acc + timetable.entries.fold(0) { acc, (_, timetable) -> acc + timetable.size}
             }
 
         return if (lengthAfterToday > 0 || tries >= maxTries)
@@ -138,7 +147,7 @@ class TimetableRepository(
     }
 
     @OptIn(ExperimentalTime::class)
-    internal fun weekDayForDate(date: LocalDate): LocalDate {
+    fun weekDayForDate(date: LocalDate): LocalDate {
         val weekDay = date.dayOfWeek.isoDayNumber
         return if (weekDay > 5) {
             LocalDate.fromEpochDays(date.toEpochDays() + 8 - weekDay)

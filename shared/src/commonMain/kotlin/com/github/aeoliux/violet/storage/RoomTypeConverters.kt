@@ -6,30 +6,38 @@ import com.github.aeoliux.violet.api.types.GradeType
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 class RoomTypeConverters {
     @TypeConverter
-    fun fromLocalDateToString(localDate: LocalDate?): String? = localDate?.toString()
+    fun fromLocalDateToLong(localDate: LocalDate?): Long? = localDate?.toEpochDays()
 
     @TypeConverter
-    fun fromStringToLocalDate(localDate: String?): LocalDate? = localDate?.let {
-        LocalDate.parse(it)
+    fun fromLongToLocalDate(localDate: Long?): LocalDate? = localDate?.let {
+        LocalDate.fromEpochDays(it)
     }
 
     @TypeConverter
-    fun fromLocalDateTimeToString(localDateTime: LocalDateTime?): String? = localDateTime?.toString()
+    fun fromLocalDateTimeToLong(localDateTime: LocalDateTime?): Long? = localDateTime?.toInstant(
+        TimeZone.currentSystemDefault()
+    )?.epochSeconds
 
     @TypeConverter
-    fun fromStringToLocalDateTime(localDateTime: String?): LocalDateTime? = localDateTime?.let {
-        LocalDateTime.parse(it)
+    fun fromLongToLocalDateTime(localDateTime: Long?): LocalDateTime? = localDateTime?.let {
+        Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.currentSystemDefault())
     }
 
     @TypeConverter
-    fun fromLocalTimeToString(localTime: LocalTime?): String? = localTime?.toString()
+    fun fromLocalTimeToLong(localTime: LocalTime?): Long? = localTime?.toSecondOfDay()?.toLong()
 
     @TypeConverter
-    fun fromStringToLocalTime(localTime: String?): LocalTime? = localTime?.let {
-        LocalTime.parse(it)
+    fun fromLongToLocalTime(localTime: Long?): LocalTime? = localTime?.let {
+        LocalTime.fromSecondOfDay(it.toInt())
     }
 
     @TypeConverter

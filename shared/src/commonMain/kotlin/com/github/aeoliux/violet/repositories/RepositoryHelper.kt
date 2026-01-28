@@ -1,13 +1,11 @@
 package com.github.aeoliux.violet.repositories
 
-import kotlinx.coroutines.CancellationException
-import kotlinx.io.IOException
-import kotlinx.serialization.SerializationException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class RepositoryHelper: KoinComponent {
     val clientManager: ClientManager by inject()
+    val keychain: Keychain by inject()
 
     val aboutMeRepository: AboutMeRepository by inject()
     val gradesRepository: GradesRepository by inject()
@@ -27,5 +25,12 @@ class RepositoryHelper: KoinComponent {
         this.messagesRepository.refresh()
         this.attendanceRepository.refresh()
         this.schoolNoticesRepository.refresh()
+    }
+
+    suspend fun updatePassword(password: String) {
+        this.keychain.deletePass()
+        this.keychain.savePass(password)
+
+        this.fullRefresh()
     }
 }
